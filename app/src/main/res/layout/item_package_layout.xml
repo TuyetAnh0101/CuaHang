@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/imgFirst"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/txtTenGoi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên gói"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtGiaGoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giá gốc: 0đ" />
+
+        <TextView
+            android:id="@+id/txtGiaGiam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giá giảm: 0đ" />
+
+        <TextView
+            android:id="@+id/txtSoLuong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số lượng: 0" />
+    </LinearLayout>
+</LinearLayout>

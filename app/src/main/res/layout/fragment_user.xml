@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userfragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.UserFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/white">
+
+            <Button
+                android:id="@+id/btnCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📂 Quản lý danh mục"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnPackage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📦 Quản lý gói đăng ký"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnInvoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🧾 Quản lý hóa đơn"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👥 Quản lý tài khoản người dùng"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🛒 Quản lý đơn mua gói"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnOrderDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📄 Chi tiết đơn mua" />
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "568907329297",
+    "project_id": "cuahang-76223",
+    "storage_bucket": "cuahang-76223.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568907329297:android:9e1656315784899c38a6b0",
+        "android_client_info": {
+          "package_name": "com.example.cuahang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCME1Q4r2rvOQ0KDJh2mzyjoUsaO1MIrfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

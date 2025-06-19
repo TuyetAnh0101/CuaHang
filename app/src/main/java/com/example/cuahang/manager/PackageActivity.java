@@ -30,7 +30,7 @@ public class PackageActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private PackageAdapter adapter;
     private List<Package> packageList = new ArrayList<>();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +48,16 @@ public class PackageActivity extends AppCompatActivity {
         txtEmpty = findViewById(R.id.txtEmpty);
         progressBar = findViewById(R.id.progressBar);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        db = FirebaseFirestore.getInstance();
         adapter = new PackageAdapter(this, packageList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Lấy categoryId từ Intent
         String categoryId = getIntent().getStringExtra("categoryId");
         if (categoryId != null) {
             loadPackagesByCategory(categoryId);
         } else {
-            Toast.makeText(this, "Không có categoryId!", Toast.LENGTH_SHORT).show();
-            finish();
+            loadAllPackages(); // ✅ Nếu không có categoryId, hiển thị toàn bộ gói
         }
     }
 
@@ -75,19 +74,38 @@ public class PackageActivity extends AppCompatActivity {
                         packageList.add(pkg);
                     }
 
-                    if (packageList.isEmpty()) {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                    } else {
-                        txtEmpty.setVisibility(View.GONE);
-                    }
-
+                    txtEmpty.setVisibility(packageList.isEmpty() ? View.VISIBLE : View.GONE);
                     adapter.notifyDataSetChanged();
                     showLoading(false);
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
                     txtEmpty.setVisibility(View.VISIBLE);
-                    Toast.makeText(PackageActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    // ✅ Hàm mới để load tất cả gói nếu không truyền categoryId
+    private void loadAllPackages() {
+        showLoading(true);
+
+        db.collection("Package")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    packageList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Package pkg = doc.toObject(Package.class);
+                        packageList.add(pkg);
+                    }
+
+                    txtEmpty.setVisibility(packageList.isEmpty() ? View.VISIBLE : View.GONE);
+                    adapter.notifyDataSetChanged();
+                    showLoading(false);
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    txtEmpty.setVisibility(View.VISIBLE);
+                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

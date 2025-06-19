@@ -1,5 +1,6 @@
 package com.example.cuahang.manager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -37,7 +38,14 @@ public class CategoryActivity extends AppCompatActivity {
         rcvCategory = findViewById(R.id.rcvCategory);
         btnAddCategory = findViewById(R.id.btnAddCategory);
 
-        adapter = new CategoryAdapter(this, categoryList, this::showEditCategoryDialog, this::deleteCategory);
+        adapter = new CategoryAdapter(
+                this,
+                categoryList,
+                this::showEditCategoryDialog,
+                this::deleteCategory,
+                this::openPackagesOfCategory // 👉 thêm xử lý khi click vào item
+        );
+
         rcvCategory.setLayoutManager(new LinearLayoutManager(this));
         rcvCategory.setAdapter(adapter);
 
@@ -56,7 +64,7 @@ public class CategoryActivity extends AppCompatActivity {
                         categoryList.add(category);
                     }
 
-                    // Sắp xếp theo ID để sinh tiếp đúng thứ tự
+                    // Sắp xếp theo ID
                     Collections.sort(categoryList, Comparator.comparing(Category::getId));
                     adapter.notifyDataSetChanged();
                 })
@@ -133,13 +141,20 @@ public class CategoryActivity extends AppCompatActivity {
                             .delete()
                             .addOnSuccessListener(unused -> {
                                 Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
-                                loadCategories(); // ← Tải lại danh sách sau khi xóa
+                                loadCategories();
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    // 👉 Mở danh sách gói đăng ký theo danh mục
+    private void openPackagesOfCategory(Category category) {
+        Intent intent = new Intent(this, PackageActivity.class);
+        intent.putExtra("categoryId", category.getId());
+        startActivity(intent);
     }
 
     private String generateNextCategoryId() {

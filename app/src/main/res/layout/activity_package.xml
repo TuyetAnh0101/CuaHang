@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="12dp"
+    android:background="#FAFAFA">
 
+    <!-- ProgressBar hiển thị khi loading -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -13,21 +15,31 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <!-- Thông báo khi danh sách rỗng -->
     <TextView
         android:id="@+id/txtEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Không có gói đăng ký nào"
         android:textSize="16sp"
+        android:textStyle="italic"
         android:gravity="center"
-        android:padding="12dp"
+        android:padding="16dp"
         android:visibility="gone"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@android:color/darker_gray"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
 
+    <!-- Danh sách gói đăng ký -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPackage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
-
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:scrollbars="vertical" />
 </LinearLayout>

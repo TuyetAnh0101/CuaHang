@@ -52,6 +52,8 @@ public class CategoryActivity extends AppCompatActivity {
         loadCategories();
 
         btnAddCategory.setOnClickListener(v -> showAddCategoryDialog());
+        String categoryId = getIntent().getStringExtra("categoryId");
+
     }
 
     private void loadCategories() {
@@ -150,9 +152,8 @@ public class CategoryActivity extends AppCompatActivity {
                 .show();
     }
 
-    // 👉 Mở danh sách gói đăng ký theo danh mục
     private void openPackagesOfCategory(Category category) {
-        Intent intent = new Intent(this, PackageActivity.class);
+        Intent intent = new Intent(this, SubCategoryActivity.class);
         intent.putExtra("categoryId", category.getId());
         startActivity(intent);
     }

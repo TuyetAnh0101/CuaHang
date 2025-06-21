@@ -2,22 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:gravity="center_vertical">
 
+    <!-- Hình ảnh đại diện -->
     <ImageView
         android:id="@+id/imgFirst"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginEnd="10dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:src="@drawable/ic_launcher_foreground"
+        android:contentDescription="Hình ảnh gói" />
 
+    <!-- Thông tin gói -->
     <LinearLayout
-        android:orientation="vertical"
+        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtTenGoi"
@@ -44,5 +50,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Số lượng: 0" />
+    </LinearLayout>
+
+    <!-- Các nút chức năng -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/btnEdit"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="4dp"
+            android:background="#A22626"
+            android:contentDescription="Sửa gói"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="4dp"
+            android:background="#D92F2F"
+            android:contentDescription="Xóa gói"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
     </LinearLayout>
 </LinearLayout>

@@ -18,16 +18,24 @@ import java.util.List;
 
 public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHolder> {
 
-    private List<Package> list;
-    private Context context;
+    private final Context context;
+    private final List<Package> list;
+    private final OnPackageClickListener listener;
 
-    public PackageAdapter(Context context, List<Package> list) {
+    // Giao diện callback để xử lý sự kiện Sửa/Xóa
+    public interface OnPackageClickListener {
+        void onEdit(Package pkg);
+        void onDelete(Package pkg);
+    }
+
+    public PackageAdapter(Context context, List<Package> list, OnPackageClickListener listener) {
         this.context = context;
         this.list = list;
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgFirst;
+        ImageView imgFirst, btnEdit, btnDelete;
         TextView txtTenGoi, txtGiaGoc, txtGiaGiam, txtSoLuong;
 
         public ViewHolder(@NonNull View itemView) {
@@ -37,6 +45,8 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             txtGiaGoc = itemView.findViewById(R.id.txtGiaGoc);
             txtGiaGiam = itemView.findViewById(R.id.txtGiaGiam);
             txtSoLuong = itemView.findViewById(R.id.txtSoLuong);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 
@@ -48,7 +58,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PackageAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Package pkg = list.get(position);
 
         holder.txtTenGoi.setText(pkg.getTenGoi());
@@ -56,12 +66,19 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
         holder.txtGiaGiam.setText("Giá giảm: " + pkg.getGiaGiam() + "đ");
         holder.txtSoLuong.setText("Số lượng: " + pkg.getSoLuong());
 
-        // Hiển thị ảnh đầu tiên nếu có
+        // Load ảnh đầu tiên
         if (pkg.getHinhAnh() != null && !pkg.getHinhAnh().isEmpty()) {
-            Glide.with(context).load(pkg.getHinhAnh().get(0)).into(holder.imgFirst);
+            Glide.with(context)
+                    .load(pkg.getHinhAnh().get(0))
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .into(holder.imgFirst);
         } else {
-            holder.imgFirst.setImageResource(R.drawable.ic_launcher_foreground); // icon mặc định
+            holder.imgFirst.setImageResource(R.drawable.ic_launcher_foreground);
         }
+
+        // Sự kiện sửa & xóa
+        holder.btnEdit.setOnClickListener(v -> listener.onEdit(pkg));
+        holder.btnDelete.setOnClickListener(v -> listener.onDelete(pkg));
     }
 
     @Override

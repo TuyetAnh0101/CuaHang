@@ -10,15 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <!-- ProgressBar hiển thị khi loading -->
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center"
-            android:visibility="gone" />
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleLarge" />
 
         <!-- Thông báo khi danh sách rỗng -->
         <TextView
@@ -29,13 +30,12 @@
             android:textSize="16sp"
             android:textStyle="italic"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="20dp"
             android:visibility="gone"
-            android:textColor="@android:color/darker_gray"
-            android:background="@android:color/white"
-            android:elevation="2dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp" />
+            android:textColor="#757575"
+            android:elevation="3dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
 
         <!-- Danh sách gói đăng ký -->
         <androidx.recyclerview.widget.RecyclerView
@@ -44,8 +44,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
+            android:paddingVertical="4dp"
             android:scrollbars="vertical" />
     </LinearLayout>
 
@@ -55,9 +54,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
         android:contentDescription="Thêm gói"
         app:srcCompat="@android:drawable/ic_input_add"
         app:tint="@android:color/white"
-        />
+        app:backgroundTint="#2E7D32"
+        app:elevation="6dp" />
 </FrameLayout>

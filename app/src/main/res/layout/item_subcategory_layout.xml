@@ -1,47 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="12dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:elevation="2dp"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp">
 
-    <!-- Tên subcategory -->
-    <TextView
-        android:id="@+id/txtSubCategoryName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tên subcategory"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="#000000" />
-
-    <!-- Nút Sửa/Xóa -->
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF">
 
+        <!-- Tên subcategory -->
         <TextView
-            android:id="@+id/btnEdit"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtSubCategoryName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sửa"
+            android:text="Tên subcategory"
             android:textStyle="bold"
-            android:textColor="@android:color/holo_blue_dark"
-            android:padding="8dp" />
+            android:textSize="17sp"
+            android:textColor="#212121"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
-        <TextView
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
+        <!-- Nút Sửa/Xóa -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Xóa"
-            android:textStyle="bold"
-            android:textColor="@android:color/holo_red_dark"
-            android:padding="8dp" />
+            android:gravity="end"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/btnEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sửa"
+                android:textStyle="bold"
+                android:textColor="#1976D2"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xóa"
+                android:textStyle="bold"
+                android:textColor="#D32F2F"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

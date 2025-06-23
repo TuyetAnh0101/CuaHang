@@ -5,6 +5,7 @@
     android:id="@+id/userfragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     tools:context=".fragment.UserFragment">
 
     <ScrollView
@@ -17,12 +18,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:padding="24dp"
+            android:layout_marginBottom="16dp"
             android:layout_gravity="center_horizontal"
-            android:background="@android:color/white">
+            android:clipToPadding="false">
 
-            <!-- TẤT CẢ BUTTON ĐỒNG NHẤT -->
+            <!-- Tiêu đề -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quản lý hệ thống"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2B572E"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Các nút chức năng -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCategory"
                 android:layout_width="match_parent"
@@ -31,7 +44,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2B572E"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -42,7 +55,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2B572E"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -53,7 +66,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2B572E"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -64,7 +77,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2B572E"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -75,7 +88,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#2B572E"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -86,7 +99,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#066214"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="16dp" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

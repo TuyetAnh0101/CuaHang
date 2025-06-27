@@ -7,20 +7,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FAFAFA"
+    android:background="#F5F5F5"
     tools:context=".manager.CategoryActivity">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📂 Quản lý danh mục"
+        android:textSize="20sp"
+        android:textColor="#2B572E"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
 
     <!-- Nút thêm danh mục -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thêm danh mục"
+        android:text="➕ Thêm danh mục"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:backgroundTint="#4CAF50"
-        app:cornerRadius="12dp"
-        android:layout_marginBottom="12dp" />
+        android:backgroundTint="#2B572E"
+        app:cornerRadius="16dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp" />
 
     <!-- Danh sách danh mục -->
     <androidx.recyclerview.widget.RecyclerView
@@ -30,7 +42,8 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:scrollbars="vertical"
-        android:background="#FFFFFF"
+        android:background="@android:color/white"
         android:padding="8dp"
-        android:elevation="2dp" />
+        android:elevation="2dp"
+        android:layout_marginBottom="8dp" />
 </LinearLayout>

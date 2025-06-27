@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/subcategory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="72dp"> <!-- Để không bị FAB che nội dung -->
+    android:background="#F5F5F5">
 
+    <!-- Tiêu đề hoặc thanh toolbar -->
+    <!-- Có thể thêm sau nếu cần -->
+
+    <!-- Danh sách SubCategory -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerSubCategory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fabAddSubCategory"
-        android:clipToPadding="false" />
+        android:padding="12dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
+    <!-- Nút thêm mới (Floating Action Button) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddSubCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="Thêm subcategory"
-        android:src="@android:drawable/ic_input_add" />
-</RelativeLayout>
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:backgroundTint="#2B572E"
+        app:tint="@android:color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

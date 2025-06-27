@@ -43,7 +43,7 @@ public class CategoryActivity extends AppCompatActivity {
                 categoryList,
                 this::showEditCategoryDialog,
                 this::deleteCategory,
-                this::openPackagesOfCategory // 👉 thêm xử lý khi click vào item
+                this::openPackagesOfCategory
         );
 
         rcvCategory.setLayoutManager(new LinearLayoutManager(this));
@@ -52,8 +52,6 @@ public class CategoryActivity extends AppCompatActivity {
         loadCategories();
 
         btnAddCategory.setOnClickListener(v -> showAddCategoryDialog());
-        String categoryId = getIntent().getStringExtra("categoryId");
-
     }
 
     private void loadCategories() {
@@ -63,10 +61,10 @@ public class CategoryActivity extends AppCompatActivity {
                     categoryList.clear();
                     for (DocumentSnapshot doc : querySnapshot) {
                         Category category = doc.toObject(Category.class);
-                        categoryList.add(category);
+                        if (category != null) {
+                            categoryList.add(category);
+                        }
                     }
-
-                    // Sắp xếp theo ID
                     Collections.sort(categoryList, Comparator.comparing(Category::getId));
                     adapter.notifyDataSetChanged();
                 })
@@ -76,7 +74,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void showAddCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Thêm danh mục");
+
 
         View dialogView = getLayoutInflater().inflate(R.layout.add_category_layout, null);
         EditText edtCategoryName = dialogView.findViewById(R.id.edtCategoryName);
@@ -90,11 +88,13 @@ public class CategoryActivity extends AppCompatActivity {
                 db.collection("Category").document(id)
                         .set(category)
                         .addOnSuccessListener(unused -> {
+                            categoryList.add(category);
+                            Collections.sort(categoryList, Comparator.comparing(Category::getId));
+                            adapter.notifyDataSetChanged();
                             Toast.makeText(this, "Đã thêm danh mục", Toast.LENGTH_SHORT).show();
-                            loadCategories();
                         })
                         .addOnFailureListener(e ->
-                                Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             } else {
                 Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
             }
@@ -120,11 +120,15 @@ public class CategoryActivity extends AppCompatActivity {
                 db.collection("Category").document(category.getId())
                         .set(category)
                         .addOnSuccessListener(unused -> {
+                            int index = categoryList.indexOf(category);
+                            if (index != -1) {
+                                categoryList.set(index, category);
+                                adapter.notifyItemChanged(index);
+                            }
                             Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
-                            loadCategories();
                         })
                         .addOnFailureListener(e ->
-                                Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                Toast.makeText(this, "Lỗi khi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             } else {
                 Toast.makeText(this, "Tên không được để trống", Toast.LENGTH_SHORT).show();
             }
@@ -142,11 +146,15 @@ public class CategoryActivity extends AppCompatActivity {
                     db.collection("Category").document(category.getId())
                             .delete()
                             .addOnSuccessListener(unused -> {
+                                int index = categoryList.indexOf(category);
+                                if (index != -1) {
+                                    categoryList.remove(index);
+                                    adapter.notifyItemRemoved(index);
+                                }
                                 Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
-                                loadCategories();
                             })
                             .addOnFailureListener(e ->
-                                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                    Toast.makeText(this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
@@ -164,7 +172,8 @@ public class CategoryActivity extends AppCompatActivity {
             try {
                 int num = Integer.parseInt(cat.getId().replace("CT", ""));
                 if (num > maxId) maxId = num;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return String.format("CT%02d", maxId + 1);
     }

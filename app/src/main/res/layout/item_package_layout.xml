@@ -1,80 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:gravity="center_vertical">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:foreground="?attr/selectableItemBackground">
 
-    <!-- Hình ảnh đại diện -->
-    <ImageView
-        android:id="@+id/imgFirst"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="10dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground"
-        android:contentDescription="Hình ảnh gói" />
-
-    <!-- Thông tin gói -->
     <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
 
-        <TextView
-            android:id="@+id/txtTenGoi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tên gói"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtGiaGoc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Giá gốc: 0đ" />
-
-        <TextView
-            android:id="@+id/txtGiaGiam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Giá giảm: 0đ" />
-
-        <TextView
-            android:id="@+id/txtSoLuong"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Số lượng: 0" />
-    </LinearLayout>
-
-    <!-- Các nút chức năng -->
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
+        <!-- Ảnh gói -->
         <ImageView
-            android:id="@+id/btnEdit"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="4dp"
-            android:background="#A22626"
-            android:contentDescription="Sửa gói"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+            android:id="@+id/imgFirst"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginEnd="12dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_image_rounded"
+            android:contentDescription="Hình ảnh gói"
+            android:src="@drawable/ic_launcher_foreground" />
 
-        <ImageView
-            android:id="@+id/btnDelete"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="4dp"
-            android:background="#D92F2F"
-            android:contentDescription="Xóa gói"
-            app:srcCompat="@android:drawable/ic_menu_delete" />
+        <LinearLayout
+            android:id="@+id/layoutThumbnails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone">
+        </LinearLayout>
+
+
+        <!-- Thông tin gói -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtTenGoi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên gói đăng ký"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#222222"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/txtGiaGoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giá gốc: 120.000đ"
+                android:textColor="#757575"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtGiaGiam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giá giảm: 99.000đ"
+                android:textColor="#D32F2F"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtSoLuong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Số lượng: 50"
+                android:textColor="#4CAF50"
+                android:textSize="14sp" />
+            <CheckBox
+                android:id="@+id/checkboxSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Nút chức năng -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/btnEdit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:contentDescription="Sửa"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
+
+            <ImageView
+                android:id="@+id/btnDelete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:contentDescription="Xóa"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

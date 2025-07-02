@@ -1,12 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="20dp"
+        android:layout_margin="8dp"
+        android:clipToPadding="false"
+        android:backgroundTint="@android:color/white">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧾 Thông tin đơn hàng"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
         <!-- Tên khách hàng -->
         <EditText
@@ -15,22 +34,42 @@
             android:layout_height="wrap_content"
             android:hint="Tên khách hàng"
             android:inputType="textPersonName"
-            android:padding="8dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:textColorHint="#9E9E9E"
             android:layout_marginBottom="12dp" />
 
         <!-- Trạng thái xử lý -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng thái xử lý"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp" />
         <Spinner
             android:id="@+id/spinnerXuLy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/btn_dropdown" />
 
         <!-- Trạng thái thanh toán -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng thái thanh toán"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp" />
         <Spinner
             android:id="@+id/spinnerThanhToan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/btn_dropdown" />
 
         <!-- Ghi chú -->
         <EditText
@@ -39,15 +78,19 @@
             android:layout_height="wrap_content"
             android:hint="Ghi chú (nếu có)"
             android:inputType="textMultiLine"
-            android:minLines="2"
+            android:minLines="3"
             android:gravity="top"
-            android:padding="8dp"
-            android:layout_marginBottom="12dp" />
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp"
+            android:textColorHint="#9E9E9E"
+            android:layout_marginBottom="16dp" />
 
         <!-- Danh sách gói -->
         <TextView
             android:text="Chọn gói dịch vụ:"
             android:textStyle="bold"
+            android:textColor="#333333"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
@@ -56,15 +99,22 @@
             android:id="@+id/recyclerPackageSelect"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="16dp"
+            android:background="#EEEEEE"
+            android:padding="6dp"
+            android:elevation="2dp" />
 
         <!-- Nút lưu -->
         <Button
             android:id="@+id/btnSaveOrder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lưu đơn hàng"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF" />
+            android:text="💾 Lưu đơn hàng"
+            android:backgroundTint="#2B572E"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:padding="14dp"
+            android:textSize="16sp"
+            android:elevation="4dp" />
     </LinearLayout>
 </ScrollView>

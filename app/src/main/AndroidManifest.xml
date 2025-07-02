@@ -13,6 +13,12 @@
         android:theme="@style/Theme.CuaHang"
         tools:targetApi="31">
         <activity
+            android:name=".manager.UserAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".manager.Invoicesctivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.RegisterActivity"
             android:exported="false" />
         <activity

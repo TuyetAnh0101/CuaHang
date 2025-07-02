@@ -13,118 +13,150 @@
         android:background="@drawable/bg_card_rounded"
         android:elevation="4dp">
 
-        <!-- Title -->
+        <!-- Tiêu đề -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thêm gói đăng ký"
+            android:text="➕ Thêm gói đăng ký"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1E1E1E"
+            android:textColor="#2B572E"
             android:gravity="center"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="20dp" />
 
-        <!-- Input Group -->
-        <LinearLayout
+        <!-- Các ô nhập liệu -->
+        <EditText
+            android:id="@+id/edtPackageName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:divider="?android:attr/dividerHorizontal"
-            android:showDividers="middle"
-            android:dividerPadding="8dp">
+            android:hint="Tên gói"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:textColorHint="#9E9E9E"
+            android:inputType="text" />
 
-            <!-- Các ô nhập -->
-            <EditText
-                android:id="@+id/edtPackageName"
-                style="@style/EditTextRounded"
-                android:hint="Tên gói" />
+        <EditText
+            android:id="@+id/edtPackageDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mô tả"
+            android:minLines="3"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtPackageDesc"
-                style="@style/EditTextRounded"
-                android:hint="Mô tả"
-                android:minLines="3"
-                android:gravity="top"
-                android:inputType="textMultiLine" />
+        <EditText
+            android:id="@+id/edtPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá gốc"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtPrice"
-                style="@style/EditTextRounded"
-                android:hint="Giá gốc"
-                android:inputType="numberDecimal" />
+        <EditText
+            android:id="@+id/edtDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá giảm"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtDiscount"
-                style="@style/EditTextRounded"
-                android:hint="Giá giảm"
-                android:inputType="numberDecimal" />
+        <EditText
+            android:id="@+id/edtVAT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="VAT (%)"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtVAT"
-                style="@style/EditTextRounded"
-                android:hint="VAT (%)"
-                android:inputType="numberDecimal" />
+        <EditText
+            android:id="@+id/edtUnit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Đơn vị tính"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtUnit"
-                style="@style/EditTextRounded"
-                android:hint="Đơn vị tính" />
+        <EditText
+            android:id="@+id/edtQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số lượng"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtQuantity"
-                style="@style/EditTextRounded"
-                android:hint="Số lượng"
-                android:inputType="number" />
+        <EditText
+            android:id="@+id/edtStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Trạng thái"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtStatus"
-                style="@style/EditTextRounded"
-                android:hint="Trạng thái" />
+        <EditText
+            android:id="@+id/edtNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ghi chú"
+            android:minLines="2"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edtNote"
-                style="@style/EditTextRounded"
-                android:hint="Ghi chú"
-                android:minLines="2"
-                android:gravity="top"
-                android:inputType="textMultiLine" />
-        </LinearLayout>
-
-        <!-- Spinner -->
+        <!-- Danh mục -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Danh mục"
             android:textStyle="bold"
+            android:textColor="#2B572E"
             android:layout_marginTop="16dp" />
 
         <Spinner
             android:id="@+id/spinnerCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
- />
+            android:layout_marginBottom="12dp" />
 
+        <!-- Danh mục con -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Danh mục con"
             android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:textColor="#2B572E" />
 
         <Spinner
             android:id="@+id/spinnerSubCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Chọn ảnh -->
+        <!-- Ảnh -->
         <Button
             android:id="@+id/btnChooseImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chọn ảnh"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#3F51B5"
-            android:textColor="#FFFFFF" />
+            android:text="📸 Chọn ảnh"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#2B572E"
+            android:textColor="#FFFFFF"
+            android:elevation="2dp" />
 
         <ImageView
             android:id="@+id/imgPreview"
@@ -133,11 +165,12 @@
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
             android:background="@drawable/bg_image_rounded" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerImages"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:orientation="horizontal"/>
-
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 </ScrollView>

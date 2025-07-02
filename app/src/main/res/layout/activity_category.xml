@@ -10,16 +10,27 @@
     android:background="#F5F5F5"
     tools:context=".manager.CategoryActivity">
 
-    <!-- Tiêu đề -->
+    <!-- Tiêu đề Restudy -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="📂 Quản lý danh mục"
-        android:textSize="20sp"
+        android:text="Restudy"
         android:textColor="#2B572E"
         android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="12dp" />
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Tiêu đề trang -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" Quản lý danh mục"
+        android:textSize="22sp"
+        android:textColor="#2B572E"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
 
     <!-- Nút thêm danh mục -->
     <com.google.android.material.button.MaterialButton

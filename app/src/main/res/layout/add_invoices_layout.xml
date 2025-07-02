@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:padding="16dp">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧾 Tạo hóa đơn mới"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Ngày giờ tạo -->
+        <EditText
+            android:id="@+id/edtNgayTao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ngày giờ tạo"
+            android:inputType="datetime"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Nhân viên tạo -->
+        <EditText
+            android:id="@+id/edtNhanVienTao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhân viên tạo"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Tổng giá -->
+        <EditText
+            android:id="@+id/edtTongGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tổng giá"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Tổng giảm giá -->
+        <EditText
+            android:id="@+id/edtGiamGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tổng giảm giá"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Tổng VAT -->
+        <EditText
+            android:id="@+id/edtVAT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tổng VAT (%)"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Tổng số lượng -->
+        <EditText
+            android:id="@+id/edtTongSL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tổng số lượng"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Ghi chú -->
+        <EditText
+            android:id="@+id/edtNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ghi chú"
+            android:minLines="2"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Danh sách chi tiết hóa đơn -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chi tiết hóa đơn"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerChiTietHoaDon"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Nút lưu -->
+        <Button
+            android:id="@+id/btnLuuHoaDon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💾 Lưu hóa đơn"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</ScrollView>

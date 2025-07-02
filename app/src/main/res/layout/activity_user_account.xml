@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/subcategory"
+    android:id="@+id/use_account"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Khung chứa tiêu đề dạng cardview -->
-    <androidx.cardview.widget.CardView
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvUserTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        android:backgroundTint="@android:color/white">
+        android:text="👤 Quản lý người dùng"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#2B572E"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:gravity="center"
+        android:elevation="4dp" />
 
-        <TextView
-            android:id="@+id/tvTitleSubcategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📁 Quản lý danh mục con"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#2B572E"
-            android:padding="20dp"
-            android:gravity="center" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- Danh sách SubCategory -->
+    <!-- Danh sách người dùng -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerSubCategory"
+        android:id="@+id/recyclerUserAccounts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="64dp"
         android:padding="12dp"
         android:clipToPadding="false"
         android:scrollbars="vertical" />
 
-    <!-- Nút thêm SubCategory -->
+    <!-- Nút thêm mới -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddSubCategory"
+        android:id="@+id/fabAddUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:contentDescription="Thêm SubCategory"
+        android:contentDescription="Thêm người dùng"
         app:srcCompat="@android:drawable/ic_input_add"
         android:backgroundTint="#2B572E"
         app:tint="@android:color/white"
-        android:elevation="10dp" />
+        android:elevation="8dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="6dp"
-    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="8dp"
+    android:layout_marginHorizontal="12dp"
     card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="6dp"
+    card_view:cardElevation="4dp"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
@@ -19,6 +19,16 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp">
+
+        <!-- Icon thư mục -->
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/folder"
+            android:contentDescription="Folder icon"
+            android:tint="#F4A300"
+            tools:ignore="UseAppTint" />
 
         <!-- Tên danh mục -->
         <TextView
@@ -36,26 +46,24 @@
         <!-- Nút chỉnh sửa -->
         <ImageView
             android:id="@+id/btnEdit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_menu_edit"
+            android:src="@drawable/edit"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Chỉnh sửa"
-            android:tint="#4CAF50"
-            android:padding="8dp"
+            android:padding="6dp"
             tools:ignore="UseAppTint" />
 
         <!-- Nút xóa -->
         <ImageView
             android:id="@+id/btnDelete"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_menu_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/delete"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Xóa"
-            android:tint="#F44336"
-            android:padding="8dp"
+            android:padding="6dp"
             tools:ignore="UseAppTint" />
 
     </LinearLayout>

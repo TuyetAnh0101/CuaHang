@@ -31,6 +31,18 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // ✅ Nếu người dùng đã đăng nhập → chuyển thẳng sang MainActivity
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            fetchUserRole(currentUser.getUid());
+            return;
+        }
+
+        // Nếu chưa đăng nhập → hiển thị giao diện đăng nhập
         setContentView(R.layout.activity_login);
 
         // Ánh xạ view
@@ -39,9 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         tvRegister = findViewById(R.id.tvRegister);
-
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         // Sự kiện Đăng nhập
         btnLogin.setOnClickListener(v -> {

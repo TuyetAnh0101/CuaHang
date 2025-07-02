@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+
+        <!-- ID + Ngày tạo -->
+        <TextView
+            android:id="@+id/tvInvoiceId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧾 Hóa đơn ID: HD001"
+            android:textColor="#2B572E"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvNgayTao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📅 Ngày tạo: 2025-07-02 14:00"
+            android:textColor="#555555"
+            android:layout_marginTop="4dp" />
+
+        <!-- Nhân viên + Số lượng -->
+        <TextView
+            android:id="@+id/tvNhanVien"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 Nhân viên: admin"
+            android:textColor="#555555"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvTongSoLuong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔢 Tổng SL: 3"
+            android:textColor="#555555"
+            android:layout_marginTop="4dp" />
+
+        <!-- Tổng giá + Giảm + VAT + Tổng tiền -->
+        <TextView
+            android:id="@+id/tvTongGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💰 Tổng giá: 300.000đ"
+            android:textColor="#000000"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvTongGiamGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💸 Giảm giá: 20.000đ"
+            android:textColor="#D32F2F"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tvTongVAT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💼 VAT: 10.000đ"
+            android:textColor="#1976D2"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tvTongTien"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧾 Tổng thanh toán: 290.000đ"
+            android:textColor="#4CAF50"
+            android:textStyle="bold"
+            android:layout_marginTop="6dp" />
+
+        <!-- Nút chức năng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="12dp">
+
+            <ImageView
+                android:id="@+id/btnEdit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/edit"
+                android:padding="4dp"
+                android:contentDescription="Sửa" />
+
+            <ImageView
+                android:id="@+id/btnDelete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/delete1"
+                android:padding="4dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Xóa" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

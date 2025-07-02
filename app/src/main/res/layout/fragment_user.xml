@@ -1,105 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/userfragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".fragment.UserFragment">
+    tools:context=".fragment.UserFragment"
+    android:padding="16dp">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="24dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Tên ứng dụng -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:padding="24dp"
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="center_horizontal"
-            android:clipToPadding="false">
+            android:text="Restudy"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="8dp" />
 
-            <!-- Tiêu đề -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Quản lý hệ thống"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#2B572E"
-                android:layout_marginBottom="24dp" />
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quản lý hệ thống"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="24dp" />
 
-            <!-- Các nút chức năng -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCategory"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="📂 Quản lý danh mục"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#2B572E"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="12dp" />
+        <!-- Các nút chức năng -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCategory"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="📂 Quản lý danh mục"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPackage"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="📦 Quản lý gói đăng ký"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#2B572E"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="12dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPackage"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="📦 Quản lý gói đăng ký"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnInvoice"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="🧾 Quản lý hóa đơn"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#2B572E"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="12dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnInvoice"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="🧾 Quản lý hóa đơn"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnUser"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="👥 Quản lý tài khoản người dùng"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#2B572E"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="12dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUser"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="👥 Quản lý tài khoản người dùng"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOrder"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="🛒 Quản lý đơn mua gói"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#2B572E"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="12dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOrder"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="🛒 Quản lý đơn mua gói"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOrderDetail"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="📄 Chi tiết đơn mua"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#066214"
-                app:cornerRadius="16dp" />
-        </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOrderDetail"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="📄 Chi tiết đơn mua"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp" />
+    </LinearLayout>
+</ScrollView>

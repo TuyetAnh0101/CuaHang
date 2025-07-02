@@ -2,16 +2,17 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp"
         android:background="@android:color/white"
-        android:elevation="2dp"
-        android:layout_margin="16dp"
+        android:elevation="4dp"
+        android:padding="24dp"
+        android:layout_margin="8dp"
         android:clipToPadding="false"
         android:backgroundTint="@android:color/white">
 
@@ -20,43 +21,44 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thêm SubCategory"
-            android:textSize="20sp"
+            android:text="📂 Thêm SubCategory"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="#2B572E"
             android:gravity="center"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="24dp" />
 
         <!-- Tên SubCategory -->
         <EditText
             android:id="@+id/edtSubCategoryName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tên SubCategory"
-            android:inputType="textPersonName"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
+            android:layout_height="50dp"
+            android:hint="Nhập tên SubCategory"
+            android:inputType="textCapWords"
+            android:background="@drawable/bg_edittext_outline"
+            android:paddingHorizontal="16dp"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textColorHint="#9E9E9E"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp" />
 
-        <!-- Nhãn Spinner -->
+        <!-- Nhãn spinner -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chọn Category"
+            android:text="Thuộc danh mục"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"
-            android:textColor="#333333" />
+            android:textColor="#2B572E"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Spinner chọn category -->
+        <!-- Spinner chọn Category -->
         <Spinner
             android:id="@+id/spinnerCategory"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_dropdown"
-            android:padding="12dp"
-            android:layout_marginTop="8dp" />
-
+            android:layout_height="50dp"
+            android:background="@drawable/bg_spinner_outline"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
     </LinearLayout>
 </ScrollView>

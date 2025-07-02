@@ -3,72 +3,91 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_margin="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="16dp">
 
+        <!-- Ngày đặt -->
         <TextView
             android:id="@+id/tvNgayDat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngày đặt: 2025-06-27"
-            android:textStyle="bold" />
+            android:text="🗓 Ngày đặt: 2025-06-27"
+            android:textColor="#2B572E"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
 
+        <!-- Tổng tiền -->
         <TextView
             android:id="@+id/tvTongTien"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tổng tiền: 0đ" />
+            android:text="💰 Tổng tiền: 0đ"
+            android:textColor="#000000"
+            android:textSize="15sp" />
 
+        <!-- Tổng số lượng -->
         <TextView
             android:id="@+id/tvSoLuong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tổng SL: 0" />
+            android:text="📦 Tổng SL: 0"
+            android:textColor="#000000"
+            android:textSize="15sp" />
 
+        <!-- Trạng thái xử lý -->
         <TextView
             android:id="@+id/tvTrangThaiXuLy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xử lý: Đang xử lý" />
+            android:text="🔄 Xử lý: Đang xử lý"
+            android:textColor="#FF9800"
+            android:textSize="15sp" />
 
+        <!-- Trạng thái thanh toán -->
         <TextView
             android:id="@+id/tvTrangThaiThanhToan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thanh toán: Chưa thanh toán" />
+            android:text="💳 Thanh toán: Chưa thanh toán"
+            android:textColor="#F44336"
+            android:textSize="15sp" />
 
+        <!-- Nút thao tác -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:id="@+id/btnEdit"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Sửa"
-                android:padding="4dp" />
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:src="@drawable/edit"
+                android:contentDescription="Sửa" />
 
             <ImageView
                 android:id="@+id/btnDelete"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_delete"
-                android:contentDescription="Xóa"
-                android:padding="4dp"
-                android:layout_marginStart="8dp" />
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:src="@drawable/delete1"
+                android:layout_marginStart="12dp"
+                android:contentDescription="Xóa" />
         </LinearLayout>
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

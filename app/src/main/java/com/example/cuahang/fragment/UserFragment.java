@@ -13,8 +13,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.cuahang.R;
 import com.example.cuahang.manager.CategoryActivity;
+import com.example.cuahang.manager.Invoicesctivity;
 import com.example.cuahang.manager.PackageActivity;
 import com.example.cuahang.manager.OrderActivity;
+import com.example.cuahang.manager.UserAccountActivity;
 import com.example.cuahang.ui.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,10 +66,10 @@ public class UserFragment extends Fragment {
 
         // ❌ Các nút chưa được dùng thì để trống hoặc ẩn trong layout
         btnInvoice.setOnClickListener(v ->
-                showFeatureComingSoon());
+                startActivity(new Intent(getContext(), Invoicesctivity.class)));
 
         btnUser.setOnClickListener(v ->
-                showFeatureComingSoon());
+                startActivity(new Intent(getContext(), UserAccountActivity.class)));
 
         btnOrderDetail.setOnClickListener(v ->
                 showFeatureComingSoon());
@@ -75,16 +77,8 @@ public class UserFragment extends Fragment {
         return view;
     }
 
-    // 🔒 Đăng xuất người dùng khi rời khỏi Fragment
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        FirebaseAuth.getInstance().signOut();
-    }
-
     // ⚠️ Hàm thông báo chức năng chưa hoàn thiện
     private void showFeatureComingSoon() {
-        // Toast hoặc AlertDialog tùy bạn
         android.widget.Toast.makeText(getContext(), "Chức năng đang phát triển", android.widget.Toast.LENGTH_SHORT).show();
     }
 }

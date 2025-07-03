@@ -1,130 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="20dp"
-    android:background="#FAFAFA">
+    android:layout_margin="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:elevation="2dp"
-        android:padding="16dp">
+        android:background="@android:color/white">
 
-        <!-- Tiêu đề -->
         <TextView
+            android:id="@+id/tvInvoiceId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🧾 Tạo hóa đơn mới"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:text="🧾 Hóa đơn ID: HD001"
             android:textColor="#2B572E"
-            android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Ngày giờ tạo -->
+        <!-- Ngày tạo -->
         <EditText
             android:id="@+id/edtNgayTao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ngày giờ tạo"
+            android:hint="📅 Ngày tạo (yyyy-MM-dd HH:mm)"
             android:inputType="datetime"
-            android:padding="12dp"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="8dp" />
 
-        <!-- Nhân viên tạo -->
+        <!-- Nhân viên -->
         <EditText
-            android:id="@+id/edtNhanVienTao"
+            android:id="@+id/edtNhanVien"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nhân viên tạo"
+            android:hint="👤 Nhân viên tạo"
             android:inputType="textPersonName"
-            android:padding="12dp"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="8dp" />
 
+        <!-- Tổng số lượng -->
+        <EditText
+            android:id="@+id/edtTongSoLuong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="🔢 Tổng số lượng"
+            android:inputType="number"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp"
+            android:background="@android:drawable/edit_text"
+            android:padding="8dp" />
         <!-- Tổng giá -->
         <EditText
             android:id="@+id/edtTongGia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tổng giá"
+            android:hint="💰 Tổng giá"
             android:inputType="numberDecimal"
-            android:padding="12dp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="8dp" />
 
-        <!-- Tổng giảm giá -->
+        <!-- Giảm giá -->
         <EditText
             android:id="@+id/edtGiamGia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tổng giảm giá"
+            android:hint="💸 Giảm giá"
             android:inputType="numberDecimal"
-            android:padding="12dp"
+            android:textColor="#D32F2F"
+            android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="8dp" />
 
-        <!-- Tổng VAT -->
+        <!-- VAT -->
         <EditText
             android:id="@+id/edtVAT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tổng VAT (%)"
+            android:hint="💼 VAT"
             android:inputType="numberDecimal"
-            android:padding="12dp"
+            android:textColor="#1976D2"
+            android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="8dp" />
 
-        <!-- Tổng số lượng -->
+        <!-- Tổng thanh toán -->
         <EditText
-            android:id="@+id/edtTongSL"
+            android:id="@+id/edtTongThanhToan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tổng số lượng"
-            android:inputType="number"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Ghi chú -->
-        <EditText
-            android:id="@+id/edtNote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ghi chú"
-            android:minLines="2"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Danh sách chi tiết hóa đơn -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Chi tiết hóa đơn"
+            android:hint="🧾 Tổng thanh toán"
+            android:inputType="numberDecimal"
+            android:textColor="#4CAF50"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerChiTietHoaDon"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/edit_text"
+            android:padding="8dp" />
 
         <!-- Nút lưu -->
         <Button
             android:id="@+id/btnLuuHoaDon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="💾 Lưu hóa đơn"
-            android:textColor="#FFFFFF"
+            android:text="Lưu hóa đơn"
             android:backgroundTint="#4CAF50"
-            android:layout_marginTop="8dp" />
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
     </LinearLayout>
-</ScrollView>
+</androidx.cardview.widget.CardView>

@@ -16,6 +16,7 @@ import com.example.cuahang.manager.CategoryActivity;
 import com.example.cuahang.manager.Invoicesctivity;
 import com.example.cuahang.manager.PackageActivity;
 import com.example.cuahang.manager.OrderActivity;
+import com.example.cuahang.manager.SystemConfigActivity;
 import com.example.cuahang.manager.UserAccountActivity;
 import com.example.cuahang.ui.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,51 +34,47 @@ public class UserFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        // 🔒 Kiểm tra người dùng đã đăng nhập chưa
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // Nếu chưa đăng nhập, chuyển sang LoginActivity
             Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
             startActivity(loginIntent);
             if (getActivity() != null) getActivity().finish();
             return null;
         }
 
-        // Inflate layout
         View view = inflater.inflate(R.layout.fragment_user, container, false);
 
-        // 🔘 Ánh xạ các nút
         Button btnCategory = view.findViewById(R.id.btnCategory);
         Button btnPackage = view.findViewById(R.id.btnPackage);
         Button btnInvoice = view.findViewById(R.id.btnInvoice);
         Button btnUser = view.findViewById(R.id.btnUser);
         Button btnOrder = view.findViewById(R.id.btnOrder);
         Button btnOrderDetail = view.findViewById(R.id.btnOrderDetail);
+        Button btnSystemConfig = view.findViewById(R.id.btnSystemConfig); // 👈 Thêm dòng này
 
-        // 📦 Chuyển đến các Activity tương ứng
         btnCategory.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), CategoryActivity.class)));
 
         btnPackage.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), PackageActivity.class)));
 
-        btnOrder.setOnClickListener(v ->
-                startActivity(new Intent(getContext(), OrderActivity.class)));
-
-        // ❌ Các nút chưa được dùng thì để trống hoặc ẩn trong layout
         btnInvoice.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), Invoicesctivity.class)));
 
         btnUser.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), UserAccountActivity.class)));
 
-        btnOrderDetail.setOnClickListener(v ->
-                showFeatureComingSoon());
+        btnOrder.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), OrderActivity.class)));
+
+        btnOrderDetail.setOnClickListener(v -> showFeatureComingSoon());
+
+        btnSystemConfig.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), SystemConfigActivity.class)));
 
         return view;
     }
 
-    // ⚠️ Hàm thông báo chức năng chưa hoàn thiện
     private void showFeatureComingSoon() {
         android.widget.Toast.makeText(getContext(), "Chức năng đang phát triển", android.widget.Toast.LENGTH_SHORT).show();
     }

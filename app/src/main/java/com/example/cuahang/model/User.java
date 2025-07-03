@@ -2,10 +2,11 @@ package com.example.cuahang.model;
 
 public class User {
 
-    private String id;      // Thêm ID người dùng
+    private String id;      // Firebase UID
     private String email;
     private String name;
-    private String role;  // lưu dạng String
+    private String role;  // "admin", "manager", "staff"
+    private boolean active = true; // đề xuất thêm trạng thái hoạt động
 
     public User() {
     }
@@ -25,7 +26,7 @@ public class User {
         this.id = id;
     }
 
-    // Các getter/setter sẵn có
+    // Getter & Setter cho email
     public String getEmail() {
         return email;
     }
@@ -34,6 +35,7 @@ public class User {
         this.email = email;
     }
 
+    // Getter & Setter cho name
     public String getName() {
         return name;
     }
@@ -42,11 +44,21 @@ public class User {
         this.name = name;
     }
 
+    // Getter & Setter cho role
     public Role getRole() {
         return Role.fromString(role);
     }
 
     public void setRole(Role role) {
         this.role = role.toStringValue();
+    }
+
+    // Getter & Setter cho active
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

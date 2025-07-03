@@ -20,7 +20,6 @@
         android:layout_marginBottom="16dp"
         android:clipToPadding="false">
 
-        <!-- Tên ứng dụng -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
             android:textColor="#2B572E"
             android:layout_marginBottom="8dp" />
 
-        <!-- Tiêu đề -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +38,6 @@
             android:textColor="#2B572E"
             android:layout_marginBottom="24dp" />
 
-        <!-- Các nút chức năng -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCategory"
             android:layout_width="match_parent"
@@ -104,6 +101,19 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:backgroundTint="#2B572E"
-            app:cornerRadius="16dp" />
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- ✅ Nút mới thêm -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSystemConfig"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="⚙️ Cấu hình hệ thống"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 </ScrollView>

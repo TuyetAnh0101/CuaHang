@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
                             User user = new User(email, name, Role.STAFF);
                             user.setId(uid); // lưu ID người dùng
 
-                            db.collection("users").document(uid).set(user)
+                            db.collection("User").document(uid).set(user)
                                     .addOnSuccessListener(unused -> {
                                         Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(this, LoginActivity.class));

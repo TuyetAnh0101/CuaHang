@@ -94,10 +94,10 @@
             android:layout_marginBottom="12dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOrderDetail"
+            android:id="@+id/btnStatistics"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="📄 Chi tiết đơn mua"
+            android:text="📄 Quản lý doanh thu"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:backgroundTint="#2B572E"

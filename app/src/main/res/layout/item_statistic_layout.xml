@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="12dp"
+    android:padding="16dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
+        android:dividerPadding="8dp">
+
+        <!-- Ngày -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:text="Ngày: 2025-07-04"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Các chỉ số -->
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvRevenue"
+                    android:text="Doanh thu: 1.500.000đ"
+                    android:textColor="#333333"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvOrders"
+                    android:text="Đơn hàng: 24"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvPackages"
+                    android:text="Gói đã bán: 17"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvUsers"
+                    android:text="Người dùng mới: 6"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Danh mục -->
+        <TextView
+            android:id="@+id/tvTopCategories"
+            android:text="Top danh mục: Điện thoại (10), Xe cũ (5), Đồ gia dụng (2)"
+            android:textColor="#666666"
+            android:textSize="13sp"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Nút chức năng -->
+        <LinearLayout
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnEdit"
+                android:text="Sửa"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2196F3" />
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:text="Xóa"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#F44336" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

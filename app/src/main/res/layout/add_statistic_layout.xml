@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:text="Chỉnh sửa"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Ngày -->
+        <EditText
+            android:id="@+id/edtDate"
+            android:hint="Ngày (vd: 2025-07-04)"
+            android:inputType="date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Doanh thu -->
+        <EditText
+            android:id="@+id/edtRevenue"
+            android:hint="Tổng doanh thu"
+            android:inputType="number"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Đơn hàng -->
+        <EditText
+            android:id="@+id/edtOrders"
+            android:hint="Tổng đơn hàng"
+            android:inputType="number"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Gói đã bán -->
+        <EditText
+            android:id="@+id/edtPackages"
+            android:hint="Số gói đã bán"
+            android:inputType="number"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Người dùng mới -->
+        <EditText
+            android:id="@+id/edtUsers"
+            android:hint="Người dùng mới"
+            android:inputType="number"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Mô tả -->
+        <TextView
+            android:text="Top danh mục (dạng: DanhMuc:SốLượng, cách nhau bởi dấu phẩy)"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/edtTopCategories"
+            android:hint="VD: Điện thoại:10, Xe cũ:5"
+            android:inputType="text"
+            android:backgroundTint="#2B572E"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Nút lưu -->
+        <Button
+            android:id="@+id/btnSave"
+            android:text="Lưu thống kê"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#2B572E"
+            android:padding="12dp" />
+
+    </LinearLayout>
+</ScrollView>

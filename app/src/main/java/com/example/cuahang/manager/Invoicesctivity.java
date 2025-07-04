@@ -145,10 +145,8 @@ public class Invoicesctivity extends AppCompatActivity {
                 Toast.makeText(this, "Lỗi nhập dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
         dialog.show();
     }
-
     @Override
     protected void onResume() {
         super.onResume();

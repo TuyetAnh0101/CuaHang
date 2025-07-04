@@ -96,6 +96,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void calculateTodayStatistics() {
+        // Format ngày hiện tại thành dạng "yyyy-MM-dd"
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         final int[] totalRevenue = {0};
@@ -105,56 +106,64 @@ public class StatisticsActivity extends AppCompatActivity {
         final Map<String, Integer> topCategories = new HashMap<>();
 
         db.collection("Orders")
-                .whereEqualTo("date", today)
                 .get()
                 .addOnSuccessListener(orderSnapshots -> {
-                    totalOrders[0] = orderSnapshots.size();
                     for (DocumentSnapshot doc : orderSnapshots) {
-                        Long amount = doc.getLong("amount");
-                        if (amount != null) totalRevenue[0] += amount;
+                        String ngayDat = doc.getString("ngayDat");
+                        if (ngayDat != null && ngayDat.startsWith(today)) {
+                            totalOrders[0]++;
 
-                        String category = doc.getString("Category");
-                        if (category != null && !category.isEmpty()) {
-                            int current = topCategories.getOrDefault(category, 0);
-                            topCategories.put(category, current + 1);
+                            Long amount = doc.getLong("tongTien");
+                            if (amount != null) {
+                                totalRevenue[0] += amount;
+                            }
+
+                            List<Map<String, Object>> packageList = (List<Map<String, Object>>) doc.get("packages");
+                            if (packageList != null) {
+                                packagesSold[0] += packageList.size();
+
+                                for (Map<String, Object> pkg : packageList) {
+                                    String tenGoi = (String) pkg.get("tenGoi");
+                                    if (tenGoi != null && !tenGoi.isEmpty()) {
+                                        int current = topCategories.getOrDefault(tenGoi, 0);
+                                        topCategories.put(tenGoi, current + 1);
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    db.collection("Package")
-                            .whereEqualTo("date", today)
+                    // Tiếp tục đếm số người dùng tạo hôm nay
+                    db.collection("User")
                             .get()
-                            .addOnSuccessListener(pkgSnapshots -> {
-                                packagesSold[0] = pkgSnapshots.size();
+                            .addOnSuccessListener(userSnapshots -> {
+                                for (DocumentSnapshot userDoc : userSnapshots) {
+                                    String createdDate = userDoc.getString("createdDate");
+                                    if (createdDate != null && createdDate.startsWith(today)) {
+                                        newUsers[0]++;
+                                    }
+                                }
 
-                                db.collection("User")
-                                        .whereEqualTo("createdDate", today)
-                                        .get()
-                                        .addOnSuccessListener(userSnapshots -> {
-                                            newUsers[0] = userSnapshots.size();
+                                // Tạo thống kê hôm nay
+                                Statistics statistics = new Statistics(
+                                        today,
+                                        totalRevenue[0],
+                                        totalOrders[0],
+                                        packagesSold[0],
+                                        newUsers[0],
+                                        topCategories
+                                );
 
-                                            Statistics statistics = new Statistics(
-                                                    today,
-                                                    totalRevenue[0],
-                                                    totalOrders[0],
-                                                    packagesSold[0],
-                                                    newUsers[0],
-                                                    topCategories
-                                            );
-
-                                            db.collection("statistics")
-                                                    .document(today)
-                                                    .set(statistics)
-                                                    .addOnSuccessListener(unused -> {
-                                                        Toast.makeText(this, "✅ Đã tạo thống kê hôm nay", Toast.LENGTH_SHORT).show();
-                                                        loadStatistics();
-                                                    })
-                                                    .addOnFailureListener(e -> {
-                                                        Toast.makeText(this, "❌ Lỗi khi lưu thống kê", Toast.LENGTH_SHORT).show();
-                                                    });
+                                db.collection("statistics")
+                                        .document(today)
+                                        .set(statistics)
+                                        .addOnSuccessListener(unused -> {
+                                            Toast.makeText(this, "✅ Đã tạo thống kê hôm nay", Toast.LENGTH_SHORT).show();
+                                            loadStatistics();
                                         })
-                                        .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải User", Toast.LENGTH_SHORT).show());
+                                        .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi khi lưu thống kê", Toast.LENGTH_SHORT).show());
                             })
-                            .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải Package", Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải User", Toast.LENGTH_SHORT).show());
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải Orders", Toast.LENGTH_SHORT).show());
     }

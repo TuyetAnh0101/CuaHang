@@ -18,6 +18,7 @@ import java.util.Locale;
 
 public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.InvoiceViewHolder> {
 
+    // Interface cho sự kiện sửa và xóa
     public interface OnInvoiceActionListener {
         void onEdit(Invoices invoice);
         void onDelete(Invoices invoice);
@@ -64,12 +65,14 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
         holder.tvTongVAT.setText("💼 VAT: " + formatMoney(invoice.getTotalTax()));
         holder.tvTongTien.setText("🧾 Tổng thanh toán: " + formatMoney(invoice.getTotalAmount()));
 
+        // Bắt sự kiện nút sửa
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEdit(invoice);
             }
         });
 
+        // Bắt sự kiện nút xóa
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDelete(invoice);

@@ -5,23 +5,45 @@
     android:id="@+id/systemconfig"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#F9F9F9"
+    android:padding="24dp">
 
-    <EditText
-        android:id="@+id/edtVatPercent"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="VAT (%)"
-        android:inputType="numberDecimal"
+        android:text="Cấu hình hệ thống"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#2B572E"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
+        android:id="@+id/edtVatPercent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="💼 VAT (%)"
+        android:inputType="numberDecimal"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext_outline"
+        android:textColor="#000000"
+        android:textColorHint="#999999"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp" />
+
+    <EditText
         android:id="@+id/edtDefaultUnit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Đơn vị mặc định"
+        android:hint="📦 Đơn vị mặc định"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#999999"
+        android:background="@drawable/bg_edittext_outline"
         app:layout_constraintTop_toBottomOf="@id/edtVatPercent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,8 +53,12 @@
         android:id="@+id/edtImageLimit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Giới hạn ảnh (MB)"
+        android:hint="🖼 Giới hạn ảnh (MB)"
         android:inputType="number"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext_outline"
+        android:textColor="#000000"
+        android:textColorHint="#999999"
         app:layout_constraintTop_toBottomOf="@id/edtDefaultUnit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,12 +66,16 @@
 
     <Button
         android:id="@+id/btnSaveConfig"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Lưu cấu hình"
+        android:text="💾 Lưu cấu hình"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#2B572E"
+        android:padding="14dp"
+        android:textStyle="bold"
+        android:layout_marginTop="28dp"
         app:layout_constraintTop_toBottomOf="@id/edtImageLimit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

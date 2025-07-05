@@ -16,16 +16,11 @@ import com.example.cuahang.R;
 import com.example.cuahang.adapter.InvoicesAdapter;
 import com.example.cuahang.model.Invoices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
 public class Invoicesctivity extends AppCompatActivity {
@@ -50,7 +45,7 @@ public class Invoicesctivity extends AppCompatActivity {
         adapter = new InvoicesAdapter(invoiceList, new InvoicesAdapter.OnInvoiceActionListener() {
             @Override
             public void onEdit(Invoices invoice) {
-                Toast.makeText(Invoicesctivity.this, "Chỉnh sửa chưa hỗ trợ", Toast.LENGTH_SHORT).show();
+                showEditInvoiceDialog(invoice);
             }
 
             @Override
@@ -147,6 +142,63 @@ public class Invoicesctivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
+    private void showEditInvoiceDialog(Invoices invoice) {
+        View view = LayoutInflater.from(this).inflate(R.layout.add_invoices_layout, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+
+        EditText edtNhanVien = view.findViewById(R.id.edtNhanVien);
+        EditText edtTongSoLuong = view.findViewById(R.id.edtTongSoLuong);
+        EditText edtTongGia = view.findViewById(R.id.edtTongGia);
+        EditText edtGiamGia = view.findViewById(R.id.edtGiamGia);
+        EditText edtVAT = view.findViewById(R.id.edtVAT);
+        EditText edtTongThanhToan = view.findViewById(R.id.edtTongThanhToan);
+        Button btnLuuHoaDon = view.findViewById(R.id.btnLuuHoaDon);
+
+        edtNhanVien.setText(invoice.getCreatedBy());
+        edtTongSoLuong.setText(String.valueOf(invoice.getTotalQuantity()));
+        edtTongGia.setText(String.valueOf(invoice.getTotalPrice()));
+        edtGiamGia.setText(String.valueOf(invoice.getTotalDiscount()));
+        edtVAT.setText(String.valueOf(invoice.getTotalTax()));
+        edtVAT.setEnabled(false);
+        edtTongThanhToan.setText(String.valueOf(invoice.getTotalAmount()));
+
+        btnLuuHoaDon.setText("Lưu thay đổi");
+
+        btnLuuHoaDon.setOnClickListener(v -> {
+            try {
+                String nhanVien = edtNhanVien.getText().toString().trim();
+                int tongSoLuong = Integer.parseInt(edtTongSoLuong.getText().toString().trim());
+                double tongGia = Double.parseDouble(edtTongGia.getText().toString().trim());
+                double giamGia = Double.parseDouble(edtGiamGia.getText().toString().trim());
+
+                double vat = vatPercent;
+                double tongThanhToan = tongGia + (tongGia * vat / 100) - giamGia;
+
+                invoice.setCreatedBy(nhanVien);
+                invoice.setTotalQuantity(tongSoLuong);
+                invoice.setTotalPrice(tongGia);
+                invoice.setTotalDiscount(giamGia);
+                invoice.setTotalTax(vat);
+                invoice.setTotalAmount(tongThanhToan);
+
+                db.collection("invoices").document(invoice.getId())
+                        .set(invoice)
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(this, "Đã cập nhật hóa đơn", Toast.LENGTH_SHORT).show();
+                            loadInvoices();
+                            dialog.dismiss();
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Lỗi nhập dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

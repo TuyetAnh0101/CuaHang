@@ -16,7 +16,7 @@ import java.util.List;
 
 public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.ViewHolder> {
 
-    // Interface xử lý chỉnh sửa và xoá
+    // Giao diện xử lý sự kiện chỉnh sửa và xoá
     public interface OnSubCategoryClickListener {
         void onEdit(SubCategory subCategory);
         void onDelete(SubCategory subCategory);
@@ -26,7 +26,7 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
     private final List<SubCategory> subCategoryList;
     private final OnSubCategoryClickListener listener;
 
-    // Listener mới để xử lý sự kiện click toàn bộ item
+    // Giao diện xử lý sự kiện click toàn bộ item
     private OnItemClickListener itemClickListener;
 
     public interface OnItemClickListener {
@@ -55,14 +55,19 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
         SubCategory sub = subCategoryList.get(position);
         holder.txtName.setText(sub.getName());
 
-        holder.btnEdit.setOnClickListener(v -> listener.onEdit(sub));
-        holder.btnDelete.setOnClickListener(v -> listener.onDelete(sub));
+        // Xử lý nút Sửa
+        holder.btnEdit.setOnClickListener(v -> {
+            if (listener != null) listener.onEdit(sub);
+        });
 
-        // Click toàn bộ item mở PackageActivity
+        // Xử lý nút Xoá
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onDelete(sub);
+        });
+
+        // Click toàn item
         holder.itemView.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(sub);
-            }
+            if (itemClickListener != null) itemClickListener.onItemClick(sub);
         });
     }
 

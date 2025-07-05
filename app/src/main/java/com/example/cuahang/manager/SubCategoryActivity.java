@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -75,7 +74,6 @@ public class SubCategoryActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Xử lý sự kiện click để mở PackageActivity
         adapter.setOnItemClickListener(subCategory -> {
             Intent intent = new Intent(SubCategoryActivity.this, PackageActivity.class);
             intent.putExtra("subCategoryId", subCategory.getId());
@@ -117,13 +115,10 @@ public class SubCategoryActivity extends AppCompatActivity {
         builder.setView(view);
 
         EditText edtName = view.findViewById(R.id.edtSubCategoryName);
-        Spinner spinnerCategory = new Spinner(this);
+        Spinner spinnerCategory = view.findViewById(R.id.spinnerCategory);
 
         categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categoryList);
         spinnerCategory.setAdapter(categoryAdapter);
-
-        ((ViewGroup) view).removeView(view.findViewById(R.id.spinnerCategory));
-        ((ViewGroup) view).addView(spinnerCategory);
 
         builder.setPositiveButton("Thêm", (dialog, which) -> {
             String name = edtName.getText().toString().trim();
@@ -155,13 +150,10 @@ public class SubCategoryActivity extends AppCompatActivity {
         builder.setView(view);
 
         EditText edtName = view.findViewById(R.id.edtSubCategoryName);
-        Spinner spinnerCategory = new Spinner(this);
+        Spinner spinnerCategory = view.findViewById(R.id.spinnerCategory);
 
         categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categoryList);
         spinnerCategory.setAdapter(categoryAdapter);
-
-        ((ViewGroup) view).removeView(view.findViewById(R.id.spinnerCategory));
-        ((ViewGroup) view).addView(spinnerCategory);
 
         edtName.setText(sub.getName());
 
@@ -175,6 +167,11 @@ public class SubCategoryActivity extends AppCompatActivity {
         builder.setPositiveButton("Lưu", (dialog, which) -> {
             String name = edtName.getText().toString().trim();
             Category selectedCat = (Category) spinnerCategory.getSelectedItem();
+
+            if (name.isEmpty() || selectedCat == null) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             sub.setName(name);
             sub.setCategoryId(selectedCat.getId());

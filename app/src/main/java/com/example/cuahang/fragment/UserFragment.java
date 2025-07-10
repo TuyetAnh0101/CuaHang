@@ -17,6 +17,7 @@ import com.example.cuahang.manager.Invoicesctivity;
 import com.example.cuahang.manager.PackageActivity;
 import com.example.cuahang.manager.OrderActivity;
 import com.example.cuahang.manager.StatisticsActivity;
+import com.example.cuahang.manager.StatisticsOverviewActivity;
 import com.example.cuahang.manager.SystemConfigActivity;
 import com.example.cuahang.manager.UserAccountActivity;
 import com.example.cuahang.ui.LoginActivity;
@@ -50,7 +51,7 @@ public class UserFragment extends Fragment {
         Button btnInvoice = view.findViewById(R.id.btnInvoice);
         Button btnUser = view.findViewById(R.id.btnUser);
         Button btnOrder = view.findViewById(R.id.btnOrder);
-        Button btnStatistics = view.findViewById(R.id.btnStatistics);
+        Button btnStatisticsOverview = view.findViewById(R.id.btnStatisticsOverview);
         Button btnSystemConfig = view.findViewById(R.id.btnSystemConfig); // 👈 Thêm dòng này
 
         btnCategory.setOnClickListener(v ->
@@ -68,8 +69,8 @@ public class UserFragment extends Fragment {
         btnOrder.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), OrderActivity.class)));
 
-        btnStatistics.setOnClickListener(v ->
-                startActivity(new Intent(getContext(), StatisticsActivity.class)));
+        btnStatisticsOverview.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), StatisticsOverviewActivity.class)));
 
         btnSystemConfig.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), SystemConfigActivity.class)));

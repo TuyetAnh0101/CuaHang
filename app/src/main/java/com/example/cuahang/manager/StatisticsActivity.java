@@ -73,7 +73,15 @@ public class StatisticsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        loadStatistics();
+        // Nhận dữ liệu filter từ biểu đồ (nếu có)
+        String chartType = getIntent().getStringExtra("chartType");
+        String value = getIntent().getStringExtra("value");
+
+        if (chartType != null && value != null) {
+            filterStatistics(chartType, value);
+        } else {
+            loadStatistics();
+        }
 
         btnCalculate.setOnClickListener(v -> calculateTodayStatistics());
     }
@@ -95,8 +103,41 @@ public class StatisticsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải thống kê", Toast.LENGTH_SHORT).show());
     }
 
+    private void filterStatistics(String chartType, String value) {
+        db.collection("statistics")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    statisticsList.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Statistics s = doc.toObject(Statistics.class);
+                        if (s == null) continue;
+
+                        switch (chartType) {
+                            case "pie":
+                            case "bar":
+                                if (s.getTopCategories() != null && s.getTopCategories().containsKey(value)) {
+                                    statisticsList.add(s);
+                                }
+                                break;
+                            case "line":
+                                if (value.equals(s.getDate())) {
+                                    statisticsList.add(s);
+                                }
+                                break;
+                        }
+                    }
+
+                    adapter.notifyDataSetChanged();
+
+                    if (statisticsList.isEmpty()) {
+                        Toast.makeText(this, "Không có dữ liệu phù hợp", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi khi lọc thống kê", Toast.LENGTH_SHORT).show());
+    }
+
     private void calculateTodayStatistics() {
-        // Format ngày hiện tại thành dạng "yyyy-MM-dd"
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         final int[] totalRevenue = {0};
@@ -112,16 +153,12 @@ public class StatisticsActivity extends AppCompatActivity {
                         String ngayDat = doc.getString("ngayDat");
                         if (ngayDat != null && ngayDat.startsWith(today)) {
                             totalOrders[0]++;
-
                             Long amount = doc.getLong("tongTien");
-                            if (amount != null) {
-                                totalRevenue[0] += amount;
-                            }
+                            if (amount != null) totalRevenue[0] += amount;
 
                             List<Map<String, Object>> packageList = (List<Map<String, Object>>) doc.get("packages");
                             if (packageList != null) {
                                 packagesSold[0] += packageList.size();
-
                                 for (Map<String, Object> pkg : packageList) {
                                     String tenGoi = (String) pkg.get("tenGoi");
                                     if (tenGoi != null && !tenGoi.isEmpty()) {
@@ -133,7 +170,6 @@ public class StatisticsActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Tiếp tục đếm số người dùng tạo hôm nay
                     db.collection("User")
                             .get()
                             .addOnSuccessListener(userSnapshots -> {
@@ -144,14 +180,14 @@ public class StatisticsActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                // Tạo thống kê hôm nay
                                 Statistics statistics = new Statistics(
                                         today,
                                         totalRevenue[0],
                                         totalOrders[0],
                                         packagesSold[0],
                                         newUsers[0],
-                                        topCategories
+                                        topCategories,
+                                        new HashMap<>() // topPostTypes rỗng
                                 );
 
                                 db.collection("statistics")
@@ -186,8 +222,10 @@ public class StatisticsActivity extends AppCompatActivity {
         edtUsers.setText(String.valueOf(statistics.getNewUsers()));
 
         StringBuilder catStr = new StringBuilder();
-        for (Map.Entry<String, Integer> entry : statistics.getTopCategories().entrySet()) {
-            catStr.append(entry.getKey()).append(":").append(entry.getValue()).append(", ");
+        if (statistics.getTopCategories() != null) {
+            for (Map.Entry<String, Integer> entry : statistics.getTopCategories().entrySet()) {
+                catStr.append(entry.getKey()).append(":").append(entry.getValue()).append(", ");
+            }
         }
         if (catStr.length() > 0) {
             catStr.setLength(catStr.length() - 2);
@@ -199,33 +237,51 @@ public class StatisticsActivity extends AppCompatActivity {
                 .create();
 
         btnSave.setOnClickListener(v -> {
-            String date = edtDate.getText().toString().trim();
-            int revenue = Integer.parseInt(edtRevenue.getText().toString().trim());
-            int orders = Integer.parseInt(edtOrders.getText().toString().trim());
-            int packages = Integer.parseInt(edtPackages.getText().toString().trim());
-            int users = Integer.parseInt(edtUsers.getText().toString().trim());
-            String topCatsInput = edtTopCategories.getText().toString().trim();
+            try {
+                String date = edtDate.getText().toString().trim();
+                int revenue = Integer.parseInt(edtRevenue.getText().toString().trim());
+                int orders = Integer.parseInt(edtOrders.getText().toString().trim());
+                int packages = Integer.parseInt(edtPackages.getText().toString().trim());
+                int users = Integer.parseInt(edtUsers.getText().toString().trim());
+                String topCatsInput = edtTopCategories.getText().toString().trim();
 
-            Map<String, Integer> topCategories = new HashMap<>();
-            if (!topCatsInput.isEmpty()) {
-                String[] pairs = topCatsInput.split(",");
-                for (String pair : pairs) {
-                    String[] parts = pair.trim().split(":");
-                    if (parts.length == 2) {
-                        topCategories.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+                Map<String, Integer> topCategories = new HashMap<>();
+                if (!topCatsInput.isEmpty()) {
+                    String[] pairs = topCatsInput.split(",");
+                    for (String pair : pairs) {
+                        String[] parts = pair.trim().split(":");
+                        if (parts.length == 2) {
+                            try {
+                                topCategories.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+                            } catch (NumberFormatException nfe) {
+                                // Bỏ qua cặp không hợp lệ
+                            }
+                        }
                     }
                 }
-            }
 
-            Statistics updated = new Statistics(date, revenue, orders, packages, users, topCategories);
-            db.collection("statistics").document(date)
-                    .set(updated)
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(this, "✅ Đã cập nhật", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                        loadStatistics();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi cập nhật", Toast.LENGTH_SHORT).show());
+                Statistics updated = new Statistics(
+                        date,
+                        revenue,
+                        orders,
+                        packages,
+                        users,
+                        topCategories,
+                        new HashMap<>()
+                );
+
+                db.collection("statistics").document(date)
+                        .set(updated)
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(this, "✅ Đã cập nhật", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            loadStatistics();
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi cập nhật", Toast.LENGTH_SHORT).show());
+
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "❌ Vui lòng nhập đúng định dạng số", Toast.LENGTH_SHORT).show();
+            }
         });
 
         dialog.show();

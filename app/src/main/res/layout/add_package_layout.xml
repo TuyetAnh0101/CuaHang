@@ -24,7 +24,7 @@
             android:gravity="center"
             android:paddingBottom="20dp" />
 
-        <!-- Các ô nhập liệu -->
+        <!-- Các EditText cơ bản -->
         <EditText
             android:id="@+id/edtPackageName"
             android:layout_width="match_parent"
@@ -32,19 +32,13 @@
             android:hint="Tên gói"
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
-            android:textSize="16sp"
-            android:textColor="#000"
-            android:textColorHint="#9E9E9E"
-            android:inputType="text" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/edtPackageDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Mô tả"
-            android:minLines="3"
-            android:gravity="top"
-            android:inputType="textMultiLine"
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
             android:textSize="16sp" />
@@ -53,7 +47,7 @@
             android:id="@+id/edtPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Giá gốc"
+            android:hint="Giá bán"
             android:inputType="numberDecimal"
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
@@ -63,7 +57,7 @@
             android:id="@+id/edtDiscount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Giá giảm"
+            android:hint="Giảm giá (%)"
             android:inputType="numberDecimal"
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
@@ -112,42 +106,134 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Ghi chú"
-            android:minLines="2"
-            android:gravity="top"
-            android:inputType="textMultiLine"
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
             android:textSize="16sp" />
+        <!-- Phân loại gói -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loại gói"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="16dp" />
 
-        <!-- Danh mục -->
+        <Spinner
+            android:id="@+id/spinnerPackageType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Danh mục chính và phụ -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Danh mục"
             android:textStyle="bold"
             android:textColor="#2B572E"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="8dp" />
 
         <Spinner
             android:id="@+id/spinnerCategory"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_height="wrap_content" />
 
-        <!-- Danh mục con -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Danh mục con"
             android:textStyle="bold"
-            android:textColor="#2B572E" />
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
 
         <Spinner
             android:id="@+id/spinnerSubCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Ảnh -->
+        <!-- Gói miễn phí hay không -->
+        <CheckBox
+            android:id="@+id/checkboxIsFree3Post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gói miễn phí"
+            android:textColor="#2B572E"
+            android:layout_marginTop="16dp" />
+
+        <!-- Chu kỳ thanh toán -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chu kỳ thanh toán"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerBillingCycle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Giới hạn sử dụng -->
+        <EditText
+            android:id="@+id/edtMaxPosts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số bài đăng tối đa"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/edtMaxCharacters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số ký tự tối đa mỗi bài"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/edtMaxImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số ảnh tối đa mỗi bài"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <!-- Ngày bắt đầu và kết thúc -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời gian áp dụng"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/edtStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ngày bắt đầu (dd/MM/yyyy)"
+            android:focusable="false"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/edtEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ngày kết thúc (dd/MM/yyyy)"
+            android:focusable="false"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <!-- Ảnh đại diện -->
         <Button
             android:id="@+id/btnChooseImage"
             android:layout_width="match_parent"
@@ -170,7 +256,6 @@
             android:id="@+id/recyclerImages"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:orientation="horizontal"
             android:layout_marginTop="8dp" />
     </LinearLayout>
 </ScrollView>

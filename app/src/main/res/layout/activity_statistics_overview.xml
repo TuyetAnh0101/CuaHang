@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:text="📊 Tổng quan thống kê"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Thanh lọc thời gian -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:text="Lọc theo: "
+                android:textSize="16sp"
+                android:textColor="#2B572E"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerTimeFilter"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <!-- Thanh chọn loại biểu đồ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:text="Chọn thống kê: "
+                android:textSize="16sp"
+                android:textColor="#2B572E"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerChartType"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <!-- Container biểu đồ: chỉ hiện 1 biểu đồ theo chọn -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginBottom="24dp">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChartPackages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:ignore="MissingClass" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChartPostTypes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:ignore="MissingClass" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChartRevenue"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:ignore="MissingClass" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+</ScrollView>

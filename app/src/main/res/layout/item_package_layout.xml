@@ -29,18 +29,7 @@
             android:contentDescription="Hình ảnh gói"
             android:src="@drawable/ic_launcher_foreground" />
 
-        <!-- Layout ẩn thumbnail -->
-        <LinearLayout
-            android:id="@+id/layoutThumbnails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="10dp"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone" />
-
-        <!-- Thông tin gói -->
+        <!-- Nội dung thông tin gói -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,13 +55,36 @@
                 android:textColor="#757575"
                 android:textSize="14sp" />
 
-
             <TextView
                 android:id="@+id/txtGiaGiam"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Giá KM: 99.000đ"
                 android:textColor="#D32F2F"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtChuKy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chu kỳ: Theo tháng"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/txtPackageType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loại gói: VIP"
+                android:textColor="#3F51B5"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/txtNgay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Từ: 01/07/2025 đến 31/12/2025"
+                android:textColor="#000000"
                 android:textSize="14sp" />
 
             <TextView
@@ -83,6 +95,23 @@
                 android:textColor="#4CAF50"
                 android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/txtGioiHan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giới hạn: 3 bài, 500 ký tự/bài, 3 ảnh"
+                android:textColor="#000000"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/txtFree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gói miễn phí 3 post: Có"
+                android:textColor="#009688"
+                android:textStyle="italic"
+                android:textSize="13sp" />
+
             <CheckBox
                 android:id="@+id/checkboxSelect"
                 android:layout_width="wrap_content"
@@ -90,7 +119,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- Các nút chức năng -->
+        <!-- Nút sửa/xóa -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,7 +52,8 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgFirst, btnEdit, btnDelete;
         TextView txtTenGoi, txtGiaGoc, txtGiaGiam, txtSoLuong;
-        LinearLayout layoutThumbnails;
+        TextView txtChuKy, txtNgay, txtGioiHan, txtFree;
+        TextView txtPackageType;
         CheckBox checkboxSelect;
 
         public ViewHolder(@NonNull View itemView) {
@@ -63,9 +63,13 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             txtGiaGoc = itemView.findViewById(R.id.txtGiaGoc);
             txtGiaGiam = itemView.findViewById(R.id.txtGiaGiam);
             txtSoLuong = itemView.findViewById(R.id.txtSoLuong);
+            txtChuKy = itemView.findViewById(R.id.txtChuKy);
+            txtNgay = itemView.findViewById(R.id.txtNgay);
+            txtGioiHan = itemView.findViewById(R.id.txtGioiHan);
+            txtFree = itemView.findViewById(R.id.txtFree);
+            txtPackageType = itemView.findViewById(R.id.txtPackageType);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
-            layoutThumbnails = itemView.findViewById(R.id.layoutThumbnails);
             checkboxSelect = itemView.findViewById(R.id.checkboxSelect);
         }
     }
@@ -83,10 +87,19 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
 
         holder.txtTenGoi.setText(pkg.getTenGoi());
         holder.txtGiaGoc.setText("Giá gốc: " + pkg.getGiaGoc() + "đ");
-        holder.txtGiaGiam.setText("Giá giảm: " + pkg.getGiaGiam() + "đ");
-        holder.txtSoLuong.setText("Số lượng: " + pkg.getSoLuong());
+        holder.txtGiaGiam.setText("Giá KM: " + pkg.getGiaGiam() + "đ");
+        holder.txtSoLuong.setText("SL còn: " + pkg.getSoLuong());
+        holder.txtChuKy.setText("Chu kỳ: " + pkg.getBillingCycle());
+        holder.txtNgay.setText("Từ: " + pkg.getStartDate() + " đến " + pkg.getEndDate());
+        holder.txtGioiHan.setText("Giới hạn: " + pkg.getMaxPosts() + " bài, " + pkg.getMaxCharacters() + " ký tự/bài, " + pkg.getMaxImages() + " ảnh");
+        holder.txtFree.setText("Gói miễn phí: " + (pkg.isFree3Posts() ? "Có" : "Không"));
 
-        // Hiển thị ảnh chính
+        String packageType = pkg.getPackageType();
+        if (packageType == null || packageType.isEmpty()) {
+            packageType = "Không xác định";
+        }
+        holder.txtPackageType.setText("Loại gói: " + packageType);
+
         if (pkg.getHinhAnh() != null && !pkg.getHinhAnh().isEmpty()) {
             try {
                 String base64Image = pkg.getHinhAnh().get(0);
@@ -96,36 +109,10 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             } catch (Exception e) {
                 holder.imgFirst.setImageResource(R.drawable.ic_launcher_foreground);
             }
-
-            // Hiển thị ảnh nhỏ
-            holder.layoutThumbnails.removeAllViews();
-            if (pkg.getHinhAnh().size() > 1) {
-                holder.layoutThumbnails.setVisibility(View.VISIBLE);
-                for (int i = 1; i < pkg.getHinhAnh().size(); i++) {
-                    try {
-                        String base64 = pkg.getHinhAnh().get(i);
-                        byte[] decoded = Base64.decode(base64, Base64.DEFAULT);
-                        Bitmap thumbBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
-
-                        ImageView thumb = new ImageView(context);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(60, 60);
-                        params.setMargins(4, 0, 4, 0);
-                        thumb.setLayoutParams(params);
-                        thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        thumb.setImageBitmap(thumbBitmap);
-
-                        holder.layoutThumbnails.addView(thumb);
-                    } catch (Exception ignored) {}
-                }
-            } else {
-                holder.layoutThumbnails.setVisibility(View.GONE);
-            }
         } else {
             holder.imgFirst.setImageResource(R.drawable.ic_launcher_foreground);
-            holder.layoutThumbnails.setVisibility(View.GONE);
         }
 
-        // Hiển thị chế độ chọn hoặc quản lý
         if (selectMode) {
             holder.btnEdit.setVisibility(View.GONE);
             holder.btnDelete.setVisibility(View.GONE);
@@ -134,11 +121,8 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             holder.checkboxSelect.setOnCheckedChangeListener(null);
             holder.checkboxSelect.setChecked(selectedPackages.contains(pkg));
             holder.checkboxSelect.setOnCheckedChangeListener((btn, checked) -> {
-                if (checked) {
-                    if (!selectedPackages.contains(pkg)) selectedPackages.add(pkg);
-                } else {
-                    selectedPackages.remove(pkg);
-                }
+                if (checked) selectedPackages.add(pkg);
+                else selectedPackages.remove(pkg);
             });
 
         } else {

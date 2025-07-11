@@ -104,7 +104,17 @@
             app:cornerRadius="16dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- ✅ Nút mới thêm -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUserStatistics"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="📊 Thống kê người dùng"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2B572E"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSystemConfig"
             android:layout_width="match_parent"

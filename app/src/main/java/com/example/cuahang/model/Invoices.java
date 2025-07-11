@@ -16,6 +16,7 @@ public class Invoices {
     private double totalPrice;      // Tổng giá trước thuế/giảm giá
     private double totalTax;        // Tổng thuế (Firestore field: tax)
     private double totalDiscount;   // Tổng giảm giá
+    private String status;          // Trạng thái hóa đơn (Đã thanh toán/Chưa thanh toán)
 
     public Invoices() {
         // Firestore yêu cầu constructor rỗng
@@ -99,5 +100,13 @@ public class Invoices {
 
     public void setTotalDiscount(double totalDiscount) {
         this.totalDiscount = totalDiscount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -18,7 +18,6 @@ import java.util.Locale;
 
 public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.InvoiceViewHolder> {
 
-    // Interface cho sự kiện sửa và xóa
     public interface OnInvoiceActionListener {
         void onEdit(Invoices invoice);
         void onDelete(Invoices invoice);
@@ -65,14 +64,21 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
         holder.tvTongVAT.setText("💼 VAT: " + formatMoney(invoice.getTotalTax()));
         holder.tvTongTien.setText("🧾 Tổng thanh toán: " + formatMoney(invoice.getTotalAmount()));
 
-        // Bắt sự kiện nút sửa
+        String statusText = invoice.getStatus() != null ? invoice.getStatus() : "Chưa xác định";
+        holder.tvStatus.setText("📌 Trạng thái: " + statusText);
+
+        if ("Đã thanh toán".equalsIgnoreCase(statusText)) {
+            holder.tvStatus.setTextColor(holder.itemView.getResources().getColor(android.R.color.holo_green_dark));
+        } else {
+            holder.tvStatus.setTextColor(holder.itemView.getResources().getColor(android.R.color.holo_orange_dark));
+        }
+
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEdit(invoice);
             }
         });
 
-        // Bắt sự kiện nút xóa
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDelete(invoice);
@@ -87,7 +93,7 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
 
     public static class InvoiceViewHolder extends RecyclerView.ViewHolder {
         TextView tvInvoiceId, tvNgayTao, tvNhanVien, tvTongSoLuong,
-                tvTongGia, tvTongGiamGia, tvTongVAT, tvTongTien;
+                tvTongGia, tvTongGiamGia, tvTongVAT, tvTongTien, tvStatus;
         ImageView btnEdit, btnDelete;
 
         public InvoiceViewHolder(@NonNull View itemView) {
@@ -100,6 +106,7 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
             tvTongGiamGia = itemView.findViewById(R.id.tvTongGiamGia);
             tvTongVAT = itemView.findViewById(R.id.tvTongVAT);
             tvTongTien = itemView.findViewById(R.id.tvTongTien);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }

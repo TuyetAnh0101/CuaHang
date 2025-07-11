@@ -20,6 +20,7 @@ import com.example.cuahang.manager.StatisticsActivity;
 import com.example.cuahang.manager.StatisticsOverviewActivity;
 import com.example.cuahang.manager.SystemConfigActivity;
 import com.example.cuahang.manager.UserAccountActivity;
+import com.example.cuahang.manager.UserStatisticActivity;
 import com.example.cuahang.ui.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,7 +53,8 @@ public class UserFragment extends Fragment {
         Button btnUser = view.findViewById(R.id.btnUser);
         Button btnOrder = view.findViewById(R.id.btnOrder);
         Button btnStatisticsOverview = view.findViewById(R.id.btnStatisticsOverview);
-        Button btnSystemConfig = view.findViewById(R.id.btnSystemConfig); // 👈 Thêm dòng này
+        Button btnUserStatistics = view.findViewById(R.id.btnUserStatistics);
+        Button btnSystemConfig = view.findViewById(R.id.btnSystemConfig);
 
         btnCategory.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), CategoryActivity.class)));
@@ -71,6 +73,9 @@ public class UserFragment extends Fragment {
 
         btnStatisticsOverview.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), StatisticsOverviewActivity.class)));
+
+        btnUserStatistics.setOnClickListener(v ->
+                startActivity(new Intent(getContext(), UserStatisticActivity.class)));
 
         btnSystemConfig.setOnClickListener(v ->
                 startActivity(new Intent(getContext(), SystemConfigActivity.class)));

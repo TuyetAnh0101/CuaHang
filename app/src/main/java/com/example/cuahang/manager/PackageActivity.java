@@ -80,10 +80,23 @@ public class PackageActivity extends AppCompatActivity {
 
         adapter = new PackageAdapter(this, packageList, new PackageAdapter.OnPackageClickListener() {
             @Override
-            public void onEdit(Package pkg) { showEditPackageDialog(pkg); }
+            public void onEdit(Package pkg) {
+                showEditPackageDialog(pkg);
+            }
+
             @Override
-            public void onDelete(Package pkg) { deletePackage(pkg); }
+            public void onDelete(Package pkg) {
+                deletePackage(pkg);
+            }
+
+            @Override
+            public void onSoLuongChange(Package pkg, int newSoLuong) {
+                db.collection("Package").document(pkg.getId())
+                        .update("soLuong", newSoLuong)
+                        .addOnSuccessListener(unused -> reload());
+            }
         });
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

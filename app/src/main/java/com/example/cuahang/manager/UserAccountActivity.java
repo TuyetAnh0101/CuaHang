@@ -5,20 +5,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.cuahang.R;
 import com.example.cuahang.adapter.UserAdapter;
 import com.example.cuahang.model.Role;
 import com.example.cuahang.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.*;
+import com.google.firebase.firestore.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +44,6 @@ public class UserAccountActivity extends AppCompatActivity {
             @Override
             public void onEdit(User user) {
                 Toast.makeText(UserAccountActivity.this, "Chỉnh sửa: " + user.getName(), Toast.LENGTH_SHORT).show();
-                // TODO: Hiển thị dialog chỉnh sửa nếu cần
             }
 
             @Override
@@ -69,14 +65,59 @@ public class UserAccountActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     userList.clear();
-                    for (var doc : queryDocumentSnapshots) {
-                        User user = doc.toObject(User.class);
-                        user.setId(doc.getId());
-                        userList.add(user);
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        createDefaultAdminAccount();
+                    } else {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            User user = doc.toObject(User.class);
+                            user.setId(doc.getId());
+                            userList.add(user);
+                        }
+                        userAdapter.setUserList(userList);
                     }
-                    userAdapter.setUserList(userList);
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Lỗi tải người dùng", Toast.LENGTH_SHORT).show());
+    }
+
+    private void createDefaultAdminAccount() {
+        String email = "admin@gmail.com";
+        String password = "anh123";
+        String name = "Admin Default";
+
+        mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<String> methods = task.getResult().getSignInMethods();
+                if (methods == null || methods.isEmpty()) {
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnSuccessListener(authResult -> {
+                                FirebaseUser firebaseUser = authResult.getUser();
+                                if (firebaseUser != null) {
+                                    saveUserToFirestore(firebaseUser.getUid(), "AD01", email, name, Role.ADMIN, true);
+                                }
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Lỗi tạo admin mặc định: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
+
+    private void saveUserToFirestore(String uid, String userId, String email, String name, Role role, boolean active) {
+        User user = new User();
+        user.setId(uid);
+        user.setUserId(userId);
+        user.setEmail(email);
+        user.setName(name);
+        user.setRole(role);
+        user.setActive(active);
+
+        db.collection("User").document(uid).set(user)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(this, "Đã lưu tài khoản " + userId, Toast.LENGTH_SHORT).show();
+                    userList.add(user);
+                    userAdapter.setUserList(userList);
+                    mAuth.signOut();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void deleteUser(@NonNull User user) {
@@ -91,10 +132,7 @@ public class UserAccountActivity extends AppCompatActivity {
 
     private void showAddUserDialog() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.add_user_account_layout, null);
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(dialogView)
-                .setCancelable(true)
-                .create();
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create();
 
         EditText edtName = dialogView.findViewById(R.id.edtUserName);
         EditText edtEmail = dialogView.findViewById(R.id.edtEmail);
@@ -105,24 +143,17 @@ public class UserAccountActivity extends AppCompatActivity {
         Button btnChooseAvatar = dialogView.findViewById(R.id.btnChooseAvatar);
         ImageView imgAvatar = dialogView.findViewById(R.id.imgAvatarPreview);
 
-        // Ẩn không cần thiết
         edtPassword.setVisibility(View.GONE);
         btnChooseAvatar.setVisibility(View.GONE);
         imgAvatar.setVisibility(View.GONE);
 
-        // Adapter role
-        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"STAFF", "MANAGER", "ADMIN"});
-        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerRole.setAdapter(roleAdapter);
-
-        // Adapter trạng thái
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"Hoạt động", "Đã khóa"});
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerStatus.setAdapter(statusAdapter);
+        Role[] roles = Role.values();
+        String[] roleNames = new String[roles.length];
+        for (int i = 0; i < roles.length; i++) {
+            roleNames[i] = roles[i].name();
+        }
+        spinnerRole.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roleNames));
+        spinnerStatus.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Hoạt động", "Đã khóa"}));
 
         btnSave.setOnClickListener(v -> {
             String name = edtName.getText().toString().trim();
@@ -135,38 +166,36 @@ public class UserAccountActivity extends AppCompatActivity {
                 return;
             }
 
-            String dummyPassword = "123456";
+            String prefix;
+            switch (roleStr) {
+                case "ADMIN":
+                    prefix = "AD";
+                    break;
+                case "USER":
+                    prefix = "US";
+                    break;
+                default:
+                    prefix = "ST";
+                    break;
+            }
 
-            mAuth.createUserWithEmailAndPassword(email, dummyPassword)
-                    .addOnSuccessListener(authResult -> {
-                        FirebaseUser firebaseUser = authResult.getUser();
-                        if (firebaseUser != null) {
-                            String uid = firebaseUser.getUid();
+            db.collection("User").whereEqualTo("role", roleStr).get()
+                    .addOnSuccessListener(query -> {
+                        int count = query.size();
+                        String newUserId = prefix + String.format("%02d", count + 1);
 
-                            mAuth.sendPasswordResetEmail(email)
-                                    .addOnSuccessListener(unused -> Toast.makeText(this, "Đã gửi email đặt lại mật khẩu", Toast.LENGTH_SHORT).show())
-                                    .addOnFailureListener(e -> Toast.makeText(this, "Lỗi gửi email: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-                            User newUser = new User();
-                            newUser.setId(uid);
-                            newUser.setEmail(email);
-                            newUser.setName(name);
-                            newUser.setRole(Role.fromString(roleStr));
-                            newUser.setActive(active);
-
-                            db.collection("User").document(uid)
-                                    .set(newUser)
-                                    .addOnSuccessListener(unused -> {
-                                        Toast.makeText(this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-                                        userList.add(newUser);
-                                        userAdapter.notifyItemInserted(userList.size() - 1);
+                        String dummyPassword = "123456";
+                        mAuth.createUserWithEmailAndPassword(email, dummyPassword)
+                                .addOnSuccessListener(authResult -> {
+                                    FirebaseUser firebaseUser = authResult.getUser();
+                                    if (firebaseUser != null) {
+                                        saveUserToFirestore(firebaseUser.getUid(), newUserId, email, name, Role.fromString(roleStr), active);
                                         dialog.dismiss();
-                                        mAuth.signOut();
-                                    })
-                                    .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
+                                    }
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(this, "Lỗi tạo tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Lỗi tạo tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(this, "Lỗi đếm người dùng: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
 
         dialog.show();

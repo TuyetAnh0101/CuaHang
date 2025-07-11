@@ -1,21 +1,17 @@
 package com.example.cuahang.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cuahang.R;
 import com.example.cuahang.model.Order;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -58,32 +54,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            if (order.getId() == null || order.getId().isEmpty()) {
-                Toast.makeText(context, "Không thể xóa: ID đơn hàng không tồn tại.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Log.d("OrderAdapter", "Xóa đơn hàng với ID: " + order.getId());
-
-            new AlertDialog.Builder(context)
-                    .setTitle("Xóa đơn hàng")
-                    .setMessage("Bạn có chắc muốn xóa đơn hàng này không?")
-                    .setPositiveButton("Xóa", (dialog, which) -> {
-                        FirebaseDatabase.getInstance().getReference("Orders")
-                                .child(order.getId())
-                                .removeValue()
-                                .addOnSuccessListener(unused -> {
-                                    orderList.remove(position);
-                                    notifyItemRemoved(position);
-                                    Toast.makeText(context, "Đã xóa đơn hàng", Toast.LENGTH_SHORT).show();
-                                    if (listener != null) listener.onDelete(order);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(context, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                });
-                    })
-                    .setNegativeButton("Hủy", null)
-                    .show();
+            if (listener != null) listener.onDelete(order);
         });
     }
 

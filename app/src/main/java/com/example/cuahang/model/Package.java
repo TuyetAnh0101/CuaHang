@@ -18,33 +18,26 @@ public class Package {
     private String note;
     private int soLuong;
 
-    private boolean isFree3Posts;    // Có miễn phí 3 bài đăng đầu tiên không
-
-    /**
-     * Chu kỳ tính theo số nguyên:
-     * 1 = Ngày, 2 = Tháng, 3 = Năm
-     */
+    private boolean isFree3Posts;
     private String billingCycle;
-
-    private int maxPosts;         // Số bài đăng tối đa
-    private int maxCharacters;    // Số ký tự tối đa mỗi bài
-    private int maxImages;        // Số ảnh tối đa mỗi bài
-
-    private String startDate;     // Dạng yyyy-MM-dd
+    private int maxPosts;
+    private int maxCharacters;
+    private int maxImages;
+    private String startDate;
     private String endDate;
-    private boolean isSelected;   // Được chọn hay chưa
-    private String packageType;   // Ví dụ: "VIP", "Thường", "Miễn phí"
+    private boolean isSelected;
+    private String packageType;
 
-    // Constructor không tham số
+    private double thanhTien; // Thêm trường này để đồng bộ với Firestore
+
     public Package() {}
 
-    // Constructor đầy đủ
     public Package(String id, String tenGoi, String moTa, String categoryId, String subcategoryId,
                    String donViTinh, double giaGoc, double giaGiam, double vat,
                    List<String> hinhAnh, String status, String note, int soLuong,
                    boolean isFree3Posts, String billingCycle, int maxPosts,
                    int maxCharacters, int maxImages, String startDate, String endDate,
-                   String packageType) {
+                   String packageType, double thanhTien) {
         this.id = id;
         this.tenGoi = tenGoi;
         this.moTa = moTa;
@@ -66,6 +59,7 @@ public class Package {
         this.startDate = startDate;
         this.endDate = endDate;
         this.packageType = packageType;
+        this.thanhTien = thanhTien;
     }
 
     // Getters và Setters
@@ -135,11 +129,14 @@ public class Package {
     public boolean isSelected() { return isSelected; }
     public void setSelected(boolean selected) { isSelected = selected; }
 
-    public double getThanhTien() {
+    public double getThanhTien() { return thanhTien; }
+    public void setThanhTien(double thanhTien) { this.thanhTien = thanhTien; }
+
+    // Hàm tính lại thanhTien theo giá giảm * số lượng, nếu muốn dùng riêng nội bộ:
+    public double tinhThanhTien() {
         return giaGiam * soLuong;
     }
 
-    // Enum hỗ trợ chu kỳ tính
     public enum BillingCycle {
         DAY(1),
         MONTH(2),

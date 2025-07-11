@@ -71,11 +71,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvUserName.setText(user.getName());
             tvEmail.setText(user.getEmail());
 
-            // Convert enum role sang tiếng Việt
+
             String roleDisplay = "Quyền: ";
             switch (user.getRole()) {
                 case ADMIN: roleDisplay += "Quản trị viên"; break;
-                case MANAGER: roleDisplay += "Quản lý"; break;
+                case USER: roleDisplay += "Người dùng"; break;
                 default: roleDisplay += "Nhân viên"; break;
             }
             tvRole.setText(roleDisplay);

@@ -38,13 +38,6 @@
                 android:layout_height="wrap_content"
                 android:text="Giá"/>
         </LinearLayout>
-
-        <EditText
-            android:id="@+id/edtSoLuong"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="SL"/>
     </LinearLayout>
 
 </LinearLayout>

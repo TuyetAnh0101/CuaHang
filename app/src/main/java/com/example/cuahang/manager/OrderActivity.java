@@ -18,6 +18,8 @@ import com.example.cuahang.model.Invoices;
 import com.example.cuahang.model.Order;
 import com.example.cuahang.model.OrderPackage;
 import com.example.cuahang.model.Package;
+import com.example.cuahang.model.Role;
+import com.example.cuahang.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -106,18 +108,22 @@ public class OrderActivity extends AppCompatActivity {
     private void openAddOrderDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);
 
-        final EditText edtKhachHang = view.findViewById(R.id.edtKhachHang);
-        final Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
-        final Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
-        final EditText edtNote = view.findViewById(R.id.edtNote);
-        final RecyclerView recyclerPackages = view.findViewById(R.id.recyclerPackageSelect);
+        Spinner spinnerKhachHang = view.findViewById(R.id.spinnerKhachHang);
+        List<String> userNameList = new ArrayList<>();
+        ArrayAdapter<String> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, userNameList);
+        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerKhachHang.setAdapter(userAdapter);
+        loadUserNames(userNameList, userAdapter);
+
+        Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
+        Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
+        EditText edtNote = view.findViewById(R.id.edtNote);
+        RecyclerView recyclerPackages = view.findViewById(R.id.recyclerPackageSelect);
 
         setupSpinners(spinnerXuLy, spinnerThanhToan);
-        final PackageSelectAdapter packageSelectAdapter = setupPackageList(recyclerPackages);
+        PackageSelectAdapter packageSelectAdapter = setupPackageList(recyclerPackages);
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        final AlertDialog dialog = new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Tạo đơn hàng mới")
                 .setView(view)
                 .setCancelable(false)
@@ -126,12 +132,13 @@ public class OrderActivity extends AppCompatActivity {
                 .create();
 
         dialog.setOnShowListener(dlg -> {
-            final Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
             btnSave.setOnClickListener(v -> {
-                String tenKhach = edtKhachHang.getText().toString().trim();
+                String tenKhach = (spinnerKhachHang.getSelectedItem() != null) ? spinnerKhachHang.getSelectedItem().toString() : "";
+
                 if (tenKhach.isEmpty()) {
-                    edtKhachHang.setError("Nhập tên khách hàng");
+                    Toast.makeText(this, "Chọn khách hàng!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -141,7 +148,7 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
-                db.collection("Orders").get().addOnSuccessListener(querySnapshot -> {
+                FirebaseFirestore.getInstance().collection("Orders").get().addOnSuccessListener(querySnapshot -> {
                     int count = querySnapshot.size() + 1;
                     String newId = String.format("OD%02d", count);
                     String ngay = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -150,11 +157,10 @@ public class OrderActivity extends AppCompatActivity {
                     long tongTien = 0;
 
                     for (Package p : selectedPackages) {
-                        if (p.getSoLuong() <= 0) continue;
-                        OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), p.getSoLuong());
+                        OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), 1);
                         orderPackages.add(op);
                         tongTien += op.getThanhTien();
-                        updatePackageSoLuong(p.getId(), -p.getSoLuong());
+                        updatePackageSoLuong(p.getId(), -1);
                     }
 
                     long tongSoLuong = orderPackages.size();
@@ -165,7 +171,7 @@ public class OrderActivity extends AppCompatActivity {
                             edtNote.getText().toString().trim(),
                             orderPackages);
 
-                    db.collection("Orders").document(newId).set(order)
+                    FirebaseFirestore.getInstance().collection("Orders").document(newId).set(order)
                             .addOnSuccessListener(unused -> {
                                 Toast.makeText(this, "Đã thêm đơn hàng", Toast.LENGTH_SHORT).show();
                                 if (order.getStatusThanhToan().equals("Đã thanh toán")) {
@@ -184,11 +190,16 @@ public class OrderActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
     private void openEditOrderDialog(Order order) {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);
 
-        EditText edtKhachHang = view.findViewById(R.id.edtKhachHang);
+        Spinner spinnerKhachHang = view.findViewById(R.id.spinnerKhachHang);
+        List<String> userNameList = new ArrayList<>();
+        ArrayAdapter<String> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, userNameList);
+        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerKhachHang.setAdapter(userAdapter);
+        loadUserNames(userNameList, userAdapter);
+
         Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
         Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
         EditText edtNote = view.findViewById(R.id.edtNote);
@@ -215,10 +226,9 @@ public class OrderActivity extends AppCompatActivity {
                     packageSelectAdapter.setPackages(packages);
                 });
 
-        edtKhachHang.setText(order.getIdKhach());
+        edtNote.setText(order.getNote());
         spinnerXuLy.setSelection(((ArrayAdapter<String>) spinnerXuLy.getAdapter()).getPosition(order.getStatusXuLy()));
         spinnerThanhToan.setSelection(((ArrayAdapter<String>) spinnerThanhToan.getAdapter()).getPosition(order.getStatusThanhToan()));
-        edtNote.setText(order.getNote());
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Sửa đơn hàng")
@@ -230,10 +240,19 @@ public class OrderActivity extends AppCompatActivity {
 
         dialog.setOnShowListener(dlg -> {
             Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+            spinnerKhachHang.post(() -> {
+                int position = userAdapter.getPosition(order.getIdKhach());
+                if (position >= 0) {
+                    spinnerKhachHang.setSelection(position);
+                }
+            });
+
             btnSave.setOnClickListener(v -> {
-                String tenKhach = edtKhachHang.getText().toString().trim();
+                String tenKhach = (spinnerKhachHang.getSelectedItem() != null) ? spinnerKhachHang.getSelectedItem().toString() : "";
+
                 if (tenKhach.isEmpty()) {
-                    edtKhachHang.setError("Nhập tên khách hàng");
+                    Toast.makeText(this, "Chọn khách hàng!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -243,33 +262,27 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
+                revertOldOrderPackages(order);
+
                 List<OrderPackage> orderPackages = new ArrayList<>();
                 long tongTien = 0;
 
                 for (Package p : selectedPackages) {
-                    if (p.getSoLuong() <= 0) continue;
-                    OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), p.getSoLuong());
+                    OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), 1);
                     orderPackages.add(op);
                     tongTien += op.getThanhTien();
-                    updatePackageSoLuong(p.getId(), -p.getSoLuong());
+                    updatePackageSoLuong(p.getId(), -1);
                 }
 
                 long tongSoLuong = orderPackages.size();
 
-                Order updatedOrder = new Order(
-                        order.getId(),
-                        tenKhach,
-                        order.getNgayDat(),
-                        tongTien,
-                        tongSoLuong,
+                Order updatedOrder = new Order(order.getId(), tenKhach, order.getNgayDat(), tongTien, tongSoLuong,
                         spinnerXuLy.getSelectedItem().toString(),
                         spinnerThanhToan.getSelectedItem().toString(),
                         edtNote.getText().toString().trim(),
-                        orderPackages
-                );
+                        orderPackages);
 
-                FirebaseFirestore.getInstance().collection("Orders")
-                        .document(order.getId())
+                FirebaseFirestore.getInstance().collection("Orders").document(order.getId())
                         .set(updatedOrder)
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(this, "Đã cập nhật đơn", Toast.LENGTH_SHORT).show();
@@ -359,5 +372,26 @@ public class OrderActivity extends AppCompatActivity {
                 .addOnSuccessListener(unused -> Log.d(TAG, "Đã đồng bộ hóa đơn cho đơn hàng: " + invoiceId))
                 .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi đồng bộ hóa đơn", e));
     }
-
+    private void loadUserNames(List<String> userNameList, ArrayAdapter<String> adapter) {
+        FirebaseFirestore.getInstance().collection("User")
+                .whereEqualTo("role", "USER")
+                .whereEqualTo("active", true)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    userNameList.clear();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String name = doc.getString("name");
+                        if (name != null && !name.isEmpty()) {
+                            userNameList.add(name);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi load user: ", e));
+    }
+    private void revertOldOrderPackages(Order oldOrder) {
+        for (OrderPackage op : oldOrder.getPackages()) {
+            updatePackageSoLuong(op.getPackageId(), op.getSoLuong());
+        }
+    }
 }

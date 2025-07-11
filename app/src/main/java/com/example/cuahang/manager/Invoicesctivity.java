@@ -2,10 +2,14 @@ package com.example.cuahang.manager;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,9 +23,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class Invoicesctivity extends AppCompatActivity {
 
@@ -30,7 +34,7 @@ public class Invoicesctivity extends AppCompatActivity {
     private List<Invoices> invoiceList;
     private FirebaseFirestore db;
     private FloatingActionButton fabAddInvoice;
-    private double vatPercent = 10.0; // default value
+    private double vatPercent = 10.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +101,16 @@ public class Invoicesctivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Không thể tải cấu hình VAT", Toast.LENGTH_SHORT).show());
     }
 
+    private double tinhTongThanhToan(double tongGia, double giamGia, double vatPercent) {
+        return tongGia + (tongGia * vatPercent / 100) - giamGia;
+    }
+
     private void showAddInvoiceDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.add_invoices_layout, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
-        EditText edtNhanVien = view.findViewById(R.id.edtNhanVien);
+        Spinner spinnerNhanVien = view.findViewById(R.id.spinnerNhanVien);
+        Spinner spinnerTrangThai = view.findViewById(R.id.spinnerStatus);
         EditText edtTongSoLuong = view.findViewById(R.id.edtTongSoLuong);
         EditText edtTongGia = view.findViewById(R.id.edtTongGia);
         EditText edtGiamGia = view.findViewById(R.id.edtGiamGia);
@@ -112,42 +121,94 @@ public class Invoicesctivity extends AppCompatActivity {
         edtVAT.setText(String.valueOf(vatPercent));
         edtVAT.setEnabled(false);
 
+        loadNhanVienToSpinner(spinnerNhanVien);
+        loadTrangThaiToSpinner(spinnerTrangThai, null);
+
+        setupAutoTinhTong(edtTongGia, edtGiamGia, edtTongThanhToan);
+
         btnLuuHoaDon.setOnClickListener(v -> {
             try {
-                String nhanVien = edtNhanVien.getText().toString().trim();
+                String nhanVien = spinnerNhanVien.getSelectedItem().toString();
+                String trangThai = spinnerTrangThai.getSelectedItem().toString();
                 int tongSoLuong = Integer.parseInt(edtTongSoLuong.getText().toString().trim());
                 double tongGia = Double.parseDouble(edtTongGia.getText().toString().trim());
                 double giamGia = Double.parseDouble(edtGiamGia.getText().toString().trim());
+                double tongThanhToan = tinhTongThanhToan(tongGia, giamGia, vatPercent);
 
-                double vat = vatPercent;
-                double tongThanhToan = tongGia + (tongGia * vat / 100) - giamGia;
+                getNextInvoiceId(nextId -> {
+                    Date ngayTao = new Date();
+                    Invoices invoice = new Invoices(nextId, ngayTao, tongThanhToan, nhanVien, tongSoLuong, tongGia, vatPercent, giamGia);
+                    invoice.setStatus(trangThai);
 
-                String id = UUID.randomUUID().toString();
-                Date ngayTao = new Date();
-
-                Invoices invoice = new Invoices(id, ngayTao, tongThanhToan, nhanVien, tongSoLuong, tongGia, vat, giamGia);
-
-                db.collection("invoices").document(id)
-                        .set(invoice)
-                        .addOnSuccessListener(unused -> {
-                            Toast.makeText(this, "Đã lưu hóa đơn", Toast.LENGTH_SHORT).show();
-                            loadInvoices();
-                            dialog.dismiss();
-                        })
-                        .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    db.collection("invoices").document(nextId)
+                            .set(invoice)
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(this, "Đã lưu hóa đơn", Toast.LENGTH_SHORT).show();
+                                loadInvoices();
+                                dialog.dismiss();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                });
 
             } catch (Exception e) {
                 Toast.makeText(this, "Lỗi nhập dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
         dialog.show();
+    }
+
+    private void getNextInvoiceId(OnNextIdListener listener) {
+        db.collection("invoices")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    int max = 0;
+                    for (var doc : querySnapshot) {
+                        String id = doc.getId();
+                        if (id.startsWith("IV")) {
+                            try {
+                                int num = Integer.parseInt(id.substring(2));
+                                if (num > max) max = num;
+                            } catch (NumberFormatException ignored) {}
+                        }
+                    }
+                    String nextId = String.format("IV%02d", max + 1);
+                    listener.onNextId(nextId);
+                });
+    }
+
+    private interface OnNextIdListener {
+        void onNextId(String nextId);
+    }
+
+    private void setupAutoTinhTong(EditText edtTongGia, EditText edtGiamGia, EditText edtTongThanhToan) {
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    double tongGia = Double.parseDouble(edtTongGia.getText().toString().trim());
+                    double giamGia = Double.parseDouble(edtGiamGia.getText().toString().trim());
+                    double tongThanhToan = tinhTongThanhToan(tongGia, giamGia, vatPercent);
+                    edtTongThanhToan.setText(String.valueOf(tongThanhToan));
+                } catch (Exception e) {
+                    edtTongThanhToan.setText("");
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+        edtTongGia.addTextChangedListener(watcher);
+        edtGiamGia.addTextChangedListener(watcher);
     }
 
     private void showEditInvoiceDialog(Invoices invoice) {
         View view = LayoutInflater.from(this).inflate(R.layout.add_invoices_layout, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
-        EditText edtNhanVien = view.findViewById(R.id.edtNhanVien);
+        Spinner spinnerNhanVien = view.findViewById(R.id.spinnerNhanVien);
+        Spinner spinnerTrangThai = view.findViewById(R.id.spinnerStatus);
         EditText edtTongSoLuong = view.findViewById(R.id.edtTongSoLuong);
         EditText edtTongGia = view.findViewById(R.id.edtTongGia);
         EditText edtGiamGia = view.findViewById(R.id.edtGiamGia);
@@ -155,31 +216,36 @@ public class Invoicesctivity extends AppCompatActivity {
         EditText edtTongThanhToan = view.findViewById(R.id.edtTongThanhToan);
         Button btnLuuHoaDon = view.findViewById(R.id.btnLuuHoaDon);
 
-        edtNhanVien.setText(invoice.getCreatedBy());
+        edtVAT.setText(String.valueOf(vatPercent));
+        edtVAT.setEnabled(false);
+
         edtTongSoLuong.setText(String.valueOf(invoice.getTotalQuantity()));
         edtTongGia.setText(String.valueOf(invoice.getTotalPrice()));
         edtGiamGia.setText(String.valueOf(invoice.getTotalDiscount()));
-        edtVAT.setText(String.valueOf(invoice.getTotalTax()));
-        edtVAT.setEnabled(false);
         edtTongThanhToan.setText(String.valueOf(invoice.getTotalAmount()));
+
+        loadNhanVienToSpinner(spinnerNhanVien, invoice.getCreatedBy());
+        loadTrangThaiToSpinner(spinnerTrangThai, invoice.getStatus());
+
+        setupAutoTinhTong(edtTongGia, edtGiamGia, edtTongThanhToan);
 
         btnLuuHoaDon.setText("Lưu thay đổi");
 
         btnLuuHoaDon.setOnClickListener(v -> {
             try {
-                String nhanVien = edtNhanVien.getText().toString().trim();
+                String nhanVien = spinnerNhanVien.getSelectedItem().toString();
+                String trangThai = spinnerTrangThai.getSelectedItem().toString();
                 int tongSoLuong = Integer.parseInt(edtTongSoLuong.getText().toString().trim());
                 double tongGia = Double.parseDouble(edtTongGia.getText().toString().trim());
                 double giamGia = Double.parseDouble(edtGiamGia.getText().toString().trim());
-
-                double vat = vatPercent;
-                double tongThanhToan = tongGia + (tongGia * vat / 100) - giamGia;
+                double tongThanhToan = tinhTongThanhToan(tongGia, giamGia, vatPercent);
 
                 invoice.setCreatedBy(nhanVien);
+                invoice.setStatus(trangThai);
                 invoice.setTotalQuantity(tongSoLuong);
                 invoice.setTotalPrice(tongGia);
                 invoice.setTotalDiscount(giamGia);
-                invoice.setTotalTax(vat);
+                invoice.setTotalTax(vatPercent);
                 invoice.setTotalAmount(tongThanhToan);
 
                 db.collection("invoices").document(invoice.getId())
@@ -190,13 +256,48 @@ public class Invoicesctivity extends AppCompatActivity {
                             dialog.dismiss();
                         })
                         .addOnFailureListener(e -> Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
             } catch (Exception e) {
                 Toast.makeText(this, "Lỗi nhập dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
         dialog.show();
+    }
+
+    private void loadNhanVienToSpinner(Spinner spinner) {
+        loadNhanVienToSpinner(spinner, null);
+    }
+
+    private void loadNhanVienToSpinner(Spinner spinner, String preSelectName) {
+        db.collection("User")
+                .whereIn("role", Arrays.asList("STAFF", "ADMIN"))
+                .get()
+                .addOnSuccessListener(query -> {
+                    List<String> staffNames = new ArrayList<>();
+                    for (var doc : query) {
+                        staffNames.add(doc.getString("name"));
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, staffNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+
+                    if (preSelectName != null) {
+                        int position = staffNames.indexOf(preSelectName);
+                        if (position >= 0) spinner.setSelection(position);
+                    }
+                });
+    }
+
+    private void loadTrangThaiToSpinner(Spinner spinner, String preSelectStatus) {
+        List<String> statusList = Arrays.asList("Đã thanh toán", "Chưa thanh toán");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        if (preSelectStatus != null) {
+            int position = statusList.indexOf(preSelectStatus);
+            if (position >= 0) spinner.setSelection(position);
+        }
     }
 
     @Override

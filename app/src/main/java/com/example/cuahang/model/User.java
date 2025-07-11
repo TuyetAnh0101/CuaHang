@@ -2,28 +2,39 @@ package com.example.cuahang.model;
 
 public class User {
 
-    private String id;      // Firebase UID
+    private String id;
+    private String userId;
     private String email;
     private String name;
-    private String role;  // "admin", "manager", "staff"
-    private boolean active = true; // đề xuất thêm trạng thái hoạt động
+    private Role role;
+    private boolean active = true;
 
     public User() {
+        // Bắt buộc phải có constructor rỗng để Firestore map
     }
 
     public User(String email, String name, Role role) {
         this.email = email;
         this.name = name;
-        this.role = role.toStringValue();
+        this.role = role;
     }
 
-    // Getter & Setter cho ID
+    // Getter & Setter cho id (Firebase UID)
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    // Getter & Setter cho userId (US01, AD01...)
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     // Getter & Setter cho email
@@ -44,13 +55,13 @@ public class User {
         this.name = name;
     }
 
-    // Getter & Setter cho role
+    // Getter & Setter cho role (để Enum luôn, không convert String nữa)
     public Role getRole() {
-        return Role.fromString(role);
+        return role;
     }
 
     public void setRole(Role role) {
-        this.role = role.toStringValue();
+        this.role = role;
     }
 
     // Getter & Setter cho active

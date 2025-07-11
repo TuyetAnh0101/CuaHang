@@ -26,28 +26,29 @@
             android:layout_marginBottom="8dp"/>
 
         <!-- Ngày tạo -->
-        <EditText
-            android:id="@+id/edtNgayTao"
+        <TextView
+            android:id="@+id/tvNgayTao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="📅 Ngày tạo (yyyy-MM-dd HH:mm)"
-            android:inputType="datetime"
+            android:text="📅 Ngày tạo: 2025-07-11 14:00"
             android:textColor="#555555"
             android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
             android:padding="8dp" />
 
-        <!-- Nhân viên -->
-        <EditText
-            android:id="@+id/edtNhanVien"
+        <!-- Spinner nhân viên -->
+        <Spinner
+            android:id="@+id/spinnerNhanVien"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="👤 Nhân viên tạo"
-            android:inputType="textPersonName"
-            android:textColor="#555555"
-            android:layout_marginBottom="8dp"
-            android:background="@android:drawable/edit_text"
-            android:padding="8dp" />
+            android:layout_marginBottom="8dp" />
+
+        <!-- Spinner trạng thái -->
+        <Spinner
+            android:id="@+id/spinnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
 
         <!-- Tổng số lượng -->
         <EditText
@@ -60,6 +61,7 @@
             android:layout_marginBottom="8dp"
             android:background="@android:drawable/edit_text"
             android:padding="8dp" />
+
         <!-- Tổng giá -->
         <EditText
             android:id="@+id/edtTongGia"

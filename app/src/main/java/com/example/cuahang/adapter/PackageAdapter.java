@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     public interface OnPackageClickListener {
         void onEdit(Package pkg);
         void onDelete(Package pkg);
+        void onSoLuongChange(Package pkg, int newSoLuong);
     }
 
     public PackageAdapter(Context context, List<Package> list, OnPackageClickListener listener) {
@@ -124,7 +126,6 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
                 if (checked) selectedPackages.add(pkg);
                 else selectedPackages.remove(pkg);
             });
-
         } else {
             holder.checkboxSelect.setVisibility(View.GONE);
             holder.btnEdit.setVisibility(View.VISIBLE);
@@ -143,5 +144,11 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void updateSoLuong(Package pkg, int newSoLuong) {
+        pkg.setSoLuong(newSoLuong);
+        notifyDataSetChanged();
+        if (listener != null) listener.onSoLuongChange(pkg, newSoLuong);
     }
 }

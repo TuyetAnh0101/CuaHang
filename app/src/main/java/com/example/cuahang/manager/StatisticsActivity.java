@@ -32,6 +32,10 @@ public class StatisticsActivity extends AppCompatActivity {
     private List<Statistics> statisticsList;
     private FirebaseFirestore db;
 
+    private String chartType = null;
+    private String value = null;
+    private String timeFilter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +53,6 @@ public class StatisticsActivity extends AppCompatActivity {
         btnCalculate = findViewById(R.id.btnCalculate);
 
         statisticsList = new ArrayList<>();
-
         adapter = new StatisticsAdapter(statisticsList, new StatisticsAdapter.StatisticsClickListener() {
             @Override
             public void onEdit(Statistics statistics) {
@@ -62,28 +65,34 @@ public class StatisticsActivity extends AppCompatActivity {
                         .delete()
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(StatisticsActivity.this, "✅ Đã xóa", Toast.LENGTH_SHORT).show();
-                            loadStatistics();
+                            refreshStatistics();
                         })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(StatisticsActivity.this, "❌ Xóa thất bại", Toast.LENGTH_SHORT).show();
-                        });
+                        .addOnFailureListener(e -> Toast.makeText(StatisticsActivity.this, "❌ Xóa thất bại", Toast.LENGTH_SHORT).show());
             }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Nhận dữ liệu filter từ biểu đồ (nếu có)
-        String chartType = getIntent().getStringExtra("chartType");
-        String value = getIntent().getStringExtra("value");
+        chartType = getIntent().getStringExtra("chartType");
+        value = getIntent().getStringExtra("value");
+        timeFilter = getIntent().getStringExtra("timeFilter");
 
-        if (chartType != null && value != null) {
-            filterStatistics(chartType, value);
+        btnCalculate.setOnClickListener(v -> calculateTodayStatistics());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshStatistics();
+    }
+
+    private void refreshStatistics() {
+        if (chartType != null && value != null && timeFilter != null) {
+            filterStatistics(timeFilter, value);
         } else {
             loadStatistics();
         }
-
-        btnCalculate.setOnClickListener(v -> calculateTodayStatistics());
     }
 
     private void loadStatistics() {
@@ -103,43 +112,55 @@ public class StatisticsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải thống kê", Toast.LENGTH_SHORT).show());
     }
 
-    private void filterStatistics(String chartType, String value) {
+    private void filterStatistics(String filterType, String value) {
         db.collection("statistics")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     statisticsList.clear();
-
                     for (DocumentSnapshot doc : querySnapshot) {
                         Statistics s = doc.toObject(Statistics.class);
                         if (s == null) continue;
 
-                        switch (chartType) {
-                            case "pie":
-                            case "bar":
-                                if (s.getTopCategories() != null && s.getTopCategories().containsKey(value)) {
+                        switch (filterType) {
+                            case "Ngày":
+                                if (s.getDate().equals(value)) {
                                     statisticsList.add(s);
                                 }
                                 break;
-                            case "line":
-                                if (value.equals(s.getDate())) {
+                            case "Tuần":
+                                if (getWeekKey(s.getDate()).equals(value)) {
+                                    statisticsList.add(s);
+                                }
+                                break;
+                            case "Tháng":
+                                if (s.getDate().startsWith(value)) {
                                     statisticsList.add(s);
                                 }
                                 break;
                         }
                     }
-
                     adapter.notifyDataSetChanged();
-
-                    if (statisticsList.isEmpty()) {
-                        Toast.makeText(this, "Không có dữ liệu phù hợp", Toast.LENGTH_SHORT).show();
-                    }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi khi lọc thống kê", Toast.LENGTH_SHORT).show());
     }
 
+    private String getWeekKey(String date) {
+        try {
+            Calendar cal = Calendar.getInstance();
+            String[] parts = date.split("-");
+            int year = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1;
+            int day = Integer.parseInt(parts[2]);
+            cal.set(year, month, day);
+            int week = cal.get(Calendar.WEEK_OF_YEAR);
+            return year + "-W" + week;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     private void calculateTodayStatistics() {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
         final int[] totalRevenue = {0};
         final int[] totalOrders = {0};
         final int[] packagesSold = {0};
@@ -155,7 +176,6 @@ public class StatisticsActivity extends AppCompatActivity {
                             totalOrders[0]++;
                             Long amount = doc.getLong("tongTien");
                             if (amount != null) totalRevenue[0] += amount;
-
                             List<Map<String, Object>> packageList = (List<Map<String, Object>>) doc.get("packages");
                             if (packageList != null) {
                                 packagesSold[0] += packageList.size();
@@ -181,21 +201,16 @@ public class StatisticsActivity extends AppCompatActivity {
                                 }
 
                                 Statistics statistics = new Statistics(
-                                        today,
-                                        totalRevenue[0],
-                                        totalOrders[0],
-                                        packagesSold[0],
-                                        newUsers[0],
-                                        topCategories,
-                                        new HashMap<>() // topPostTypes rỗng
+                                        today, totalRevenue[0], totalOrders[0],
+                                        packagesSold[0], newUsers[0],
+                                        topCategories, new HashMap<>()
                                 );
 
-                                db.collection("statistics")
-                                        .document(today)
+                                db.collection("statistics").document(today)
                                         .set(statistics)
                                         .addOnSuccessListener(unused -> {
-                                            Toast.makeText(this, "✅ Đã tạo thống kê hôm nay", Toast.LENGTH_SHORT).show();
-                                            loadStatistics();
+                                            Toast.makeText(this, "✅ Đã cập nhật/thêm thống kê hôm nay", Toast.LENGTH_SHORT).show();
+                                            refreshStatistics();
                                         })
                                         .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi khi lưu thống kê", Toast.LENGTH_SHORT).show());
                             })
@@ -206,7 +221,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
     private void showEditDialog(Statistics statistics) {
         View dialogView = getLayoutInflater().inflate(R.layout.add_statistic_layout, null);
-
         EditText edtDate = dialogView.findViewById(R.id.edtDate);
         EditText edtRevenue = dialogView.findViewById(R.id.edtRevenue);
         EditText edtOrders = dialogView.findViewById(R.id.edtOrders);
@@ -232,9 +246,7 @@ public class StatisticsActivity extends AppCompatActivity {
         }
         edtTopCategories.setText(catStr.toString());
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create();
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
         btnSave.setOnClickListener(v -> {
             try {
@@ -253,21 +265,14 @@ public class StatisticsActivity extends AppCompatActivity {
                         if (parts.length == 2) {
                             try {
                                 topCategories.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
-                            } catch (NumberFormatException nfe) {
-                                // Bỏ qua cặp không hợp lệ
+                            } catch (NumberFormatException ignored) {
                             }
                         }
                     }
                 }
 
                 Statistics updated = new Statistics(
-                        date,
-                        revenue,
-                        orders,
-                        packages,
-                        users,
-                        topCategories,
-                        new HashMap<>()
+                        date, revenue, orders, packages, users, topCategories, new HashMap<>()
                 );
 
                 db.collection("statistics").document(date)
@@ -275,10 +280,9 @@ public class StatisticsActivity extends AppCompatActivity {
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(this, "✅ Đã cập nhật", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-                            loadStatistics();
+                            refreshStatistics();
                         })
                         .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi cập nhật", Toast.LENGTH_SHORT).show());
-
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "❌ Vui lòng nhập đúng định dạng số", Toast.LENGTH_SHORT).show();
             }

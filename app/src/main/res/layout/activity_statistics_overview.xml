@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
             android:gravity="center_vertical">
 
             <TextView
@@ -44,61 +44,41 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
 
-        <!-- Thanh chọn loại biểu đồ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_vertical">
+        <!-- Biểu đồ kết hợp: Doanh thu và số đơn hàng -->
+        <TextView
+            android:text="💰 Doanh thu và Số đơn theo thời gian"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:text="Chọn thống kê: "
-                android:textSize="16sp"
-                android:textColor="#2B572E"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp" />
-
-            <Spinner
-                android:id="@+id/spinnerChartType"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <!-- Container biểu đồ: chỉ hiện 1 biểu đồ theo chọn -->
-        <FrameLayout
+        <com.github.mikephil.charting.charts.CombinedChart
+            android:id="@+id/combinedChartRevenue"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="24dp"
+            tools:ignore="MissingClass" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChartPackages"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                tools:ignore="MissingClass" />
+        <!-- Biểu đồ 2: Gói tin được mua nhiều -->
+        <TextView
+            android:text="📦 Top gói tin được mua"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChartPostTypes"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                tools:ignore="MissingClass" />
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChartRevenue"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                tools:ignore="MissingClass" />
-
-        </FrameLayout>
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartPackages"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginBottom="24dp"
+            tools:ignore="MissingClass" />
 
     </LinearLayout>
 </ScrollView>

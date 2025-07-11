@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.cuahang.R;
 import com.example.cuahang.adapter.PackageAdapter;
 import com.example.cuahang.model.Category;
+import com.example.cuahang.model.Order;
+import com.example.cuahang.model.OrderPackage;
 import com.example.cuahang.model.Package;
 import com.example.cuahang.model.SubCategory;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -515,10 +517,10 @@ public class PackageActivity extends AppCompatActivity {
     private void loadAllPackages() {
         db.collection("Package")
                 .get()
-                .addOnSuccessListener(snapshots -> {
+                .addOnSuccessListener(packageSnapshots -> {
                     packageList.clear();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        Package pkg = doc.toObject(Package.class);
+                    for (QueryDocumentSnapshot packageDoc : packageSnapshots) {
+                        Package pkg = packageDoc.toObject(Package.class);
                         packageList.add(pkg);
                     }
                     adapter.notifyDataSetChanged();

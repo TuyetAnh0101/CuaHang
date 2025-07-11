@@ -1,5 +1,6 @@
 package com.example.cuahang.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Statistics {
@@ -9,7 +10,7 @@ public class Statistics {
     private int packagesSold;
     private int newUsers;
     private Map<String, Integer> topCategories;
-    private Map<String, Integer> topPostTypes; // thêm trường này để thống kê Loại tin
+    private Map<String, Integer> topPostTypes;
 
     public Statistics() {
         // Firebase cần constructor rỗng
@@ -26,8 +27,18 @@ public class Statistics {
         this.topPostTypes = topPostTypes;
     }
 
-    // getters và setters cho tất cả trường
+    // ✅ Constructor thêm để fix lỗi "Cannot resolve constructor 'Statistics(String)'"
+    public Statistics(String date) {
+        this.date = date;
+        this.totalRevenue = 0;
+        this.totalOrders = 0;
+        this.packagesSold = 0;
+        this.newUsers = 0;
+        this.topCategories = new HashMap<>();
+        this.topPostTypes = new HashMap<>();
+    }
 
+    // Getters và Setters
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
 

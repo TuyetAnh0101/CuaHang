@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.cuahang.R;
 import com.example.cuahang.adapter.OrderAdapter;
 import com.example.cuahang.adapter.PackageSelectAdapter;
+import com.example.cuahang.model.Invoices;
 import com.example.cuahang.model.Order;
 import com.example.cuahang.model.OrderPackage;
 import com.example.cuahang.model.Package;
@@ -28,7 +29,7 @@ public class OrderActivity extends AppCompatActivity {
 
     private RecyclerView recyclerOrders;
     private FloatingActionButton fabAddOrder;
-    private List<Order> orderList = new ArrayList<>();
+    private final List<Order> orderList = new ArrayList<>();
     private OrderAdapter orderAdapter;
 
     private static final String TAG = "OrderActivity";
@@ -50,11 +51,18 @@ public class OrderActivity extends AppCompatActivity {
 
             @Override
             public void onDelete(Order order) {
+                if (order.getId() == null || order.getId().isEmpty()) {
+                    Toast.makeText(OrderActivity.this, "Không tìm thấy ID đơn hàng", Toast.LENGTH_SHORT).show();
+                    Log.w(TAG, "ID đơn hàng null, không thể xoá");
+                    return;
+                }
+
                 new AlertDialog.Builder(OrderActivity.this)
                         .setTitle("Xác nhận xoá")
                         .setMessage("Bạn có chắc muốn xoá đơn này?")
                         .setPositiveButton("Xoá", (dialog, which) -> {
-                            FirebaseFirestore.getInstance().collection("Orders")
+                            FirebaseFirestore.getInstance()
+                                    .collection("Orders")
                                     .document(order.getId())
                                     .delete()
                                     .addOnSuccessListener(unused -> {
@@ -63,6 +71,7 @@ public class OrderActivity extends AppCompatActivity {
                                     })
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(OrderActivity.this, "Xoá đơn thất bại", Toast.LENGTH_SHORT).show();
+                                        Log.e(TAG, "Lỗi xoá đơn: ", e);
                                     });
                         })
                         .setNegativeButton("Huỷ", null)
@@ -94,48 +103,21 @@ public class OrderActivity extends AppCompatActivity {
                     Log.e(TAG, "Lỗi tải đơn hàng từ Firestore", e);
                 });
     }
-
     private void openAddOrderDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);
 
-        EditText edtKhachHang = view.findViewById(R.id.edtKhachHang);
-        Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
-        Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
-        EditText edtNote = view.findViewById(R.id.edtNote);
-        RecyclerView recyclerPackages = view.findViewById(R.id.recyclerPackageSelect);
+        final EditText edtKhachHang = view.findViewById(R.id.edtKhachHang);
+        final Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
+        final Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
+        final EditText edtNote = view.findViewById(R.id.edtNote);
+        final RecyclerView recyclerPackages = view.findViewById(R.id.recyclerPackageSelect);
 
-        ArrayAdapter<String> xuLyAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Chờ xử lý", "Đang xử lý", "Hoàn tất"));
-        xuLyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerXuLy.setAdapter(xuLyAdapter);
+        setupSpinners(spinnerXuLy, spinnerThanhToan);
+        final PackageSelectAdapter packageSelectAdapter = setupPackageList(recyclerPackages);
 
-        ArrayAdapter<String> thanhToanAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Chưa thanh toán", "Đã thanh toán"));
-        thanhToanAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerThanhToan.setAdapter(thanhToanAdapter);
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        recyclerPackages.setLayoutManager(new LinearLayoutManager(this));
-        PackageSelectAdapter packageSelectAdapter = new PackageSelectAdapter(this, new ArrayList<>());
-        recyclerPackages.setAdapter(packageSelectAdapter);
-
-        FirebaseFirestore.getInstance().collection("Package")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<Package> packages = new ArrayList<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                        Package p = doc.toObject(Package.class);
-                        if (p != null) packages.add(p);
-                    }
-                    packageSelectAdapter.setPackages(packages);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi tải gói từ Firestore", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Load packages error", e);
-                });
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Tạo đơn hàng mới")
                 .setView(view)
                 .setCancelable(false)
@@ -144,7 +126,8 @@ public class OrderActivity extends AppCompatActivity {
                 .create();
 
         dialog.setOnShowListener(dlg -> {
-            Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            final Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
             btnSave.setOnClickListener(v -> {
                 String tenKhach = edtKhachHang.getText().toString().trim();
                 if (tenKhach.isEmpty()) {
@@ -158,55 +141,44 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
 
-                List<OrderPackage> orderPackages = new ArrayList<>();
-                long tongTien = 0;
-                long tongSoLuong = 0;
+                db.collection("Orders").get().addOnSuccessListener(querySnapshot -> {
+                    int count = querySnapshot.size() + 1;
+                    String newId = String.format("OD%02d", count);
+                    String ngay = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-                for (Package p : selectedPackages) {
-                    OrderPackage op = new OrderPackage(
-                            p.getId(),
-                            p.getTenGoi(),
-                            p.getGiaGiam(),
-                            p.getSoLuong()
-                    );
-                    orderPackages.add(op);
-                    tongTien += op.getThanhTien();
-                    tongSoLuong += op.getSoLuong();
-                }
+                    List<OrderPackage> orderPackages = new ArrayList<>();
+                    long tongTien = 0;
 
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                String id = db.collection("Orders").document().getId();
-                String ngay = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                    for (Package p : selectedPackages) {
+                        if (p.getSoLuong() <= 0) continue;
+                        OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), p.getSoLuong());
+                        orderPackages.add(op);
+                        tongTien += op.getThanhTien();
+                        updatePackageSoLuong(p.getId(), -p.getSoLuong());
+                    }
 
-                if (id == null) {
-                    Toast.makeText(this, "Lỗi tạo ID đơn hàng", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                    long tongSoLuong = orderPackages.size();
 
-                Order order = new Order(
-                        id,
-                        tenKhach,
-                        ngay,
-                        tongTien,
-                        tongSoLuong,
-                        spinnerXuLy.getSelectedItem().toString(),
-                        spinnerThanhToan.getSelectedItem().toString(),
-                        edtNote.getText().toString().trim(),
-                        orderPackages
-                );
+                    Order order = new Order(newId, tenKhach, ngay, tongTien, tongSoLuong,
+                            spinnerXuLy.getSelectedItem().toString(),
+                            spinnerThanhToan.getSelectedItem().toString(),
+                            edtNote.getText().toString().trim(),
+                            orderPackages);
 
-                db.collection("Orders")
-                        .document(id)
-                        .set(order)
-                        .addOnSuccessListener(unused -> {
-                            Toast.makeText(this, "Đã thêm đơn hàng", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            loadOrders();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Lỗi khi thêm đơn", Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "Lỗi lưu đơn", e);
-                        });
+                    db.collection("Orders").document(newId).set(order)
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(this, "Đã thêm đơn hàng", Toast.LENGTH_SHORT).show();
+                                if (order.getStatusThanhToan().equals("Đã thanh toán")) {
+                                    createOrUpdateInvoice(order);
+                                }
+                                dialog.dismiss();
+                                loadOrders();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Lỗi khi thêm đơn", Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, "Lỗi lưu đơn", e);
+                            });
+                });
             });
         });
 
@@ -222,21 +194,8 @@ public class OrderActivity extends AppCompatActivity {
         EditText edtNote = view.findViewById(R.id.edtNote);
         RecyclerView recyclerPackages = view.findViewById(R.id.recyclerPackageSelect);
 
-        ArrayAdapter<String> xuLyAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Chờ xử lý", "Đang xử lý", "Hoàn tất"));
-        xuLyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerXuLy.setAdapter(xuLyAdapter);
-
-        ArrayAdapter<String> thanhToanAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Chưa thanh toán", "Đã thanh toán"));
-        thanhToanAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerThanhToan.setAdapter(thanhToanAdapter);
-
-        recyclerPackages.setLayoutManager(new LinearLayoutManager(this));
-        PackageSelectAdapter packageSelectAdapter = new PackageSelectAdapter(this, new ArrayList<>());
-        recyclerPackages.setAdapter(packageSelectAdapter);
+        setupSpinners(spinnerXuLy, spinnerThanhToan);
+        PackageSelectAdapter packageSelectAdapter = setupPackageList(recyclerPackages);
 
         FirebaseFirestore.getInstance().collection("Package")
                 .get()
@@ -244,33 +203,21 @@ public class OrderActivity extends AppCompatActivity {
                     List<Package> packages = new ArrayList<>();
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                         Package p = doc.toObject(Package.class);
-                        if (p != null) packages.add(p);
-                    }
-
-                    // Gán packages cho adapter
-                    packageSelectAdapter.setPackages(packages);
-
-                    // Gán số lượng cho từng package dựa trên order.getPackages()
-                    List<OrderPackage> orderPackages = order.getPackages();
-                    for (Package p : packages) {
-                        for (OrderPackage op : orderPackages) {
-                            if (p.getId().equals(op.getPackageId())) {
-                                p.setSoLuong(op.getSoLuong());
-                                break;
+                        if (p != null) {
+                            for (OrderPackage op : order.getPackages()) {
+                                if (p.getId().equals(op.getPackageId())) {
+                                    p.setSoLuong(op.getSoLuong());
+                                }
                             }
+                            packages.add(p);
                         }
                     }
-
-                    packageSelectAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi tải gói từ Firestore", Toast.LENGTH_SHORT).show();
+                    packageSelectAdapter.setPackages(packages);
                 });
 
-        // Set dữ liệu cũ lên các trường
         edtKhachHang.setText(order.getIdKhach());
-        spinnerXuLy.setSelection(xuLyAdapter.getPosition(order.getStatusXuLy()));
-        spinnerThanhToan.setSelection(thanhToanAdapter.getPosition(order.getStatusThanhToan()));
+        spinnerXuLy.setSelection(((ArrayAdapter<String>) spinnerXuLy.getAdapter()).getPosition(order.getStatusXuLy()));
+        spinnerThanhToan.setSelection(((ArrayAdapter<String>) spinnerThanhToan.getAdapter()).getPosition(order.getStatusThanhToan()));
         edtNote.setText(order.getNote());
 
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -298,19 +245,16 @@ public class OrderActivity extends AppCompatActivity {
 
                 List<OrderPackage> orderPackages = new ArrayList<>();
                 long tongTien = 0;
-                long tongSoLuong = 0;
 
                 for (Package p : selectedPackages) {
-                    OrderPackage op = new OrderPackage(
-                            p.getId(),
-                            p.getTenGoi(),
-                            p.getGiaGiam(),
-                            p.getSoLuong()
-                    );
+                    if (p.getSoLuong() <= 0) continue;
+                    OrderPackage op = new OrderPackage(p.getId(), p.getTenGoi(), p.getPackageType(), p.getGiaGiam(), p.getSoLuong());
                     orderPackages.add(op);
                     tongTien += op.getThanhTien();
-                    tongSoLuong += op.getSoLuong();
+                    updatePackageSoLuong(p.getId(), -p.getSoLuong());
                 }
+
+                long tongSoLuong = orderPackages.size();
 
                 Order updatedOrder = new Order(
                         order.getId(),
@@ -329,15 +273,91 @@ public class OrderActivity extends AppCompatActivity {
                         .set(updatedOrder)
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(this, "Đã cập nhật đơn", Toast.LENGTH_SHORT).show();
+                            if (updatedOrder.getStatusThanhToan().equals("Đã thanh toán")) {
+                                createOrUpdateInvoice(updatedOrder);
+                            }
                             dialog.dismiss();
                             loadOrders();
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(this, "Lỗi cập nhật đơn", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Lỗi cập nhật đơn", e);
                         });
             });
         });
 
         dialog.show();
     }
+
+
+    private void updatePackageSoLuong(String packageId, int changeAmount) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Package").document(packageId).get().addOnSuccessListener(doc -> {
+            Package p = doc.toObject(Package.class);
+            if (p != null) {
+                int newSoLuong = p.getSoLuong() + changeAmount;
+                if (newSoLuong < 0) newSoLuong = 0;
+                db.collection("Package").document(packageId).update("soLuong", newSoLuong);
+            }
+        });
+    }
+
+    private void setupSpinners(Spinner spinnerXuLy, Spinner spinnerThanhToan) {
+        ArrayAdapter<String> xuLyAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                Arrays.asList("Chờ xử lý", "Đang xử lý", "Hoàn tất"));
+        xuLyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerXuLy.setAdapter(xuLyAdapter);
+
+        ArrayAdapter<String> thanhToanAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                Arrays.asList("Chưa thanh toán", "Đã thanh toán"));
+        thanhToanAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerThanhToan.setAdapter(thanhToanAdapter);
+    }
+
+    private PackageSelectAdapter setupPackageList(RecyclerView recyclerPackages) {
+        recyclerPackages.setLayoutManager(new LinearLayoutManager(this));
+        PackageSelectAdapter adapter = new PackageSelectAdapter(this, new ArrayList<>());
+        recyclerPackages.setAdapter(adapter);
+        FirebaseFirestore.getInstance().collection("Package")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Package> packages = new ArrayList<>();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        Package p = doc.toObject(Package.class);
+                        if (p != null) packages.add(p);
+                    }
+                    adapter.setPackages(packages);
+                });
+        return adapter;
+    }
+
+    private void createOrUpdateInvoice(Order order) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String invoiceId = order.getId(); // Dùng luôn ID đơn hàng làm ID hóa đơn
+
+        double vatPercent = 10.0; // Hoặc load từ SystemConfig nếu bạn muốn, ở đây tạm để cố định
+
+        double totalPrice = order.getTongTien();
+        double totalTax = totalPrice * vatPercent / 100;
+        double totalDiscount = 0; // Nếu chưa có discount thì để 0
+        double totalAmount = totalPrice + totalTax - totalDiscount;
+
+        Invoices invoice = new Invoices(
+                invoiceId,
+                new Date(),
+                totalAmount,
+                "Tự động tạo",
+                (int) order.getTongSoLuong(),
+                totalPrice,
+                vatPercent,
+                totalDiscount
+        );
+
+        db.collection("invoices").document(invoiceId).set(invoice)
+                .addOnSuccessListener(unused -> Log.d(TAG, "Đã đồng bộ hóa đơn cho đơn hàng: " + invoiceId))
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi đồng bộ hóa đơn", e));
+    }
+
 }

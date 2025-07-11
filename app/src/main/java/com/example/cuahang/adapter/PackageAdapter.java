@@ -92,7 +92,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
         holder.txtChuKy.setText("Chu kỳ: " + pkg.getBillingCycle());
         holder.txtNgay.setText("Từ: " + pkg.getStartDate() + " đến " + pkg.getEndDate());
         holder.txtGioiHan.setText("Giới hạn: " + pkg.getMaxPosts() + " bài, " + pkg.getMaxCharacters() + " ký tự/bài, " + pkg.getMaxImages() + " ảnh");
-        holder.txtFree.setText("Gói miễn phí: " + (pkg.isFree3Posts() ? "Có" : "Không"));
+        holder.txtFree.setText("Gói miễn phí 3 post đầu: " + (pkg.isFree3Posts() ? "Có" : "Không"));
 
         String packageType = pkg.getPackageType();
         if (packageType == null || packageType.isEmpty()) {

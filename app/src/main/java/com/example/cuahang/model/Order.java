@@ -55,4 +55,5 @@ public class Order {
 
     public List<OrderPackage> getPackages() { return packages; }
     public void setPackages(List<OrderPackage> packages) { this.packages = packages; }
+
 }

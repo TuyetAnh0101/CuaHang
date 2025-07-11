@@ -2,6 +2,7 @@ package com.example.cuahang.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     public interface OnOrderActionListener {
         void onEdit(Order order);
-
         void onDelete(Order order);
     }
 
@@ -58,6 +58,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         });
 
         holder.btnDelete.setOnClickListener(v -> {
+            if (order.getId() == null || order.getId().isEmpty()) {
+                Toast.makeText(context, "Không thể xóa: ID đơn hàng không tồn tại.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Log.d("OrderAdapter", "Xóa đơn hàng với ID: " + order.getId());
+
             new AlertDialog.Builder(context)
                     .setTitle("Xóa đơn hàng")
                     .setMessage("Bạn có chắc muốn xóa đơn hàng này không?")
@@ -69,6 +76,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                                     orderList.remove(position);
                                     notifyItemRemoved(position);
                                     Toast.makeText(context, "Đã xóa đơn hàng", Toast.LENGTH_SHORT).show();
+                                    if (listener != null) listener.onDelete(order);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(context, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 });
                     })
                     .setNegativeButton("Hủy", null)

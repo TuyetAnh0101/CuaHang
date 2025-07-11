@@ -22,9 +22,7 @@ public class Package {
 
     /**
      * Chu kỳ tính theo số nguyên:
-     * 1 = Ngày
-     * 2 = Tháng
-     * 3 = Năm
+     * 1 = Ngày, 2 = Tháng, 3 = Năm
      */
     private String billingCycle;
 
@@ -34,13 +32,13 @@ public class Package {
 
     private String startDate;     // Dạng yyyy-MM-dd
     private String endDate;
-
+    private boolean isSelected;   // Được chọn hay chưa
     private String packageType;   // Ví dụ: "VIP", "Thường", "Miễn phí"
 
-    // Constructor không tham số (bắt buộc nếu dùng Firestore hay các framework tương tự)
-    public Package() {
-    }
+    // Constructor không tham số
+    public Package() {}
 
+    // Constructor đầy đủ
     public Package(String id, String tenGoi, String moTa, String categoryId, String subcategoryId,
                    String donViTinh, double giaGoc, double giaGiam, double vat,
                    List<String> hinhAnh, String status, String note, int soLuong,
@@ -71,177 +69,77 @@ public class Package {
     }
 
     // Getters và Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getId() {
-        return id;
+    public String getTenGoi() { return tenGoi; }
+    public void setTenGoi(String tenGoi) { this.tenGoi = tenGoi; }
+
+    public String getMoTa() { return moTa; }
+    public void setMoTa(String moTa) { this.moTa = moTa; }
+
+    public String getCategoryId() { return categoryId; }
+    public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
+
+    public String getSubcategoryId() { return subcategoryId; }
+    public void setSubcategoryId(String subcategoryId) { this.subcategoryId = subcategoryId; }
+
+    public String getDonViTinh() { return donViTinh; }
+    public void setDonViTinh(String donViTinh) { this.donViTinh = donViTinh; }
+
+    public double getGiaGoc() { return giaGoc; }
+    public void setGiaGoc(double giaGoc) { this.giaGoc = giaGoc; }
+
+    public double getGiaGiam() { return giaGiam; }
+    public void setGiaGiam(double giaGiam) { this.giaGiam = giaGiam; }
+
+    public double getVat() { return vat; }
+    public void setVat(double vat) { this.vat = vat; }
+
+    public List<String> getHinhAnh() { return hinhAnh; }
+    public void setHinhAnh(List<String> hinhAnh) { this.hinhAnh = hinhAnh; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
+
+    public int getSoLuong() { return soLuong; }
+    public void setSoLuong(int soLuong) { this.soLuong = soLuong; }
+
+    public boolean isFree3Posts() { return isFree3Posts; }
+    public void setFree3Posts(boolean free3Posts) { isFree3Posts = free3Posts; }
+
+    public String getBillingCycle() { return billingCycle; }
+    public void setBillingCycle(String billingCycle) { this.billingCycle = billingCycle; }
+
+    public int getMaxPosts() { return maxPosts; }
+    public void setMaxPosts(int maxPosts) { this.maxPosts = maxPosts; }
+
+    public int getMaxCharacters() { return maxCharacters; }
+    public void setMaxCharacters(int maxCharacters) { this.maxCharacters = maxCharacters; }
+
+    public int getMaxImages() { return maxImages; }
+    public void setMaxImages(int maxImages) { this.maxImages = maxImages; }
+
+    public String getStartDate() { return startDate; }
+    public void setStartDate(String startDate) { this.startDate = startDate; }
+
+    public String getEndDate() { return endDate; }
+    public void setEndDate(String endDate) { this.endDate = endDate; }
+
+    public String getPackageType() { return packageType; }
+    public void setPackageType(String packageType) { this.packageType = packageType; }
+
+    public boolean isSelected() { return isSelected; }
+    public void setSelected(boolean selected) { isSelected = selected; }
+
+    public double getThanhTien() {
+        return giaGiam * soLuong;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTenGoi() {
-        return tenGoi;
-    }
-
-    public void setTenGoi(String tenGoi) {
-        this.tenGoi = tenGoi;
-    }
-
-    public String getMoTa() {
-        return moTa;
-    }
-
-    public void setMoTa(String moTa) {
-        this.moTa = moTa;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getSubcategoryId() {
-        return subcategoryId;
-    }
-
-    public void setSubcategoryId(String subcategoryId) {
-        this.subcategoryId = subcategoryId;
-    }
-
-    public String getDonViTinh() {
-        return donViTinh;
-    }
-
-    public void setDonViTinh(String donViTinh) {
-        this.donViTinh = donViTinh;
-    }
-
-    public double getGiaGoc() {
-        return giaGoc;
-    }
-
-    public void setGiaGoc(double giaGoc) {
-        this.giaGoc = giaGoc;
-    }
-
-    public double getGiaGiam() {
-        return giaGiam;
-    }
-
-    public void setGiaGiam(double giaGiam) {
-        this.giaGiam = giaGiam;
-    }
-
-    public double getVat() {
-        return vat;
-    }
-
-    public void setVat(double vat) {
-        this.vat = vat;
-    }
-
-    public List<String> getHinhAnh() {
-        return hinhAnh;
-    }
-
-    public void setHinhAnh(List<String> hinhAnh) {
-        this.hinhAnh = hinhAnh;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public int getSoLuong() {
-        return soLuong;
-    }
-
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
-    }
-
-    public boolean isFree3Posts() {
-        return isFree3Posts;
-    }
-
-    public void setFree3Posts(boolean free3Posts) {
-        isFree3Posts = free3Posts;
-    }
-
-    public String getBillingCycle() {
-        return billingCycle;
-    }
-
-    public void setBillingCycle(String billingCycle) {
-        this.billingCycle = billingCycle;
-    }
-
-    public int getMaxPosts() {
-        return maxPosts;
-    }
-
-    public void setMaxPosts(int maxPosts) {
-        this.maxPosts = maxPosts;
-    }
-
-    public int getMaxCharacters() {
-        return maxCharacters;
-    }
-
-    public void setMaxCharacters(int maxCharacters) {
-        this.maxCharacters = maxCharacters;
-    }
-
-    public int getMaxImages() {
-        return maxImages;
-    }
-
-    public void setMaxImages(int maxImages) {
-        this.maxImages = maxImages;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getPackageType() {
-        return packageType;
-    }
-
-    public void setPackageType(String packageType) {
-        this.packageType = packageType;
-    }
-
-    // Enum hỗ trợ billingCycle, có thể để riêng file nếu muốn
-
+    // Enum hỗ trợ chu kỳ tính
     public enum BillingCycle {
         DAY(1),
         MONTH(2),

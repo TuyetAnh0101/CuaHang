@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:gravity="center_vertical">
 
             <TextView
@@ -45,6 +45,54 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+
+        <!-- Chọn khoảng ngày -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <EditText
+                android:id="@+id/edtStartDate"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Từ ngày"
+                android:focusable="false"
+                android:inputType="none"
+                android:background="@drawable/bg_edittext"
+                android:padding="8dp"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/edtEndDate"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Đến ngày"
+                android:focusable="false"
+                android:inputType="none"
+                android:background="@drawable/bg_edittext"
+                android:padding="8dp"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Button Thống kê -->
+        <Button
+            android:id="@+id/btnThongKe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thống kê"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2B572E"
+            android:layout_marginBottom="20dp" />
 
         <!-- Biểu đồ kết hợp: Doanh thu và số đơn hàng -->
         <TextView

@@ -1,12 +1,17 @@
 package com.example.cuahang.manager;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +21,7 @@ import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -32,6 +38,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class StatisticsOverviewActivity extends AppCompatActivity {
@@ -46,19 +53,46 @@ public class StatisticsOverviewActivity extends AppCompatActivity {
     private boolean isFirstLoad = true;
     private List<Statistics> lastFilteredStatistics = new ArrayList<>();
 
+    private EditText edtStartDate, edtEndDate;
+    private Button btnThongKe;
+    private Calendar calendarStart, calendarEnd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics_overview);
 
+
         pieChartPackages = findViewById(R.id.pieChartPackages);
         combinedChartRevenue = findViewById(R.id.combinedChartRevenue);
         spinnerTimeFilter = findViewById(R.id.spinnerTimeFilter);
-
         db = FirebaseFirestore.getInstance();
-
+        combinedChartRevenue.setOnTouchListener((v, event) -> {
+            Log.d("ChartTouchTest", "CombinedChart touched: " + event.getAction());
+            return false;
+        });
+        pieChartPackages.setOnTouchListener((v, event) -> {
+            Log.d("ChartTouchTest", "PieChart touched: " + event.getAction());
+            return false;
+        });
         setupTimeFilter();
         setupChartClicks();
+        combinedChartRevenue.setTouchEnabled(true);
+        combinedChartRevenue.setHighlightPerTapEnabled(true);
+        combinedChartRevenue.setNestedScrollingEnabled(false);
+
+        pieChartPackages.setTouchEnabled(true);
+        pieChartPackages.setHighlightPerTapEnabled(true);
+        pieChartPackages.setNestedScrollingEnabled(false);
+        edtStartDate = findViewById(R.id.edtStartDate);
+        edtEndDate = findViewById(R.id.edtEndDate);
+        btnThongKe = findViewById(R.id.btnThongKe);
+        calendarStart = Calendar.getInstance();
+        calendarEnd = Calendar.getInstance();
+
+        setupDatePickers();
+        btnThongKe.setOnClickListener(v -> filterByDateRange());
+
     }
 
     @Override
@@ -186,7 +220,6 @@ public class StatisticsOverviewActivity extends AppCompatActivity {
             base.put(entry.getKey(), base.getOrDefault(entry.getKey(), 0) + entry.getValue());
         }
     }
-
     private void showCombinedChartRevenue(List<Statistics> list) {
         List<BarEntry> barEntries = new ArrayList<>();
         List<Entry> lineEntries = new ArrayList<>();
@@ -194,34 +227,36 @@ public class StatisticsOverviewActivity extends AppCompatActivity {
 
         for (int i = 0; i < list.size(); i++) {
             Statistics s = list.get(i);
-            barEntries.add(new BarEntry(i, s.getTotalRevenue()));
-            lineEntries.add(new Entry(i, s.getPackagesSold()));
+            barEntries.add(new BarEntry(i, s.getTotalOrders()));
+            lineEntries.add(new Entry(i, s.getTotalRevenue()));
             revenueLabels.add(s.getDate());
         }
 
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Doanh thu");
-        barDataSet.setColor(Color.parseColor("#2B572E"));
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Số đơn hàng");
+        barDataSet.setColor(Color.rgb(60, 120, 240));
         barDataSet.setValueTextSize(12f);
 
-        LineDataSet lineDataSet = new LineDataSet(lineEntries, "Gói bán ra");
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.3f);
+
+        LineDataSet lineDataSet = new LineDataSet(lineEntries, "Doanh thu");
         lineDataSet.setColor(Color.RED);
         lineDataSet.setCircleColor(Color.RED);
-        lineDataSet.setValueTextColor(Color.BLACK);
-        lineDataSet.setLineWidth(3f);
-        lineDataSet.setValueTextSize(12f);
+        lineDataSet.setValueTextSize(10f);
+        lineDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+        LineData lineData = new LineData(lineDataSet);
 
         CombinedData combinedData = new CombinedData();
-        combinedData.setData(new BarData(barDataSet));
-        combinedData.setData(new LineData(lineDataSet));
+        combinedData.setData(barData);
+        combinedData.setData(lineData);
 
         combinedChartRevenue.setData(combinedData);
+
         XAxis xAxis = combinedChartRevenue.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
-        xAxis.setGranularityEnabled(true);
-        xAxis.setLabelRotationAngle(-45);
-        xAxis.setLabelCount(revenueLabels.size(), false);
-        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setLabelCount(revenueLabels.size());
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -230,9 +265,10 @@ public class StatisticsOverviewActivity extends AppCompatActivity {
             }
         });
 
-        Description desc = new Description();
-        desc.setText("");
-        combinedChartRevenue.setDescription(desc);
+        combinedChartRevenue.getAxisLeft().setAxisMinimum(0);
+        combinedChartRevenue.getAxisRight().setAxisMinimum(0);
+
+        combinedChartRevenue.getDescription().setText("Thống kê tổng hợp");
         combinedChartRevenue.invalidate();
     }
 
@@ -293,5 +329,57 @@ public class StatisticsOverviewActivity extends AppCompatActivity {
         intent.putExtra("chartType", type);
         intent.putExtra("value", value);
         startActivity(intent);
+        intent.putExtra("timeFilter", spinnerTimeFilter.getSelectedItem().toString());
+        startActivity(intent);
     }
+    private void setupDatePickers() {
+        edtStartDate.setOnClickListener(v -> showDatePicker(true));
+        edtEndDate.setOnClickListener(v -> showDatePicker(false));
+    }
+
+    private void showDatePicker(boolean isStartDate) {
+        Calendar target = isStartDate ? calendarStart : calendarEnd;
+        new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            target.set(year, month, dayOfMonth);
+            String dateStr = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+            if (isStartDate) {
+                edtStartDate.setText(dateStr);
+            } else {
+                edtEndDate.setText(dateStr);
+            }
+        }, target.get(Calendar.YEAR), target.get(Calendar.MONTH), target.get(Calendar.DAY_OF_MONTH)).show();
+    }
+    private void filterByDateRange() {
+        String startStr = edtStartDate.getText().toString().trim();
+        String endStr = edtEndDate.getText().toString().trim();
+
+        if (startStr.isEmpty() || endStr.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn đầy đủ Từ ngày và Đến ngày", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<Statistics> filtered = new ArrayList<>();
+        for (Statistics s : allStatistics) {
+            if (isDateInRange(s.getDate(), startStr, endStr)) {
+                filtered.add(s);
+            }
+        }
+
+        lastFilteredStatistics = filtered;
+        showCombinedChartRevenue(filtered);
+        showPieChart(filtered);
+    }
+
+    private boolean isDateInRange(String dateStr, String startStr, String endStr) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = sdf.parse(dateStr);
+            Date start = sdf.parse(startStr);
+            Date end = sdf.parse(endStr);
+            return date != null && start != null && end != null && !date.before(start) && !date.after(end);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

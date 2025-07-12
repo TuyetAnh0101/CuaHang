@@ -18,8 +18,6 @@ import com.example.cuahang.model.Invoices;
 import com.example.cuahang.model.Order;
 import com.example.cuahang.model.OrderPackage;
 import com.example.cuahang.model.Package;
-import com.example.cuahang.model.Role;
-import com.example.cuahang.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -105,15 +103,17 @@ public class OrderActivity extends AppCompatActivity {
                     Log.e(TAG, "Lỗi tải đơn hàng từ Firestore", e);
                 });
     }
+
     private void openAddOrderDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);
 
         Spinner spinnerKhachHang = view.findViewById(R.id.spinnerKhachHang);
         List<String> userNameList = new ArrayList<>();
+        HashMap<String, String> userIdMap = new HashMap<>();
         ArrayAdapter<String> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, userNameList);
         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerKhachHang.setAdapter(userAdapter);
-        loadUserNames(userNameList, userAdapter);
+        loadUserNames(userNameList, userAdapter, userIdMap);
 
         Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
         Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
@@ -133,11 +133,11 @@ public class OrderActivity extends AppCompatActivity {
 
         dialog.setOnShowListener(dlg -> {
             Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-
             btnSave.setOnClickListener(v -> {
                 String tenKhach = (spinnerKhachHang.getSelectedItem() != null) ? spinnerKhachHang.getSelectedItem().toString() : "";
+                String userId = userIdMap.get(tenKhach);
 
-                if (tenKhach.isEmpty()) {
+                if (userId == null || userId.isEmpty()) {
                     Toast.makeText(this, "Chọn khách hàng!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -165,7 +165,7 @@ public class OrderActivity extends AppCompatActivity {
 
                     long tongSoLuong = orderPackages.size();
 
-                    Order order = new Order(newId, tenKhach, ngay, tongTien, tongSoLuong,
+                    Order order = new Order(newId, userId, ngay, tongTien, tongSoLuong,
                             spinnerXuLy.getSelectedItem().toString(),
                             spinnerThanhToan.getSelectedItem().toString(),
                             edtNote.getText().toString().trim(),
@@ -190,15 +190,38 @@ public class OrderActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
+    private void loadUserNames(List<String> userNameList, ArrayAdapter<String> adapter, HashMap<String, String> userIdMap) {
+        FirebaseFirestore.getInstance().collection("User")
+                .whereEqualTo("role", "USER")
+                .whereEqualTo("active", true)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    userNameList.clear();
+                    userIdMap.clear();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String name = doc.getString("name");
+                        String userId = doc.getString("userId");
+                        if (name != null && userId != null) {
+                            userNameList.add(name);
+                            userIdMap.put(name, userId);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi load user: ", e));
+    }
     private void openEditOrderDialog(Order order) {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);
 
         Spinner spinnerKhachHang = view.findViewById(R.id.spinnerKhachHang);
         List<String> userNameList = new ArrayList<>();
+        HashMap<String, String> userIdMap = new HashMap<>();
         ArrayAdapter<String> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, userNameList);
         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerKhachHang.setAdapter(userAdapter);
-        loadUserNames(userNameList, userAdapter);
+
+        loadUserNames(userNameList, userAdapter, userIdMap);
 
         Spinner spinnerXuLy = view.findViewById(R.id.spinnerXuLy);
         Spinner spinnerThanhToan = view.findViewById(R.id.spinnerThanhToan);
@@ -207,28 +230,6 @@ public class OrderActivity extends AppCompatActivity {
 
         setupSpinners(spinnerXuLy, spinnerThanhToan);
         PackageSelectAdapter packageSelectAdapter = setupPackageList(recyclerPackages);
-
-        FirebaseFirestore.getInstance().collection("Package")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<Package> packages = new ArrayList<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                        Package p = doc.toObject(Package.class);
-                        if (p != null) {
-                            for (OrderPackage op : order.getPackages()) {
-                                if (p.getId().equals(op.getPackageId())) {
-                                    p.setSoLuong(op.getSoLuong());
-                                }
-                            }
-                            packages.add(p);
-                        }
-                    }
-                    packageSelectAdapter.setPackages(packages);
-                });
-
-        edtNote.setText(order.getNote());
-        spinnerXuLy.setSelection(((ArrayAdapter<String>) spinnerXuLy.getAdapter()).getPosition(order.getStatusXuLy()));
-        spinnerThanhToan.setSelection(((ArrayAdapter<String>) spinnerThanhToan.getAdapter()).getPosition(order.getStatusThanhToan()));
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Sửa đơn hàng")
@@ -242,16 +243,22 @@ public class OrderActivity extends AppCompatActivity {
             Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
             spinnerKhachHang.post(() -> {
-                int position = userAdapter.getPosition(order.getIdKhach());
-                if (position >= 0) {
-                    spinnerKhachHang.setSelection(position);
+                for (Map.Entry<String, String> entry : userIdMap.entrySet()) {
+                    if (entry.getValue().equals(order.getIdKhach())) {
+                        int position = userAdapter.getPosition(entry.getKey());
+                        if (position >= 0) {
+                            spinnerKhachHang.setSelection(position);
+                        }
+                        break;
+                    }
                 }
             });
 
             btnSave.setOnClickListener(v -> {
                 String tenKhach = (spinnerKhachHang.getSelectedItem() != null) ? spinnerKhachHang.getSelectedItem().toString() : "";
+                String userId = userIdMap.get(tenKhach);
 
-                if (tenKhach.isEmpty()) {
+                if (userId == null || userId.isEmpty()) {
                     Toast.makeText(this, "Chọn khách hàng!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -276,7 +283,7 @@ public class OrderActivity extends AppCompatActivity {
 
                 long tongSoLuong = orderPackages.size();
 
-                Order updatedOrder = new Order(order.getId(), tenKhach, order.getNgayDat(), tongTien, tongSoLuong,
+                Order updatedOrder = new Order(order.getId(), userId, order.getNgayDat(), tongTien, tongSoLuong,
                         spinnerXuLy.getSelectedItem().toString(),
                         spinnerThanhToan.getSelectedItem().toString(),
                         edtNote.getText().toString().trim(),

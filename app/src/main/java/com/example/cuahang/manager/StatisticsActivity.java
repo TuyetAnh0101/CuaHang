@@ -1,6 +1,8 @@
 package com.example.cuahang.manager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,9 +34,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private List<Statistics> statisticsList;
     private FirebaseFirestore db;
 
-    private String chartType = null;
-    private String value = null;
-    private String timeFilter = null;
+    private String chartType;
+    private String value;
+    private String timeFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +65,7 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onDelete(Statistics statistics) {
                 db.collection("statistics").document(statistics.getDate())
                         .delete()
-                        .addOnSuccessListener(unused -> {
-                            Toast.makeText(StatisticsActivity.this, "✅ Đã xóa", Toast.LENGTH_SHORT).show();
-                            refreshStatistics();
-                        })
+                        .addOnSuccessListener(unused -> refreshStatistics())
                         .addOnFailureListener(e -> Toast.makeText(StatisticsActivity.this, "❌ Xóa thất bại", Toast.LENGTH_SHORT).show());
             }
         });
@@ -74,9 +73,11 @@ public class StatisticsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        chartType = getIntent().getStringExtra("chartType");
-        value = getIntent().getStringExtra("value");
-        timeFilter = getIntent().getStringExtra("timeFilter");
+        Intent intent = getIntent();
+        chartType = intent.getStringExtra("chartType");
+        value = intent.getStringExtra("value");
+        timeFilter = intent.getStringExtra("timeFilter");
+        Log.d("StatisticsActivity", "chartType: " + chartType + ", value: " + value + ", timeFilter: " + timeFilter);
 
         btnCalculate.setOnClickListener(v -> calculateTodayStatistics());
     }
@@ -88,7 +89,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void refreshStatistics() {
-        if (chartType != null && value != null && timeFilter != null) {
+        if (timeFilter != null && value != null && !timeFilter.isEmpty() && !value.isEmpty()) {
             filterStatistics(timeFilter, value);
         } else {
             loadStatistics();
@@ -108,52 +109,73 @@ public class StatisticsActivity extends AppCompatActivity {
                         }
                     }
                     adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi tải thống kê", Toast.LENGTH_SHORT).show());
+                });
     }
 
     private void filterStatistics(String filterType, String value) {
         db.collection("statistics")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    statisticsList.clear();
+                    List<Statistics> tempList = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot) {
                         Statistics s = doc.toObject(Statistics.class);
                         if (s == null) continue;
 
                         switch (filterType) {
                             case "Ngày":
-                                if (s.getDate().equals(value)) {
-                                    statisticsList.add(s);
-                                }
+                                if (s.getDate().equals(value)) tempList.add(s);
                                 break;
                             case "Tuần":
-                                if (getWeekKey(s.getDate()).equals(value)) {
-                                    statisticsList.add(s);
-                                }
+                                if (getWeekKey(s.getDate()).equals(value)) tempList.add(s);
                                 break;
                             case "Tháng":
-                                if (s.getDate().startsWith(value)) {
-                                    statisticsList.add(s);
-                                }
+                                if (s.getDate().startsWith(value)) tempList.add(s);
                                 break;
                         }
                     }
+
+                    statisticsList.clear();
+                    if (filterType.equals("Ngày")) {
+                        statisticsList.addAll(tempList);
+                    } else {
+                        Statistics combined = combineStatistics(tempList, value);
+                        statisticsList.add(combined);
+                    }
                     adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi khi lọc thống kê", Toast.LENGTH_SHORT).show());
+                });
+    }
+
+    private Statistics combineStatistics(List<Statistics> list, String dateLabel) {
+        int totalRevenue = 0;
+        int totalOrders = 0;
+        int packagesSold = 0;
+        int newUsers = 0;
+        Map<String, Integer> topCategories = new HashMap<>();
+
+        for (Statistics s : list) {
+            totalRevenue += s.getTotalRevenue();
+            totalOrders += s.getTotalOrders();
+            packagesSold += s.getPackagesSold();
+            newUsers += s.getNewUsers();
+
+            if (s.getTopCategories() != null) {
+                for (Map.Entry<String, Integer> entry : s.getTopCategories().entrySet()) {
+                    int current = topCategories.getOrDefault(entry.getKey(), 0);
+                    topCategories.put(entry.getKey(), current + entry.getValue());
+                }
+            }
+        }
+
+        return new Statistics(dateLabel, totalRevenue, totalOrders, packagesSold, newUsers, topCategories, new HashMap<>());
     }
 
     private String getWeekKey(String date) {
         try {
             Calendar cal = Calendar.getInstance();
             String[] parts = date.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]) - 1;
-            int day = Integer.parseInt(parts[2]);
-            cal.set(year, month, day);
+            cal.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
             int week = cal.get(Calendar.WEEK_OF_YEAR);
-            return year + "-W" + week;
+            return parts[0] + "-W" + week;
         } catch (Exception e) {
             return "";
         }
@@ -238,7 +260,7 @@ public class StatisticsActivity extends AppCompatActivity {
         StringBuilder catStr = new StringBuilder();
         if (statistics.getTopCategories() != null) {
             for (Map.Entry<String, Integer> entry : statistics.getTopCategories().entrySet()) {
-                catStr.append(entry.getKey()).append(":").append(entry.getValue()).append(", ");
+                catStr.append(entry.getKey()).append(":" + entry.getValue()).append(", ");
             }
         }
         if (catStr.length() > 0) {

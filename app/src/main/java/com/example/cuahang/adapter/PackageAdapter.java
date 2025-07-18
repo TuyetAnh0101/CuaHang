@@ -11,6 +11,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -88,8 +91,12 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
         Package pkg = list.get(position);
 
         holder.txtTenGoi.setText(pkg.getTenGoi());
-        holder.txtGiaGoc.setText("Giá gốc: " + pkg.getGiaGoc() + "đ");
-        holder.txtGiaGiam.setText("Giá KM: " + pkg.getGiaGiam() + "đ");
+        NumberFormat formatVn = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String giaGocFormatted = formatVn.format(pkg.getGiaGoc()).replace("₫", "₫").replace(".", ",");
+        String giaGiamFormatted = formatVn.format(pkg.getGiaGiam()).replace("₫", "₫").replace(".", ",");
+        holder.txtGiaGoc.setText("Giá gốc: " + giaGocFormatted);
+        holder.txtGiaGiam.setText("Giá KM: " + giaGiamFormatted);
+
         holder.txtSoLuong.setText("SL còn: " + pkg.getSoLuong());
         holder.txtChuKy.setText("Chu kỳ: " + pkg.getBillingCycle());
         holder.txtNgay.setText("Từ: " + pkg.getStartDate() + " đến " + pkg.getEndDate());

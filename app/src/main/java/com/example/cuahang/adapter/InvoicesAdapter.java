@@ -61,7 +61,7 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
         holder.tvTongSoLuong.setText("🔢 Tổng SL: " + invoice.getTotalQuantity());
         holder.tvTongGia.setText("💰 Tổng giá: " + formatMoney(invoice.getTotalPrice()));
         holder.tvTongGiamGia.setText("💸 Giảm giá: " + formatMoney(invoice.getTotalDiscount()));
-        holder.tvTongVAT.setText("💼 VAT: " + formatMoney(invoice.getTotalTax()));
+        holder.tvTongVAT.setText("💼 VAT: " + invoice.getTotalTax() + "%");
         holder.tvTongTien.setText("🧾 Tổng thanh toán: " + formatMoney(invoice.getTotalAmount()));
 
         String statusText = invoice.getStatus() != null ? invoice.getStatus() : "Chưa xác định";

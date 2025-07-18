@@ -48,7 +48,6 @@ public class UserStatisticActivity extends AppCompatActivity {
 
         btnThongKe.setOnClickListener(v -> loadUserStatistics());
     }
-
     private void setupDatePickers() {
         edtStartDate.setOnClickListener(v -> showDatePicker(calendarStart, edtStartDate));
         edtEndDate.setOnClickListener(v -> showDatePicker(calendarEnd, edtEndDate));

@@ -44,7 +44,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         Order order = orderList.get(position);
 
         holder.tvNgayDat.setText("Ngày đặt: " + order.getNgayDat());
-        holder.tvTongTien.setText("Tổng tiền: " + order.getTongTien() + "đ");
+        holder.tvTongTien.setText("Tổng tiền: " + formatMoney(order.getTongTien()));
         holder.tvTrangThaiXuLy.setText("Xử lý: " + order.getStatusXuLy());
         holder.tvTrangThaiThanhToan.setText("Thanh toán: " + order.getStatusThanhToan());
         holder.tvSoLuong.setText("Tổng SL: " + order.getTongSoLuong());
@@ -57,6 +57,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             if (listener != null) listener.onDelete(order);
         });
     }
+    private String formatMoney(double amount) {
+        return String.format("%,.0fđ", amount); // hoặc dùng NumberFormat
+    }
+
 
     @Override
     public int getItemCount() {

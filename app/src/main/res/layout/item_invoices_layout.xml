@@ -71,7 +71,7 @@
             android:id="@+id/tvTongVAT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="💼 VAT: 10.000đ"
+            android:text="💼 VAT: 10.000"
             android:textColor="#1976D2"
             android:layout_marginTop="2dp" />
 

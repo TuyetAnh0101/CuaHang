@@ -11,9 +11,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.NumberFormat;
 import java.util.Locale;
-
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +31,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     private final OnPackageClickListener listener;
     private boolean selectMode = false;
     private final List<Package> selectedPackages = new ArrayList<>();
+    private boolean isForUser = false; // ✅ Thêm biến này để biết đang hiển thị cho người dùng hay admin
 
     public interface OnPackageClickListener {
         void onEdit(Package pkg);
@@ -42,6 +43,12 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
         this.context = context;
         this.list = list;
         this.listener = listener;
+    }
+
+    // ✅ Thêm hàm này để cài đặt chế độ người dùng
+    public void setForUser(boolean isForUser) {
+        this.isForUser = isForUser;
+        notifyDataSetChanged();
     }
 
     public void setSelectMode(boolean mode) {
@@ -122,7 +129,19 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             holder.imgFirst.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
-        if (selectMode) {
+        // ✅ Logic hiển thị cho người dùng (ẩn hết)
+        if (isForUser) {
+            holder.btnEdit.setVisibility(View.GONE);
+            holder.btnDelete.setVisibility(View.GONE);
+            holder.checkboxSelect.setVisibility(View.GONE);
+
+            // Gợi ý xử lý khi người dùng click vào gói
+            holder.itemView.setOnClickListener(v -> {
+                Toast.makeText(context, "Bạn đã chọn gói: " + pkg.getTenGoi(), Toast.LENGTH_SHORT).show();
+                // Hoặc mở chi tiết / trang mua gói
+            });
+
+        } else if (selectMode) {
             holder.btnEdit.setVisibility(View.GONE);
             holder.btnDelete.setVisibility(View.GONE);
             holder.checkboxSelect.setVisibility(View.VISIBLE);
@@ -133,6 +152,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
                 if (checked) selectedPackages.add(pkg);
                 else selectedPackages.remove(pkg);
             });
+
         } else {
             holder.checkboxSelect.setVisibility(View.GONE);
             holder.btnEdit.setVisibility(View.VISIBLE);

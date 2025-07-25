@@ -9,7 +9,7 @@ public class Category {
         // Constructor rỗng bắt buộc cho Firestore
     }
 
-    public Category(String id, String name) {
+    public Category(String all, String id, String name) {
         this.id = id;
         this.name = name;
 

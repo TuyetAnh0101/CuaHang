@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cuahang.MainActivity;
@@ -35,43 +37,53 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // ✅ Nếu người dùng đã đăng nhập → chuyển thẳng sang MainActivity
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             fetchUserRole(currentUser.getUid());
             return;
         }
 
-        // Nếu chưa đăng nhập → hiển thị giao diện đăng nhập
         setContentView(R.layout.activity_login);
 
-        // Ánh xạ view
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         tvRegister = findViewById(R.id.tvRegister);
 
-        // Sự kiện Đăng nhập
         btnLogin.setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
 
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Vui lòng nhập email và mật khẩu", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            if (!isValid(email, password)) return;
 
             loginUser(email, password);
         });
 
-        // Sự kiện Quên mật khẩu
         tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
 
-        // Sự kiện chuyển đến đăng ký
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
+    }
+
+    private boolean isValid(String email, String password) {
+        if (TextUtils.isEmpty(email)) {
+            edtEmail.setError("Vui lòng nhập email");
+            edtEmail.requestFocus();
+            return false;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            edtEmail.setError("Email không hợp lệ");
+            edtEmail.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(password)) {
+            edtPassword.setError("Vui lòng nhập mật khẩu");
+            edtPassword.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     private void loginUser(String email, String password) {
@@ -82,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (firebaseUser != null) {
                             fetchUserRole(firebaseUser.getUid());
                         } else {
-                            Toast.makeText(this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(this, "Sai email hoặc mật khẩu", Toast.LENGTH_SHORT).show();
@@ -95,16 +107,23 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         User user = documentSnapshot.toObject(User.class);
+
+                        // ✅ GHI LOG UID và role
+                        String roleStr = documentSnapshot.getString("role");
+                        android.util.Log.d("LOGIN_DEBUG", "UID: " + uid);
+                        android.util.Log.d("LOGIN_DEBUG", "Role (từ Firestore): " + roleStr);
+
                         if (user != null && user.getRole() != null) {
                             Role role = user.getRole();
+                            android.util.Log.d("LOGIN_DEBUG", "Role (object): " + role.name());
 
-                            // ✅ Chuyển sang MainActivity
+                            // ✅ Chuyển sang MainActivity, kèm role
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("role", role.name());
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(this, "Người dùng chưa được gán role", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Tài khoản chưa có vai trò", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(this, "Tài khoản không tồn tại trong hệ thống", Toast.LENGTH_SHORT).show();
@@ -116,12 +135,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showForgotPasswordDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Đặt lại mật khẩu");
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        input.setHint("Nhập email");
+        input.setHint("Nhập email của bạn");
         builder.setView(input);
 
         builder.setPositiveButton("Gửi", (dialog, which) -> {
@@ -130,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             auth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

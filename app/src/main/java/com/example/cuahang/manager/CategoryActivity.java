@@ -84,7 +84,7 @@ public class CategoryActivity extends AppCompatActivity {
             String name = edtCategoryName.getText().toString().trim();
             if (!name.isEmpty()) {
                 String id = generateNextCategoryId();
-                Category category = new Category(id, name);
+                Category category = new Category("all", id, name);
                 db.collection("Category").document(id)
                         .set(category)
                         .addOnSuccessListener(unused -> {

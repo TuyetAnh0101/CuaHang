@@ -1,5 +1,7 @@
 package com.example.cuahang.ui;
 
+import static com.example.cuahang.R.layout.activity_register;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,8 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-
+        setContentView(activity_register);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtName = findViewById(R.id.edtName);
@@ -58,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = auth.getCurrentUser();
                         if (firebaseUser != null) {
                             String uid = firebaseUser.getUid();
-                            User user = new User(email, name, Role.STAFF);
+                            User user = new User(email, name, Role.USER);
                             user.setId(uid); // lưu ID người dùng
 
                             db.collection("User").document(uid).set(user)

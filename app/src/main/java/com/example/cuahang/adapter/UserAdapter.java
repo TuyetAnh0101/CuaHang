@@ -73,13 +73,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
 
             String roleDisplay = "Quyền: ";
-            switch (user.getRole()) {
-                case ADMIN: roleDisplay += "Quản trị viên"; break;
-                case USER: roleDisplay += "Người dùng"; break;
-                default: roleDisplay += "Nhân viên"; break;
+
+            if (user.getRole() == null) {
+                roleDisplay += "Chưa xác định";
+            } else {
+                switch (user.getRole()) {
+                    case ADMIN:
+                        roleDisplay += "Quản trị viên";
+                        break;
+                    case USER:
+                        roleDisplay += "Người dùng";
+                        break;
+                    default:
+                        roleDisplay += "Nhân viên";
+                        break;
+                }
             }
             tvRole.setText(roleDisplay);
-
             // Xử lý nút sửa
             btnEdit.setOnClickListener(v -> {
                 if (listener != null) {

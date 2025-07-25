@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/userhome"
         android:icon="@drawable/home"
-        android:title="Trang chủ"/>
+        android:title="Trang chủ" />
+
+    <item
+        android:id="@+id/post"
+        android:icon="@drawable/add"
+        android:title="Đăng tin" />
 
     <item
         android:id="@+id/account"
         android:icon="@drawable/person"
-        android:title="Cá nhân"/>
+        android:title="Cá nhân" />
 
 </menu>

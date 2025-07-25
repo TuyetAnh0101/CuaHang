@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="8dp"
+    android:layout_margin="10dp"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#fefefe">
+
+        <!-- Tên gói -->
+        <TextView
+            android:id="@+id/tvTenGoi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên gói cao cấp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1e8141"
+            android:drawableStart="@android:drawable/ic_menu_info_details"
+            android:drawablePadding="6dp" />
+
+        <!-- Mô tả -->
+        <TextView
+            android:id="@+id/tvMoTa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Truy cập không giới hạn trong 30 ngày"
+            android:textSize="14sp"
+            android:textColor="#555"
+            android:layout_marginTop="4dp" />
+
+        <!-- Giá giảm -->
+        <TextView
+            android:id="@+id/tvGiaGiam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giá giảm: 99.000đ"
+            android:textColor="#d32f2f"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <!-- Số lượng -->
+        <TextView
+            android:id="@+id/tvSoLuong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số lượng: 10"
+            android:layout_marginTop="4dp"
+            android:textColor="#333" />
+
+        <!-- Chu kỳ -->
+        <TextView
+            android:id="@+id/tvBilling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chu kỳ: 1 tháng"
+            android:layout_marginTop="2dp"
+            android:textColor="#333" />
+
+        <!-- Thời gian -->
+        <TextView
+            android:id="@+id/tvThoiGian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thời gian: 01/08/2025 - 01/09/2025"
+            android:layout_marginTop="2dp"
+            android:textColor="#333" />
+
+        <!-- Nút mua -->
+        <Button
+            android:id="@+id/btnMuaGoi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔥 MUA GÓI NGAY"
+            android:textAllCaps="true"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#1e8141"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

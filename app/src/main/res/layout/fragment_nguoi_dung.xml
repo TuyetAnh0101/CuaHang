@@ -8,79 +8,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Tên cửa hàng -->
+    <!-- Tiêu đề -->
     <TextView
         android:id="@+id/tvStoreName"
         android:text="🏪 GÓI TIN RAO VẶT – ĐỒ CŨ"
-        android:textSize="22sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:fontFamily="sans-serif-condensed"
         android:textColor="#1e8141"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="18dp"
+        android:letterSpacing="0.02"
+        android:shadowColor="#BBBBBB"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+
     <!-- Tìm kiếm + Giỏ hàng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
+        android:layout_marginBottom="14dp">
 
         <!-- Ô tìm kiếm -->
         <EditText
             android:id="@+id/edtSearch"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:hint="Tìm gói tin theo tên..."
-            android:padding="5dp"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="8dp"
+            android:layout_height="48dp"
+            android:hint=" Tìm gói tin theo tên..."
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
             android:textColor="#000000"
+            android:textColorHint="#777"
             android:background="@drawable/bg_search"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="10dp"
             android:elevation="4dp"
-            android:textColorHint="#888888" />
+            android:layout_marginEnd="8dp" />
 
-        <!-- Icon giỏ hàng -->
+        <!-- Giỏ hàng -->
         <ImageView
             android:id="@+id/ivCart"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_search"
-            android:padding="8dp"
+            android:padding="10dp"
             android:src="@drawable/cart"
-            android:contentDescription="Giỏ hàng" />
+            android:contentDescription="Giỏ hàng"
+            android:elevation="4dp" />
     </LinearLayout>
 
-
-    <!-- Banner ViewPager (chuyển động) -->
+    <!-- Banner ViewPager -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/bannerViewPager"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:clipToPadding="false"
+        android:layout_height="100dp"
         android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
         android:paddingStart="6dp"
-        android:paddingEnd="6dp" />
+        android:paddingEnd="6dp"
+        android:elevation="2dp" />
 
-    <!-- Danh mục gói tin (ngang) -->
+    <!-- Danh mục gói tin -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="10dp"
+        android:paddingBottom="4dp"
         android:overScrollMode="never"
-        android:scrollbars="none"
-        android:paddingBottom="4dp" />
+        android:scrollbars="none" />
 
     <!-- Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#DDDDDD"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="10dp" />
 
     <!-- Danh sách gói tin -->
     <androidx.recyclerview.widget.RecyclerView
@@ -89,7 +97,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingBottom="8dp"
+        android:paddingBottom="12dp"
         android:scrollbars="vertical" />
 
 </LinearLayout>

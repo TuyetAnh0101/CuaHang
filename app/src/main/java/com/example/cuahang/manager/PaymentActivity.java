@@ -95,8 +95,8 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         for (CartItem item : cartItems) {
             int quantity = item.getSoLuong();
             double price = item.getPackagePrice();
-            double tax = item.getTax();           // giả sử có sẵn trong CartItem
-            double discount = item.getDiscount(); // giả sử có sẵn trong CartItem
+            double tax = item.getTax();
+            double discount = item.getDiscount();
 
             double thanhTien = (price + tax - discount) * quantity;
 
@@ -118,8 +118,6 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         }
 
         double totalAmount = totalPrice + totalTax - totalDiscount;
-
-        // 1. Tạo hóa đơn
         String invoiceId = db.collection("invoices").document().getId();
 
         Map<String, Object> invoiceMap = new HashMap<>();
@@ -134,11 +132,11 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         invoiceMap.put("status", "Đã thanh toán");
 
         int finalTotalQuantity = totalQuantity;
+
         db.collection("invoices")
                 .document(invoiceId)
                 .set(invoiceMap)
                 .addOnSuccessListener(aVoid -> {
-                    // 2. Tạo đơn hàng sau khi lưu hóa đơn thành công
                     String orderId = db.collection("Orders").document().getId();
 
                     Map<String, Object> orderMap = new HashMap<>();
@@ -157,6 +155,20 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                             .document(orderId)
                             .set(orderMap)
                             .addOnSuccessListener(orderVoid -> {
+                                // ✅ Sau khi tạo đơn hàng, giảm số lượng gói trong collection Packages
+                                for (CartItem item : cartItems) {
+                                    String packageId = item.getPackageId();
+                                    int quantityToSubtract = item.getSoLuong();  // số lượng đã mua
+
+                                    db.collection("Package").document(packageId)
+                                            .update("soLuong", FieldValue.increment(-quantityToSubtract))
+                                            .addOnSuccessListener(a -> {
+                                                // Thành công - có thể ghi log hoặc không cần gì thêm
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(this, "Không thể cập nhật số lượng gói: " + packageId, Toast.LENGTH_SHORT).show();
+                                            });
+                                }
                                 Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                                 CartManager.getInstance().clearCart();
                                 adapter.notifyDataSetChanged();

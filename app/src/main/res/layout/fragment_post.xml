@@ -1,48 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutPostFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     tools:context=".UserFragment.PostFragment">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvTitlePost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="📋  Bài Đăng"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#1A237E"
+        android:padding="16dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Danh sách bài đăng -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPosts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvTitlePost"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Khi không có dữ liệu -->
     <TextView
         android:id="@+id/txtEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Không có bài đăng nào"
+        android:text="❌ Không có bài đăng nào"
         android:textSize="16sp"
         android:textColor="#888888"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        android:padding="12dp"
+        android:background="@drawable/bg_card_rounded"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recyclerPosts"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerPosts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Loading khi đang tải -->
     <ProgressBar
         android:id="@+id/progressLoading"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recyclerPosts"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerPosts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Nút đăng bài -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
         android:contentDescription="Thêm bài đăng"
         android:visibility="gone"
-        android:tint="@android:color/white" />
-</FrameLayout>
+        android:tint="@android:color/white"
+        app:backgroundTint="#3F51B5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

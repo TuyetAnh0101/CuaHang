@@ -1,11 +1,13 @@
 package com.example.cuahang.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,6 +60,18 @@ public class PackageUserAdapter extends RecyclerView.Adapter<PackageUserAdapter.
 
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         String giaGiamFormatted = decimalFormat.format(pkg.getGiaGiam()) + " đ";
+        if (pkg.getHinhAnh() != null && !pkg.getHinhAnh().isEmpty()) {
+            try {
+                byte[] decodedString = android.util.Base64.decode(pkg.getHinhAnh().get(0), android.util.Base64.DEFAULT);
+                Bitmap decodedByte = android.graphics.BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                holder.imgPackage.setImageBitmap(decodedByte);
+            } catch (Exception e) {
+                holder.imgPackage.setImageResource(R.drawable.ic_launcher_background);
+            }
+        } else {
+            holder.imgPackage.setImageResource(R.drawable.ic_launcher_background);
+        }
+
 
         holder.tvTenGoi.setText(pkg.getTenGoi());
         holder.tvMoTa.setText(pkg.getMoTa());
@@ -100,6 +114,7 @@ public class PackageUserAdapter extends RecyclerView.Adapter<PackageUserAdapter.
     public static class PackageViewHolder extends RecyclerView.ViewHolder {
         TextView tvTenGoi, tvMoTa, tvGiaGiam, tvSoLuong, tvBilling, tvThoiGian;
         Button btnMuaGoi;
+        ImageView imgPackage;
 
         public PackageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,6 +125,7 @@ public class PackageUserAdapter extends RecyclerView.Adapter<PackageUserAdapter.
             tvBilling = itemView.findViewById(R.id.tvBilling);
             tvThoiGian = itemView.findViewById(R.id.tvThoiGian);
             btnMuaGoi = itemView.findViewById(R.id.btnMuaGoi);
+            imgPackage = itemView.findViewById(R.id.imgPackage);
         }
     }
 }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.example.cuahang.R;
 import com.example.cuahang.adapter.BannerAdapter;
 import com.example.cuahang.adapter.CategoryHorizontalAdapter;
 import com.example.cuahang.adapter.PackageUserAdapter;
+import com.example.cuahang.manager.CartActivity;
 import com.example.cuahang.manager.PackageDetailActivity;
 import com.example.cuahang.model.Category;
 import com.example.cuahang.model.Package;
@@ -36,6 +38,7 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
     private RecyclerView recyclerViewPackages;
     private RecyclerView recyclerViewCategories;
     private EditText edtSearch;
+    private ImageView ivCart;
 
     private PackageUserAdapter packageAdapter;
     private CategoryHorizontalAdapter categoryAdapter;
@@ -46,7 +49,6 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
     private FirebaseFirestore db;
 
     private ViewPager2 viewPagerBanner;
-    private BannerAdapter bannerAdapter;
     private Handler bannerHandler = new Handler();
     private int currentBannerIndex = 0;
     private Runnable bannerRunnable;
@@ -64,7 +66,31 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
 
         db = FirebaseFirestore.getInstance();
 
+        // Ánh xạ các view
         edtSearch = view.findViewById(R.id.edtSearch);
+        ivCart = view.findViewById(R.id.ivCart);
+        viewPagerBanner = view.findViewById(R.id.bannerViewPager);
+        recyclerViewPackages = view.findViewById(R.id.recyclerPackages);
+        recyclerViewCategories = view.findViewById(R.id.categoryContainer);
+
+        // Setup RecyclerView Packages
+        recyclerViewPackages.setLayoutManager(new LinearLayoutManager(getContext()));
+        packageList = new ArrayList<>();
+        packageAdapter = new PackageUserAdapter(getContext(), packageList, item -> {
+            Log.d("PACKAGE_CLICK", "Gói được click: " + item.getTenGoi());
+            Intent intent = new Intent(getContext(), PackageDetailActivity.class);
+            intent.putExtra("id", item.getId());
+            startActivity(intent);
+        });
+        recyclerViewPackages.setAdapter(packageAdapter);
+
+        // Setup RecyclerView Categories ngang
+        recyclerViewCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        categoryList = new ArrayList<>();
+        categoryAdapter = new CategoryHorizontalAdapter(getContext(), categoryList, this);
+        recyclerViewCategories.setAdapter(categoryAdapter);
+
+        // Thiết lập sự kiện tìm kiếm
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -73,8 +99,7 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        // Banner động
-        viewPagerBanner = view.findViewById(R.id.bannerViewPager);
+        // Setup banner động
         List<Integer> bannerImages = new ArrayList<>();
         bannerImages.add(R.drawable.banner1);
         bannerImages.add(R.drawable.banner2);
@@ -82,7 +107,6 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
         BannerAdapter bannerAdapter = new BannerAdapter(requireContext(), bannerImages);
         viewPagerBanner.setAdapter(bannerAdapter);
 
-        // Tự động chuyển banner mỗi 3 giây
         bannerRunnable = () -> {
             currentBannerIndex = (currentBannerIndex + 1) % bannerImages.size();
             viewPagerBanner.setCurrentItem(currentBannerIndex, true);
@@ -97,23 +121,13 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
             }
         });
 
-        recyclerViewPackages = view.findViewById(R.id.recyclerPackages);
-        recyclerViewPackages.setLayoutManager(new LinearLayoutManager(getContext()));
-        packageList = new ArrayList<>();
-        packageAdapter = new PackageUserAdapter(getContext(), packageList, item -> {
-            Log.d("PACKAGE_CLICK", "Gói được click: " + item.getTenGoi());
-            Intent intent = new Intent(getContext(), PackageDetailActivity.class);
-            intent.putExtra("id", item.getId());
+        // Xử lý click vào icon giỏ hàng
+        ivCart.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CartActivity.class);
             startActivity(intent);
         });
-        recyclerViewPackages.setAdapter(packageAdapter);
 
-        recyclerViewCategories = view.findViewById(R.id.categoryContainer);
-        recyclerViewCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        categoryList = new ArrayList<>();
-        categoryAdapter = new CategoryHorizontalAdapter(getContext(), categoryList, this);
-        recyclerViewCategories.setAdapter(categoryAdapter);
-
+        // Load dữ liệu
         loadCategoriesFromFirestore();
         loadPackagesFromFirestore();
 
@@ -162,7 +176,7 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
     }
 
     private void loadPackagesByCategory(String categoryId) {
-        if (categoryId.equals("all")) {
+        if ("all".equals(categoryId)) {
             loadPackagesFromFirestore();
             return;
         }
@@ -197,7 +211,6 @@ public class NguoiDungFragment extends Fragment implements CategoryHorizontalAda
                 filtered.add(pkg);
             }
         }
-
         packageAdapter.updateList(filtered);
     }
 

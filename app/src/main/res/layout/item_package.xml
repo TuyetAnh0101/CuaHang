@@ -14,6 +14,14 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:background="#fefefe">
+        <!-- THÊM ẢNH ĐẠI DIỆN CHO GÓI Ở ĐÂU -->
+        <ImageView
+            android:id="@+id/imgPackage"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/ic_launcher_background" />
 
         <!-- Tên gói -->
         <TextView

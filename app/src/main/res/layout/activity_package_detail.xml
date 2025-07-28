@@ -24,15 +24,13 @@
             android:textStyle="bold"
             android:textColor="#1E8141"
             android:layout_marginBottom="12dp" />
-
-        <!-- Hình ảnh -->
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/rvHinhAnh"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp" />
+
 
         <!-- Mô tả -->
         <TextView

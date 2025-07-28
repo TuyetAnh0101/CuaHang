@@ -53,12 +53,14 @@ public class CartActivity extends AppCompatActivity {
             }
         });
     }
-
     private void updateTotalPrice() {
         double total = 0;
         for (CartItem item : cartItemList) {
-            total += item.getThanhTien();  
+            // Tính lại thanh tiền nếu chưa tính sẵn
+            double itemTotal = item.getPackagePrice() * item.getSoLuong();
+            total += itemTotal;
         }
-        tvTotalPrice.setText("Tổng tiền: " + total + "đ");
+        String formattedTotal = String.format("%,.0f", total);
+        tvTotalPrice.setText("Tổng tiền: " + formattedTotal + "đ");
     }
 }

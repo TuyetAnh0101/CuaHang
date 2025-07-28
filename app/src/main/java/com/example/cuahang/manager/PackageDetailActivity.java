@@ -14,6 +14,10 @@ import com.example.cuahang.R;
 import com.example.cuahang.model.CartItem;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import androidx.viewpager2.widget.ViewPager2;
+import com.example.cuahang.adapter.ImageSliderAdapter;
+
+import java.util.List;
 
 public class PackageDetailActivity extends AppCompatActivity {
 
@@ -29,6 +33,8 @@ public class PackageDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
+    private ViewPager2 viewPager2;
+    private List<String> imageUrls;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +73,7 @@ public class PackageDetailActivity extends AppCompatActivity {
 
         btnThemVaoGio = findViewById(R.id.btnThemVaoGio);
         btnMuaNgay = findViewById(R.id.btnMuaNgay);
+        viewPager2 = findViewById(R.id.rvHinhAnh);
     }
 
     // Thiết lập sự kiện click cho nút
@@ -114,6 +121,14 @@ public class PackageDetailActivity extends AppCompatActivity {
         tvMaxImages.setText("Số ảnh tối đa: " + formatNumber(doc.getLong("maxImages")));
         tvPackageType.setText("Loại gói: " + getOrEmpty(doc.getString("packageType")));
         tvNote.setText("📝 Ghi chú: " + getOrEmpty(doc.getString("note")));
+        imageUrls = (List<String>) doc.get("hinhAnh");
+        imageUrls = (List<String>) doc.get("hinhAnh");
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            ImageSliderAdapter adapter = new ImageSliderAdapter(this, imageUrls);
+            viewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+            viewPager2.setAdapter(adapter);
+        }
+
     }
 
     // Helpers

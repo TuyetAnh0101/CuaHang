@@ -243,7 +243,6 @@
             android:backgroundTint="#2B572E"
             android:textColor="#FFFFFF"
             android:elevation="2dp" />
-
         <ImageView
             android:id="@+id/imgPreview"
             android:layout_width="match_parent"

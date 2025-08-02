@@ -43,7 +43,7 @@ public class UserAccountActivity extends AppCompatActivity {
         userAdapter = new UserAdapter(userList, new UserAdapter.OnUserActionListener() {
             @Override
             public void onEdit(User user) {
-                Toast.makeText(UserAccountActivity.this, "Chỉnh sửa: " + user.getName(), Toast.LENGTH_SHORT).show();
+                showEditUserDialog(user);
             }
 
             @Override
@@ -51,7 +51,6 @@ public class UserAccountActivity extends AppCompatActivity {
                 deleteUser(user);
             }
         });
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(userAdapter);
 
@@ -200,6 +199,77 @@ public class UserAccountActivity extends AppCompatActivity {
 
         dialog.show();
     }
+    private void showEditUserDialog(User user) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.add_user_account_layout, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create();
+
+        EditText edtName = dialogView.findViewById(R.id.edtUserName);
+        EditText edtEmail = dialogView.findViewById(R.id.edtEmail);
+        EditText edtPassword = dialogView.findViewById(R.id.edtPassword);
+        Spinner spinnerRole = dialogView.findViewById(R.id.spinnerRole);
+        Spinner spinnerStatus = dialogView.findViewById(R.id.spinnerStatus);
+        Button btnSave = dialogView.findViewById(R.id.btnSaveUser);
+        Button btnChooseAvatar = dialogView.findViewById(R.id.btnChooseAvatar);
+        ImageView imgAvatar = dialogView.findViewById(R.id.imgAvatarPreview);
+
+        // Ẩn những phần không cần khi sửa
+        edtPassword.setVisibility(View.GONE);
+        btnChooseAvatar.setVisibility(View.GONE);
+        imgAvatar.setVisibility(View.GONE);
+
+        // Gán dữ liệu cũ
+        edtName.setText(user.getName());
+        edtEmail.setText(user.getEmail());
+        edtEmail.setEnabled(false); // không sửa email
+
+        // Gán dữ liệu role
+        Role[] roles = Role.values();
+        String[] roleNames = new String[roles.length];
+        int selectedRoleIndex = 0;
+        for (int i = 0; i < roles.length; i++) {
+            roleNames[i] = roles[i].name();
+            if (roles[i] == user.getRole()) selectedRoleIndex = i;
+        }
+
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roleNames);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRole.setAdapter(roleAdapter);
+        spinnerRole.setSelection(selectedRoleIndex);
+
+        // Trạng thái
+        String[] statusOptions = new String[]{"Hoạt động", "Đã khóa"};
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusOptions);
+        spinnerStatus.setAdapter(statusAdapter);
+        spinnerStatus.setSelection(user.isActive() ? 0 : 1);
+
+        btnSave.setOnClickListener(v -> {
+            String name = edtName.getText().toString().trim();
+            String roleStr = spinnerRole.getSelectedItem().toString();
+            boolean active = spinnerStatus.getSelectedItemPosition() == 0;
+
+            if (name.isEmpty()) {
+                Toast.makeText(this, "Tên không được để trống", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Cập nhật Firestore
+            DocumentReference userRef = db.collection("User").document(user.getId());
+            userRef.update(
+                    "name", name,
+                    "role", roleStr,
+                    "active", active
+            ).addOnSuccessListener(unused -> {
+                Toast.makeText(this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                loadUsersFromFirestore(); // reload lại list
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        });
+
+        dialog.show();
+    }
+
 
     @Override
     protected void onResume() {

@@ -74,9 +74,9 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void showAddCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-
         View dialogView = getLayoutInflater().inflate(R.layout.add_category_layout, null);
+
+        // Ánh xạ EditText trong layout
         EditText edtCategoryName = dialogView.findViewById(R.id.edtCategoryName);
         builder.setView(dialogView);
 
@@ -85,6 +85,7 @@ public class CategoryActivity extends AppCompatActivity {
             if (!name.isEmpty()) {
                 String id = generateNextCategoryId();
                 Category category = new Category("all", id, name);
+
                 db.collection("Category").document(id)
                         .set(category)
                         .addOnSuccessListener(unused -> {
@@ -94,7 +95,8 @@ public class CategoryActivity extends AppCompatActivity {
                             Toast.makeText(this, "Đã thêm danh mục", Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e ->
-                                Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        );
             } else {
                 Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
             }
@@ -103,6 +105,7 @@ public class CategoryActivity extends AppCompatActivity {
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
+
 
     private void showEditCategoryDialog(Category category) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

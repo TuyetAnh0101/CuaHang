@@ -173,9 +173,9 @@ public class PackageActivity extends AppCompatActivity {
         EditText edtNote = view.findViewById(R.id.edtNote);
         CheckBox checkboxFree3Posts = view.findViewById(R.id.checkboxIsFree3Post);
         Spinner spinnerBillingCycle = view.findViewById(R.id.spinnerBillingCycle);
-        EditText edtMaxPosts = view.findViewById(R.id.edtMaxPosts);
-        EditText edtMaxCharacters = view.findViewById(R.id.edtMaxCharacters);
-        EditText edtMaxImages = view.findViewById(R.id.edtMaxImages);
+        Spinner edtMaxPosts = view.findViewById(R.id.edtMaxPosts); // Spinner thay vì EditText
+        Spinner edtMaxCharacters = view.findViewById(R.id.edtMaxCharacters); // Spinner thay vì EditText
+        Spinner edtMaxImages = view.findViewById(R.id.edtMaxImages); // Spinner thay vì EditText
         EditText edtStartDate = view.findViewById(R.id.edtStartDate);
         EditText edtEndDate = view.findViewById(R.id.edtEndDate);
         Spinner spinnerCategory = view.findViewById(R.id.spinnerCategory);
@@ -184,31 +184,56 @@ public class PackageActivity extends AppCompatActivity {
         TextView btnChooseImage = view.findViewById(R.id.btnChooseImage);
         Spinner spinnerPackageType = view.findViewById(R.id.spinnerPackageType);
 
+        // Cài đặt Spinner dữ liệu
+        List<String> maxPostOptions = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) maxPostOptions.add(String.valueOf(i));
+        ArrayAdapter<String> maxPostAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxPostOptions);
+        maxPostAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxPosts.setAdapter(maxPostAdapter);
+
+        List<String> maxCharOptions = new ArrayList<>();
+        for (int i = 1000; i <= 10000; i += 1000) maxCharOptions.add(String.valueOf(i));
+        ArrayAdapter<String> maxCharAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxCharOptions);
+        maxCharAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxCharacters.setAdapter(maxCharAdapter);
+
+        List<String> maxImageOptions = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) maxImageOptions.add(String.valueOf(i));
+        ArrayAdapter<String> maxImageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxImageOptions);
+        maxImageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxImages.setAdapter(maxImageAdapter);
+
+        // Spinner danh mục
         ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categoryList);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(categoryAdapter);
 
+        // Spinner danh mục con
         filteredSubCategories.clear();
         ArrayAdapter<SubCategory> subCategoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, filteredSubCategories);
         subCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSubCategory.setAdapter(subCategoryAdapter);
 
+        // Spinner chu kỳ thanh toán
         String[] billingCycles = {"Theo tuần", "Theo tháng", "Theo quý", "Theo năm"};
         ArrayAdapter<String> billingCycleAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, billingCycles);
         billingCycleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerBillingCycle.setAdapter(billingCycleAdapter);
 
+        // Spinner loại gói
         ArrayAdapter<String> packageTypeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, new String[]{"Gói thường", "VIP", "VVIP"});
         packageTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPackageType.setAdapter(packageTypeAdapter);
 
+        // Mặc định VAT và đơn vị
         edtVAT.setText(String.valueOf(defaultVat));
         edtUnit.setText(defaultUnit);
 
+        // Sự kiện khi chọn danh mục
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Category selectedCat = categoryList.get(position);
@@ -219,6 +244,7 @@ public class PackageActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // Chọn ảnh
         btnChooseImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
@@ -226,6 +252,7 @@ public class PackageActivity extends AppCompatActivity {
             imagePickerLauncher.launch(intent);
         });
 
+        // Hiển thị ảnh đầu tiên nếu có
         imgPreview.setImageResource(R.drawable.user);
         if (!selectedImageUris.isEmpty()) {
             imgPreview.setImageURI(selectedImageUris.get(0));
@@ -251,13 +278,14 @@ public class PackageActivity extends AppCompatActivity {
                 pkg.setSubcategoryId(selectedSubCategory != null ? selectedSubCategory.getId() : "");
                 pkg.setFree3Posts(checkboxFree3Posts.isChecked());
                 pkg.setBillingCycle(spinnerBillingCycle.getSelectedItem().toString());
-                pkg.setMaxPosts(parseIntSafe(edtMaxPosts.getText().toString()));
-                pkg.setMaxCharacters(parseIntSafe(edtMaxCharacters.getText().toString()));
-                pkg.setMaxImages(parseIntSafe(edtMaxImages.getText().toString()));
+                pkg.setMaxPosts(Integer.parseInt(edtMaxPosts.getSelectedItem().toString()));
+                pkg.setMaxCharacters(Integer.parseInt(edtMaxCharacters.getSelectedItem().toString()));
+                pkg.setMaxImages(Integer.parseInt(edtMaxImages.getSelectedItem().toString()));
                 pkg.setStartDate(edtStartDate.getText().toString().trim());
                 pkg.setEndDate(edtEndDate.getText().toString().trim());
                 pkg.setPackageType(spinnerPackageType.getSelectedItem().toString());
 
+                // Ảnh
                 if (!selectedImageUris.isEmpty()) {
                     List<String> base64Images = new ArrayList<>();
                     for (Uri uri : selectedImageUris) {
@@ -277,6 +305,7 @@ public class PackageActivity extends AppCompatActivity {
         builder.setNegativeButton("Hủy", null);
         builder.show();
     }
+
     private void showEditPackageDialog(Package pkg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.add_package_layout, null);
@@ -294,9 +323,9 @@ public class PackageActivity extends AppCompatActivity {
         EditText edtNote = view.findViewById(R.id.edtNote);
         CheckBox checkboxFree3Posts = view.findViewById(R.id.checkboxIsFree3Post);
         Spinner spinnerBillingCycle = view.findViewById(R.id.spinnerBillingCycle);
-        EditText edtMaxPosts = view.findViewById(R.id.edtMaxPosts);
-        EditText edtMaxCharacters = view.findViewById(R.id.edtMaxCharacters);
-        EditText edtMaxImages = view.findViewById(R.id.edtMaxImages);
+        Spinner edtMaxPosts = view.findViewById(R.id.edtMaxPosts);
+        Spinner edtMaxCharacters = view.findViewById(R.id.edtMaxCharacters);
+        Spinner edtMaxImages = view.findViewById(R.id.edtMaxImages);
         EditText edtStartDate = view.findViewById(R.id.edtStartDate);
         EditText edtEndDate = view.findViewById(R.id.edtEndDate);
         Spinner spinnerCategory = view.findViewById(R.id.spinnerCategory);
@@ -316,47 +345,53 @@ public class PackageActivity extends AppCompatActivity {
         edtNote.setText(pkg.getNote());
         checkboxFree3Posts.setChecked(pkg.isFree3Posts());
 
+        // Gán dữ liệu spinner chu kỳ thanh toán
         String[] billingCycles = {"Theo tuần", "Theo tháng", "Theo quý", "Theo năm"};
-        ArrayAdapter<String> billingCycleAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, billingCycles);
+        ArrayAdapter<String> billingCycleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, billingCycles);
         billingCycleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerBillingCycle.setAdapter(billingCycleAdapter);
-
         if (pkg.getBillingCycle() != null) {
             int index = Arrays.asList(billingCycles).indexOf(pkg.getBillingCycle());
             if (index >= 0) spinnerBillingCycle.setSelection(index);
         }
 
-        edtMaxPosts.setText(String.valueOf(pkg.getMaxPosts()));
-        edtMaxCharacters.setText(String.valueOf(pkg.getMaxCharacters()));
-        edtMaxImages.setText(String.valueOf(pkg.getMaxImages()));
+        // Spinner: số bài đăng từ 1–10
+        List<String> maxPostsList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) maxPostsList.add(String.valueOf(i));
+        ArrayAdapter<String> maxPostsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxPostsList);
+        maxPostsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxPosts.setAdapter(maxPostsAdapter);
+        edtMaxPosts.setSelection(pkg.getMaxPosts() - 1);
+
+        // Spinner: số ký tự từ 1000–10000
+        List<String> maxCharsList = new ArrayList<>();
+        for (int i = 1000; i <= 10000; i += 1000) maxCharsList.add(String.valueOf(i));
+        ArrayAdapter<String> maxCharsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxCharsList);
+        maxCharsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxCharacters.setAdapter(maxCharsAdapter);
+        edtMaxCharacters.setSelection((pkg.getMaxCharacters() - 1000) / 1000);
+
+        // Spinner: số ảnh từ 1–10
+        List<String> maxImagesList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) maxImagesList.add(String.valueOf(i));
+        ArrayAdapter<String> maxImagesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxImagesList);
+        maxImagesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edtMaxImages.setAdapter(maxImagesAdapter);
+        edtMaxImages.setSelection(pkg.getMaxImages() - 1);
+
         edtStartDate.setText(pkg.getStartDate());
         edtEndDate.setText(pkg.getEndDate());
 
-        ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, categoryList);
+        // Category
+        ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoryList);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(categoryAdapter);
 
+        // SubCategory
         filteredSubCategories.clear();
-        ArrayAdapter<SubCategory> subCategoryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, filteredSubCategories);
+        ArrayAdapter<SubCategory> subCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filteredSubCategories);
         subCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSubCategory.setAdapter(subCategoryAdapter);
-
-        ArrayAdapter<String> packageTypeAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"Gói thường", "VIP", "VVIP"});
-        packageTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPackageType.setAdapter(packageTypeAdapter);
-
-        if (pkg.getPackageType() != null) {
-            for (int i = 0; i < packageTypeAdapter.getCount(); i++) {
-                if (pkg.getPackageType().equals(packageTypeAdapter.getItem(i))) {
-                    spinnerPackageType.setSelection(i);
-                    break;
-                }
-            }
-        }
 
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -365,7 +400,6 @@ public class PackageActivity extends AppCompatActivity {
                 subCategoryAdapter.notifyDataSetChanged();
                 if (!filteredSubCategories.isEmpty()) spinnerSubCategory.setSelection(0);
             }
-
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
@@ -378,11 +412,23 @@ public class PackageActivity extends AppCompatActivity {
 
         filterSubCategoriesByCategory(pkg.getCategoryId());
         subCategoryAdapter.notifyDataSetChanged();
-
         for (int i = 0; i < filteredSubCategories.size(); i++) {
             if (filteredSubCategories.get(i).getId().equals(pkg.getSubcategoryId())) {
                 spinnerSubCategory.setSelection(i);
                 break;
+            }
+        }
+
+        ArrayAdapter<String> packageTypeAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new String[]{"Gói thường", "VIP", "VVIP"});
+        packageTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPackageType.setAdapter(packageTypeAdapter);
+        if (pkg.getPackageType() != null) {
+            for (int i = 0; i < packageTypeAdapter.getCount(); i++) {
+                if (pkg.getPackageType().equals(packageTypeAdapter.getItem(i))) {
+                    spinnerPackageType.setSelection(i);
+                    break;
+                }
             }
         }
 
@@ -420,9 +466,9 @@ public class PackageActivity extends AppCompatActivity {
                 pkg.setSubcategoryId(selectedSubCategory != null ? selectedSubCategory.getId() : "");
                 pkg.setFree3Posts(checkboxFree3Posts.isChecked());
                 pkg.setBillingCycle(spinnerBillingCycle.getSelectedItem().toString());
-                pkg.setMaxPosts(parseIntSafe(edtMaxPosts.getText().toString()));
-                pkg.setMaxCharacters(parseIntSafe(edtMaxCharacters.getText().toString()));
-                pkg.setMaxImages(parseIntSafe(edtMaxImages.getText().toString()));
+                pkg.setMaxPosts(Integer.parseInt(edtMaxPosts.getSelectedItem().toString()));
+                pkg.setMaxCharacters(Integer.parseInt(edtMaxCharacters.getSelectedItem().toString()));
+                pkg.setMaxImages(Integer.parseInt(edtMaxImages.getSelectedItem().toString()));
                 pkg.setStartDate(edtStartDate.getText().toString().trim());
                 pkg.setEndDate(edtEndDate.getText().toString().trim());
                 pkg.setPackageType(spinnerPackageType.getSelectedItem().toString());
@@ -451,6 +497,7 @@ public class PackageActivity extends AppCompatActivity {
         builder.setNegativeButton("Hủy", null);
         builder.show();
     }
+
 
     private double parseDoubleSafe(String s) {
         try {

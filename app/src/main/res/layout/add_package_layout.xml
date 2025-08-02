@@ -109,6 +109,7 @@
             android:background="@drawable/bg_edittext_outline"
             android:padding="14dp"
             android:textSize="16sp" />
+
         <!-- Phân loại gói -->
         <TextView
             android:layout_width="match_parent"
@@ -174,35 +175,53 @@
             android:layout_height="wrap_content" />
 
         <!-- Giới hạn sử dụng -->
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Số bài đăng tối đa"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
+
+        <Spinner
             android:id="@+id/edtMaxPosts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Số bài đăng tối đa"
-            android:inputType="number"
             android:background="@drawable/bg_edittext_outline"
-            android:padding="14dp"
-            android:textSize="16sp" />
+            android:padding="10dp"
+            android:spinnerMode="dropdown" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Số ký tự tối đa mỗi bài"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
+
+        <Spinner
             android:id="@+id/edtMaxCharacters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Số ký tự tối đa mỗi bài"
-            android:inputType="number"
             android:background="@drawable/bg_edittext_outline"
-            android:padding="14dp"
-            android:textSize="16sp" />
+            android:padding="10dp"
+            android:spinnerMode="dropdown" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Số ảnh tối đa mỗi bài"
+            android:textStyle="bold"
+            android:textColor="#2B572E"
+            android:layout_marginTop="8dp" />
+
+        <Spinner
             android:id="@+id/edtMaxImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Số ảnh tối đa mỗi bài"
-            android:inputType="number"
             android:background="@drawable/bg_edittext_outline"
-            android:padding="14dp"
-            android:textSize="16sp" />
+            android:padding="10dp"
+            android:spinnerMode="dropdown" />
 
         <!-- Ngày bắt đầu và kết thúc -->
         <TextView
@@ -243,6 +262,7 @@
             android:backgroundTint="#2B572E"
             android:textColor="#FFFFFF"
             android:elevation="2dp" />
+
         <ImageView
             android:id="@+id/imgPreview"
             android:layout_width="match_parent"

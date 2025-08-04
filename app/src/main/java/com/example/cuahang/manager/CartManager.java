@@ -91,8 +91,6 @@ public class CartManager {
         }
         return tax;
     }
-
-    // Tổng giá sau thuế
     public double getTotalAmount() {
         double total = 0;
         for (CartItem item : cartItems) {
@@ -109,6 +107,8 @@ public class CartManager {
         }
         return total;
     }
+
+
 
     // Lấy package từ Firestore và thêm vào giỏ
     public void addPackageById(String packageId, int soLuongDaMua, Runnable onSuccess) {

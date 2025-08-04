@@ -1,6 +1,7 @@
 package com.example.cuahang.manager;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +23,7 @@ import com.example.cuahang.R;
 import com.example.cuahang.adapter.InvoicesAdapter;
 import com.example.cuahang.model.Invoices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ public class Invoicesctivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FloatingActionButton fabAddInvoice;
     private double vatPercent = 10.0;
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,8 @@ public class Invoicesctivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         invoiceList = new ArrayList<>();
+        mAuth = FirebaseAuth.getInstance();
+
         adapter = new InvoicesAdapter(invoiceList, new InvoicesAdapter.OnInvoiceActionListener() {
             @Override
             public void onEdit(Invoices invoice) {
@@ -60,7 +66,16 @@ public class Invoicesctivity extends AppCompatActivity {
                             Toast.makeText(Invoicesctivity.this, "Đã xóa hóa đơn", Toast.LENGTH_SHORT).show();
                             loadInvoices();
                         })
-                        .addOnFailureListener(e -> Toast.makeText(Invoicesctivity.this, "Lỗi xoá: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        .addOnFailureListener(e ->
+                                Toast.makeText(Invoicesctivity.this, "Lỗi xoá: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        );
+            }
+
+            @Override
+            public void onClick(Invoices invoice) {
+                Intent intent = new Intent(Invoicesctivity.this, InvoiceDetailActivity.class);
+                intent.putExtra("invoiceId", invoice.getId());
+                startActivity(intent);
             }
         });
 
@@ -72,6 +87,7 @@ public class Invoicesctivity extends AppCompatActivity {
         loadSystemConfig();
         loadInvoices();
     }
+
 
     private void loadInvoices() {
         db.collection("invoices")
@@ -119,11 +135,12 @@ public class Invoicesctivity extends AppCompatActivity {
         Button btnLuuHoaDon = view.findViewById(R.id.btnLuuHoaDon);
 
         edtVAT.setText(String.valueOf(vatPercent));
-        edtVAT.setEnabled(false);
+        edtVAT.setEnabled(false); // không cho người dùng sửa VAT
 
         loadNhanVienToSpinner(spinnerNhanVien);
         loadTrangThaiToSpinner(spinnerTrangThai, null);
 
+        // Tự tính tổng thành tiền mỗi khi giá hoặc giảm giá thay đổi
         setupAutoTinhTong(edtTongGia, edtGiamGia, edtTongThanhToan);
 
         btnLuuHoaDon.setOnClickListener(v -> {
@@ -133,10 +150,12 @@ public class Invoicesctivity extends AppCompatActivity {
                 int tongSoLuong = Integer.parseInt(edtTongSoLuong.getText().toString().trim());
                 double tongGia = Double.parseDouble(edtTongGia.getText().toString().trim());
                 double giamGia = Double.parseDouble(edtGiamGia.getText().toString().trim());
+
                 double tongThanhToan = tinhTongThanhToan(tongGia, giamGia, vatPercent);
 
                 getNextInvoiceId(nextId -> {
                     Date ngayTao = new Date();
+
                     Invoices invoice = new Invoices(nextId, ngayTao, tongThanhToan, nhanVien, tongSoLuong, tongGia, vatPercent, giamGia);
                     invoice.setStatus(trangThai);
 
@@ -147,7 +166,9 @@ public class Invoicesctivity extends AppCompatActivity {
                                 loadInvoices();
                                 dialog.dismiss();
                             })
-                            .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Lỗi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            );
                 });
 
             } catch (Exception e) {
@@ -163,7 +184,7 @@ public class Invoicesctivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     int max = 0;
-                    for (var doc : querySnapshot) {
+                    for (DocumentSnapshot doc : querySnapshot) {
                         String id = doc.getId();
                         if (id.startsWith("IV")) {
                             try {
@@ -174,6 +195,9 @@ public class Invoicesctivity extends AppCompatActivity {
                     }
                     String nextId = String.format("IV%02d", max + 1);
                     listener.onNextId(nextId);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi tạo ID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 

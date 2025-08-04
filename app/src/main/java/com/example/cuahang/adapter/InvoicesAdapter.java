@@ -1,5 +1,6 @@
 package com.example.cuahang.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,12 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
     public interface OnInvoiceActionListener {
         void onEdit(Invoices invoice);
         void onDelete(Invoices invoice);
+        void onClick(Invoices invoice);
     }
 
     private List<Invoices> invoiceList;
     private final OnInvoiceActionListener listener;
+    private static final String TAG = "InvoicesAdapter";
 
     public InvoicesAdapter(List<Invoices> invoiceList, OnInvoiceActionListener listener) {
         this.invoiceList = invoiceList;
@@ -74,14 +77,23 @@ public class InvoicesAdapter extends RecyclerView.Adapter<InvoicesAdapter.Invoic
         }
 
         holder.btnEdit.setOnClickListener(v -> {
+            Log.d(TAG, "Sửa hóa đơn: " + invoice.getId());
             if (listener != null) {
                 listener.onEdit(invoice);
             }
         });
 
         holder.btnDelete.setOnClickListener(v -> {
+            Log.d(TAG, "Xóa hóa đơn: " + invoice.getId());
             if (listener != null) {
                 listener.onDelete(invoice);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            Log.d(TAG, "Click hóa đơn: " + invoice.getId());
+            if (listener != null) {
+                listener.onClick(invoice);
             }
         });
     }

@@ -1,20 +1,21 @@
 package com.example.cuahang.model;
 
 public class CartItem {
+
     private String packageId;
     private String packageName;
     private String packageType;     // Ví dụ: "Tin VIP"
-    private double originalPrice;   // giá gốc (giaGoc)
-    private double packagePrice;    // giá sau giảm (giaGiam) - là giá bán thực tế
+    private double originalPrice;   // Giá gốc (giaGoc)
+    private double packagePrice;    // Giá bán thực tế (giaGiam)
     private int soLuong;
     private double tax;             // % VAT
     private double thanhTien;
     private String firestoreId;
 
-    public CartItem() {
-        // Firestore requires default constructor
-    }
+    // Firestore requires default constructor
+    public CartItem() {}
 
+    // Constructor đầy đủ thông tin
     public CartItem(String packageId, String packageName, String packageType,
                     double originalPrice, double packagePrice, int soLuong, double tax) {
         this.packageId = packageId;
@@ -24,13 +25,28 @@ public class CartItem {
         this.packagePrice = packagePrice;
         this.soLuong = soLuong;
         this.tax = tax;
-        this.thanhTien = calculateThanhTien();
+        recalculateThanhTien();
     }
 
-    private double calculateThanhTien() {
-        double total = packagePrice * soLuong;
-        return total + (total * tax / 100.0);
+    // Constructor tạo từ một Package object
+    public CartItem(Package pkg, int soLuong) {
+        this.packageId = pkg.getId();
+        this.packageName = pkg.getTenGoi();
+        this.packageType = pkg.getPackageType();
+        this.originalPrice = pkg.getGiaGoc();
+        this.packagePrice = pkg.getGiaGiam();
+        this.tax = pkg.getVat(); // Đồng bộ VAT từ Package
+        this.soLuong = soLuong;
+        recalculateThanhTien();
     }
+
+    // Tính lại thành tiền khi có thay đổi về số lượng, giá, hoặc thuế
+    public void recalculateThanhTien() {
+        double total = packagePrice * soLuong;
+        this.thanhTien = total + (total * tax / 100.0);
+    }
+
+    // ========== Getter & Setter ==========
 
     public String getPackageId() {
         return packageId;
@@ -70,7 +86,7 @@ public class CartItem {
 
     public void setPackagePrice(double packagePrice) {
         this.packagePrice = packagePrice;
-        this.thanhTien = calculateThanhTien();
+        recalculateThanhTien();
     }
 
     public int getSoLuong() {
@@ -79,7 +95,7 @@ public class CartItem {
 
     public void setSoLuong(int soLuong) {
         this.soLuong = soLuong;
-        this.thanhTien = calculateThanhTien();
+        recalculateThanhTien();
     }
 
     public double getTax() {
@@ -88,7 +104,7 @@ public class CartItem {
 
     public void setTax(double tax) {
         this.tax = tax;
-        this.thanhTien = calculateThanhTien();
+        recalculateThanhTien();
     }
 
     public double getThanhTien() {

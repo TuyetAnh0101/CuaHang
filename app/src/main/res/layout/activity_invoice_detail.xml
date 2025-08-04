@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_invoices"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".manager.InvoiceDetailActivity">
+
+    <TextView
+        android:id="@+id/tvUser"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Mã người dùng:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Ngày đặt:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvUser"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvTotal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Tổng tiền:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Số lượng:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvTotal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvTax"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Thuế:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvQuantity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvDiscount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Giảm giá:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvTax"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvPackageName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Tên gói:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvDiscount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:id="@+id/tvPackagePrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Giá gói:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvPackageName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

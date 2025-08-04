@@ -17,9 +17,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class PaymentActivity extends AppCompatActivity implements CartAdapter.OnCartItemListener {
@@ -139,10 +142,13 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                 .addOnSuccessListener(aVoid -> {
                     String orderId = db.collection("Orders").document().getId();
 
+                    String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                            .format(new Date());
+
                     Map<String, Object> orderMap = new HashMap<>();
                     orderMap.put("id", orderId);
                     orderMap.put("idKhach", userId);
-                    orderMap.put("ngayDat", FieldValue.serverTimestamp());
+                    orderMap.put("ngayDat", currentDateTime); // 🔁 thay đổi tại đây
                     orderMap.put("tongTien", totalAmount);
                     orderMap.put("tongSoLuong", finalTotalQuantity);
                     orderMap.put("statusXuLy", "Chờ xử lý");
@@ -150,6 +156,7 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                     orderMap.put("note", "");
                     orderMap.put("invoiceId", invoiceId);
                     orderMap.put("packages", orderPackageList);
+
 
                     db.collection("Orders")
                             .document(orderId)

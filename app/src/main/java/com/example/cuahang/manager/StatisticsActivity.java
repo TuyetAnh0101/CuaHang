@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.cuahang.R;
 import com.example.cuahang.adapter.StatisticsAdapter;
 import com.example.cuahang.model.Statistics;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -180,7 +182,6 @@ public class StatisticsActivity extends AppCompatActivity {
             return "";
         }
     }
-
     private void calculateTodayStatistics() {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         final int[] totalRevenue = {0};

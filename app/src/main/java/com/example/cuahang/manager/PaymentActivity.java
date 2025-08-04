@@ -120,8 +120,10 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         invoiceMap.put("tax", totalTax);
         invoiceMap.put("totalAmount", totalAmount);
         invoiceMap.put("totalQuantity", totalQuantity);
-        invoiceMap.put("createdBy", userId);
+        invoiceMap.put("userId", userId);
+        invoiceMap.put("createdBy", "App");            
         invoiceMap.put("status", "Đã thanh toán");
+
 
         String orderId = db.collection("Orders").document().getId();
         String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());

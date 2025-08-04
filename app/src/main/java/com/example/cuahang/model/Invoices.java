@@ -18,6 +18,7 @@ public class Invoices {
     private double totalDiscount;   // Tổng giảm giá
     private String status;          // Trạng thái hóa đơn (Đã thanh toán/Chưa thanh toán)
     private String userId;
+
     public Invoices() {
         // Firestore yêu cầu constructor rỗng
     }

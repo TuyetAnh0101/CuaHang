@@ -1,117 +1,88 @@
 package com.example.cuahang.manager;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cuahang.R;
+import com.example.cuahang.adapter.InvoicePackageAdapter;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 public class InvoiceDetailActivity extends AppCompatActivity {
 
-    private FirebaseFirestore db;
-    private TextView tvUser, tvDate, tvTotal, tvQuantity, tvTax, tvDiscount, tvPackageName, tvPackagePrice;
-    private String invoiceId;
+    private TextView tvUser, tvCreatedBy, tvDate, tvStatus, tvTotal, tvDiscount, tvQuantity;
+    private RecyclerView rvPackages;
+    private InvoicePackageAdapter adapter;
 
-    @SuppressLint("MissingInflatedId")
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice_detail);
 
+        // Ánh xạ đúng ID
+        tvUser = findViewById(R.id.tvUser);
+        tvCreatedBy = findViewById(R.id.tvCreatedBy);
+        tvDate = findViewById(R.id.tvDate);
+        tvStatus = findViewById(R.id.tvStatus);
+        tvTotal = findViewById(R.id.tvTotal);
+        tvDiscount = findViewById(R.id.tvDiscount);
+        tvQuantity = findViewById(R.id.tvQuantity);
+        rvPackages = findViewById(R.id.rvPackages);
+
+        rvPackages.setLayoutManager(new LinearLayoutManager(this));
         db = FirebaseFirestore.getInstance();
 
-        // Ánh xạ view
-        tvUser = findViewById(R.id.tvUser);
-        tvDate = findViewById(R.id.tvDate);
-        tvTotal = findViewById(R.id.tvTotal);
-        tvQuantity = findViewById(R.id.tvQuantity);
-        tvTax = findViewById(R.id.tvTax);
-        tvDiscount = findViewById(R.id.tvDiscount);
-        tvPackageName = findViewById(R.id.tvPackageName);
-        tvPackagePrice = findViewById(R.id.tvPackagePrice);
-
-        invoiceId = getIntent().getStringExtra("invoiceId");
-
+        String invoiceId = getIntent().getStringExtra("invoiceId");
         if (invoiceId != null) {
-            Log.d("InvoiceDetail", "Đang tải hóa đơn với ID: " + invoiceId);
             loadInvoiceDetails(invoiceId);
         } else {
-            Toast.makeText(this, "Không tìm thấy mã hóa đơn", Toast.LENGTH_SHORT).show();
-            Log.e("InvoiceDetail", "invoiceId null trong Intent");
-            finish();
+            Toast.makeText(this, "Không tìm thấy hóa đơn!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void loadInvoiceDetails(String id) {
-        db.collection("invoices").document(id).get()
+    private void loadInvoiceDetails(String invoiceId) {
+        db.collection("invoices").document(invoiceId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        Log.d("InvoiceDetail", "Hóa đơn tồn tại");
+                        // Gán dữ liệu cho TextView
+                        tvUser.setText(documentSnapshot.getString("userId"));
+                        tvCreatedBy.setText(documentSnapshot.getString("createdBy"));
+                        tvDate.setText(documentSnapshot.getString("ngay"));
+                        tvStatus.setText(documentSnapshot.getString("status"));
 
-                        String userId = documentSnapshot.getString("userId");
-                        String ngayDat = documentSnapshot.getString("ngayDat");
-                        Double tongTien = documentSnapshot.getDouble("tongTien");
-                        Double giamGia = documentSnapshot.getDouble("giamGia");
-                        Double thue = documentSnapshot.getDouble("thue");
-                        Long soLuong = documentSnapshot.getLong("soLuong");
-                        Map<String, Object> packageInfo = (Map<String, Object>) documentSnapshot.get("package");
+                        tvTotal.setText(documentSnapshot.get("tongTien") + " đ");
+                        tvDiscount.setText(documentSnapshot.get("discount") + " đ");
+                        tvQuantity.setText(documentSnapshot.get("tongSoLuong") + " SP");
 
-                        Log.d("InvoiceDetail", "userId: " + userId);
-                        Log.d("InvoiceDetail", "ngayDat: " + ngayDat);
-                        Log.d("InvoiceDetail", "tongTien: " + tongTien);
-                        Log.d("InvoiceDetail", "giamGia: " + giamGia);
-                        Log.d("InvoiceDetail", "thue: " + thue);
-                        Log.d("InvoiceDetail", "soLuong: " + soLuong);
-                        Log.d("InvoiceDetail", "package: " + packageInfo);
+                        // Lấy danh sách packages
+                        List<Map<String, Object>> packageList =
+                                (List<Map<String, Object>>) documentSnapshot.get("packages");
 
-                        tvUser.setText("Mã người dùng: " + (userId != null ? userId : "Không có"));
-                        tvDate.setText("Ngày đặt: " + (ngayDat != null ? ngayDat : "Không có"));
-                        tvTotal.setText("Tổng tiền: " + formatCurrency(tongTien != null ? tongTien : 0));
-                        tvDiscount.setText("Giảm giá: " + formatCurrency(giamGia != null ? giamGia : 0));
-                        tvTax.setText("Thuế: " + formatCurrency(thue != null ? thue : 0));
-                        tvQuantity.setText("Số lượng: " + (soLuong != null ? soLuong : 0));
-
-                        if (packageInfo != null) {
-                            String tenGoi = (String) packageInfo.get("tenGoi");
-                            Number gia = (Number) packageInfo.get("gia");
-
-                            Log.d("InvoiceDetail", "tenGoi: " + tenGoi);
-                            Log.d("InvoiceDetail", "gia: " + gia);
-
-                            tvPackageName.setText("Tên gói: " + (tenGoi != null ? tenGoi : "Không có"));
-                            tvPackagePrice.setText("Giá gói: " + formatCurrency(gia != null ? gia.doubleValue() : 0));
+                        if (packageList != null && !packageList.isEmpty()) {
+                            adapter = new InvoicePackageAdapter(packageList);
+                            rvPackages.setAdapter(adapter);
+                            Log.d("InvoiceDetail", "Có " + packageList.size() + " gói được mua");
                         } else {
-                            tvPackageName.setText("Tên gói: Không có");
-                            tvPackagePrice.setText("Giá gói: Không có");
-                            Log.d("InvoiceDetail", "Không có thông tin gói");
+                            Log.d("InvoiceDetail", "Không có gói nào trong hóa đơn");
                         }
 
                     } else {
-                        Log.w("InvoiceDetail", "Không tìm thấy tài liệu hóa đơn với ID: " + id);
-                        Toast.makeText(this, "Không tìm thấy hóa đơn", Toast.LENGTH_SHORT).show();
-                        finish();
+                        Toast.makeText(this, "Hóa đơn không tồn tại!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi khi tải chi tiết hóa đơn", Toast.LENGTH_SHORT).show();
-                    Log.e("InvoiceDetail", "Lỗi khi truy vấn Firestore: ", e);
-                    finish();
+                    Toast.makeText(this, "Lỗi khi tải hóa đơn!", Toast.LENGTH_SHORT).show();
+                    Log.e("InvoiceDetail", "Lỗi: ", e);
                 });
     }
-
-    private String formatCurrency(double amount) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return format.format(amount);
-    }
 }
-
-

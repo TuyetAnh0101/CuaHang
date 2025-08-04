@@ -100,19 +100,17 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
             totalQuantity += quantity;
 
             Map<String, Object> packageMap = new HashMap<>();
+            packageMap.put("giaGiam", price);
             packageMap.put("packageId", item.getPackageId());
-            packageMap.put("packageName", item.getPackageName());
             packageMap.put("packageType", item.getPackageType());
             packageMap.put("soLuong", quantity);
-            packageMap.put("giaGoc", item.getOriginalPrice());
-            packageMap.put("giaGiam", price);
-            packageMap.put("VAT", tax);
+            packageMap.put("tenGoi", item.getPackageName());
             packageMap.put("thanhTien", thanhTien);
 
             orderPackageList.add(packageMap);
         }
 
-        double totalAmount = totalPrice + totalTax;
+            double totalAmount = totalPrice + totalTax;
         String invoiceId = db.collection("invoices").document().getId();
         String orderId = db.collection("Orders").document().getId();
         String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());

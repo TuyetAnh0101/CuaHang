@@ -17,6 +17,7 @@ public class Package {
     private String status;
     private String note;
     private int soLuong;
+    private List<Package> packages;
 
     private boolean isFree3Posts;
     private String billingCycle;
@@ -134,6 +135,13 @@ public class Package {
 
     public double tinhThanhTien() {
         return giaGiam * soLuong;
+    }
+    public List<Package> getPackages() {
+        return packages;
+    }
+
+    public void setPackages(List<Package> packages) {
+        this.packages = packages;
     }
 
     public enum BillingCycle {

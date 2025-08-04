@@ -70,8 +70,8 @@ public class AccountFragment extends Fragment {
 
     private void setupRecyclerView() {
         rcvPurchased.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new OrderPackageItemAdapter(allPackages, packageId -> {
-            CartManager.getInstance().addPackageById(packageId, () -> {
+        adapter = new OrderPackageItemAdapter(allPackages, (packageId, quantity) -> {
+            CartManager.getInstance().addPackageById(packageId, quantity, () -> {
                 Toast.makeText(getContext(), "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getContext(), PaymentActivity.class));
             });

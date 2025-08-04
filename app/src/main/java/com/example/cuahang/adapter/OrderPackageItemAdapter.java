@@ -20,7 +20,7 @@ import java.util.Map;
 public class OrderPackageItemAdapter extends RecyclerView.Adapter<OrderPackageItemAdapter.OrderPackageViewHolder> {
 
     public interface OnBuyAgainClickListener {
-        void onBuyAgain(String packageId);
+        void onBuyAgain(String packageId, int quantity);
     }
 
     private List<Map<String, Object>> orderPackages;
@@ -44,52 +44,74 @@ public class OrderPackageItemAdapter extends RecyclerView.Adapter<OrderPackageIt
         Map<String, Object> pkg = orderPackages.get(position);
 
         String packageId = pkg.get("packageId") != null ? pkg.get("packageId").toString() : "";
-        String packageName = pkg.get("packageName") != null ? pkg.get("packageName").toString() : "Không rõ";
+        String packageName = pkg.get("tenGoi") != null ? pkg.get("tenGoi").toString() : "Không rõ";
 
-        long quantity = 0;
-        if (pkg.get("quantity") instanceof Long) {
-            quantity = (Long) pkg.get("quantity");
-        } else if (pkg.get("quantity") instanceof Integer) {
-            quantity = ((Integer) pkg.get("quantity")).longValue();
+        long quantityLong = 0;
+        if (pkg.get("soLuong") instanceof Number) {
+            quantityLong = ((Number) pkg.get("soLuong")).longValue();
         }
+        final int quantity = (int) quantityLong; // ép kiểu an toàn
 
         double thanhTien = 0;
-        if (pkg.get("thanhTien") instanceof Double) {
-            thanhTien = (Double) pkg.get("thanhTien");
-        } else if (pkg.get("thanhTien") instanceof Long) {
-            thanhTien = ((Long) pkg.get("thanhTien")).doubleValue();
+        if (pkg.get("thanhTien") instanceof Number) {
+            thanhTien = ((Number) pkg.get("thanhTien")).doubleValue();
         }
 
         holder.tvPackageName.setText(packageName);
-        holder.tvQuantity.setText("Số lượng: " + quantity);
+        holder.tvQuantity.setText("Số lượng đã mua: " + quantity);
         holder.tvThanhTien.setText("Tổng tiền: " + String.format("%,.0f", thanhTien) + "đ");
 
-        // Kiểm tra số lượng gói từ Firestore
+        holder.btnBuyAgain.setVisibility(View.GONE);
+
         FirebaseFirestore.getInstance()
                 .collection("Package")
                 .document(packageId)
                 .get()
                 .addOnSuccessListener(doc -> {
-                    Long soLuong = doc.getLong("soLuong");
-                    boolean isAvailable = soLuong != null && soLuong > 0;
+                    if (doc.exists()) {
+                        Long tonKho = doc.getLong("soLuong");
 
-                    holder.btnBuyAgain.setVisibility(isAvailable ? View.VISIBLE : View.GONE);
-                    holder.btnBuyAgain.setOnClickListener(v -> {
-                        if (listener != null) {
-                            listener.onBuyAgain(packageId);
+                        if (tonKho != null && tonKho >= quantity) {
+                            holder.btnBuyAgain.setVisibility(View.VISIBLE);
+
+                            holder.btnBuyAgain.setOnClickListener(v -> {
+                                FirebaseFirestore.getInstance()
+                                        .collection("Package")
+                                        .document(packageId)
+                                        .get()
+                                        .addOnSuccessListener(checkDoc -> {
+                                            Long tonKhoCheck = checkDoc.getLong("soLuong");
+                                            if (tonKhoCheck != null && tonKhoCheck >= quantity) {
+                                                if (listener != null) {
+                                                    listener.onBuyAgain(packageId, quantity);
+                                                }
+                                            } else {
+                                                Toast.makeText(holder.itemView.getContext(),
+                                                        "Không đủ hàng trong kho để mua lại (" + tonKhoCheck + " còn lại)",
+                                                        Toast.LENGTH_SHORT).show();
+                                                holder.btnBuyAgain.setVisibility(View.GONE);
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(holder.itemView.getContext(),
+                                                    "Lỗi kiểm tra tồn kho, thử lại sau.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            });
                         }
-                    });
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("OrderPackageAdapter", "Lỗi truy vấn Package: " + e.getMessage());
+                    Toast.makeText(holder.itemView.getContext(),
+                            "Không thể kiểm tra tồn kho.",
+                            Toast.LENGTH_SHORT).show();
                     holder.btnBuyAgain.setVisibility(View.GONE);
-                    Toast.makeText(holder.itemView.getContext(), "Không kiểm tra được số lượng gói.", Toast.LENGTH_SHORT).show();
                 });
     }
 
     @Override
     public int getItemCount() {
-        return orderPackages.size();
+        return orderPackages != null ? orderPackages.size() : 0;
     }
 
     public static class OrderPackageViewHolder extends RecyclerView.ViewHolder {

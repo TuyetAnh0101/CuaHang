@@ -3,31 +3,33 @@ package com.example.cuahang.model;
 public class CartItem {
     private String packageId;
     private String packageName;
-    private double packagePrice;
+    private String packageType;     // Ví dụ: "Tin VIP"
+    private double originalPrice;   // giá gốc (giaGoc)
+    private double packagePrice;    // giá sau giảm (giaGiam) - là giá bán thực tế
     private int soLuong;
-    private String firestoreId;
-    private double tax;
-    private double discount;
+    private double tax;             // % VAT
     private double thanhTien;
-    private String packageType;
+    private String firestoreId;
 
     public CartItem() {
-        // Constructor mặc định bắt buộc khi dùng Firebase Firestore
+        // Firestore requires default constructor
     }
 
-    public CartItem(String packageId, String packageName, double packagePrice, int soLuong) {
+    public CartItem(String packageId, String packageName, String packageType,
+                    double originalPrice, double packagePrice, int soLuong, double tax) {
         this.packageId = packageId;
         this.packageName = packageName;
+        this.packageType = packageType;
+        this.originalPrice = originalPrice;
         this.packagePrice = packagePrice;
         this.soLuong = soLuong;
+        this.tax = tax;
+        this.thanhTien = calculateThanhTien();
     }
 
-    public CartItem(String packageId, String packageName, double packagePrice, int soLuong, String firestoreId) {
-        this.packageId = packageId;
-        this.packageName = packageName;
-        this.packagePrice = packagePrice;
-        this.soLuong = soLuong;
-        this.firestoreId = firestoreId;
+    private double calculateThanhTien() {
+        double total = packagePrice * soLuong;
+        return total + (total * tax / 100.0);
     }
 
     public String getPackageId() {
@@ -46,12 +48,29 @@ public class CartItem {
         this.packageName = packageName;
     }
 
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public double getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(double originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
     public double getPackagePrice() {
         return packagePrice;
     }
 
     public void setPackagePrice(double packagePrice) {
         this.packagePrice = packagePrice;
+        this.thanhTien = calculateThanhTien();
     }
 
     public int getSoLuong() {
@@ -60,6 +79,20 @@ public class CartItem {
 
     public void setSoLuong(int soLuong) {
         this.soLuong = soLuong;
+        this.thanhTien = calculateThanhTien();
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public void setTax(double tax) {
+        this.tax = tax;
+        this.thanhTien = calculateThanhTien();
+    }
+
+    public double getThanhTien() {
+        return thanhTien;
     }
 
     public String getFirestoreId() {
@@ -70,39 +103,7 @@ public class CartItem {
         this.firestoreId = firestoreId;
     }
 
-    public String getPackageType() {
-        return packageType;
-    }
-
-    public void setPackageType(String packageType) {
-        this.packageType = packageType;
-    }
-
-    public double getTax() {
-        return tax;
-    }
-
-    public void setTax(double tax) {
-        this.tax = tax;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
-
-    public double getThanhTien() {
-        return thanhTien;
-    }
-
-    public void setThanhTien(double thanhTien) {
-        this.thanhTien = thanhTien;
-    }
-
-    public double getTotalPrice() {
+    public double getTotalBeforeTax() {
         return packagePrice * soLuong;
     }
 }

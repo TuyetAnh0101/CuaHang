@@ -2,7 +2,6 @@ package com.example.cuahang.manager;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,14 +18,9 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-public class PaymentActivity extends AppCompatActivity implements CartAdapter.OnCartItemListener {
+public class PaymentActivity extends AppCompatActivity implements CartAdapter.OnCartItemActionListener {
 
     private RecyclerView recyclerView;
     private CartAdapter adapter;
@@ -68,20 +62,17 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
     }
 
     @Override
-    public void onDeleteClick(int position) {
-        CartManager.getInstance().removeItem(position);
-        adapter.notifyItemRemoved(position);
+    public void onCartUpdated() {
         updateTotal();
     }
 
     private void updateTotal() {
         double total = 0;
         for (CartItem item : cartItems) {
-            total += item.getPackagePrice() * item.getSoLuong();
+            total += item.getThanhTien(); // đã bao gồm thuế
         }
         tvTotal.setText("Tổng tiền: " + String.format("%,.0f", total) + "đ");
     }
-
     private void saveInvoiceAndOrder() {
         if (auth.getCurrentUser() == null) {
             Toast.makeText(this, "Người dùng chưa đăng nhập!", Toast.LENGTH_SHORT).show();
@@ -91,92 +82,71 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         String userId = auth.getCurrentUser().getUid();
         double totalPrice = 0;
         double totalTax = 0;
-        double totalDiscount = 0;
-        int totalQuantity = 0;
+        final int[] totalQuantity = {0};
 
         List<Map<String, Object>> orderPackageList = new ArrayList<>();
+
         for (CartItem item : cartItems) {
             int quantity = item.getSoLuong();
-            double price = item.getDiscount(); // Giá đã giảm = giá bán cuối
-            double thanhTien = price * quantity;
+            double price = item.getPackagePrice();
+            double tax = item.getTax();
+            double thanhTien = item.getThanhTien();
+            double totalBeforeTax = item.getTotalBeforeTax();
 
-            // Nếu CartItem chưa có thanhTien, thì tính lại ở đây
-            item.setThanhTien(thanhTien);
+            totalPrice += totalBeforeTax;
+            totalTax += thanhTien - totalBeforeTax;
+            totalQuantity[0] += item.getSoLuong();
 
             Map<String, Object> packageMap = new HashMap<>();
             packageMap.put("packageId", item.getPackageId());
-            packageMap.put("packageType", item.getPackageType() != null ? item.getPackageType() : ""); // tránh null
-            packageMap.put("tenGoi", item.getPackageName() != null ? item.getPackageName() : "");       // tránh null
+            packageMap.put("packageName", item.getPackageName());
+            packageMap.put("packageType", item.getPackageType());
             packageMap.put("soLuong", quantity);
+            packageMap.put("giaGoc", item.getOriginalPrice());
             packageMap.put("giaGiam", price);
+            packageMap.put("VAT", tax);
             packageMap.put("thanhTien", thanhTien);
 
-            totalQuantity += quantity;
             orderPackageList.add(packageMap);
-
-            // Ghi log kiểm tra đầy đủ
-            Log.d("CartItemCheck", "packageId: " + item.getPackageId());
-            Log.d("CartItemCheck", "packageType: " + item.getPackageType());
-            Log.d("CartItemCheck", "tenGoi: " + item.getPackageName());
-            Log.d("CartItemCheck", "soLuong: " + quantity);
-            Log.d("CartItemCheck", "giaGiam: " + price);
-            Log.d("CartItemCheck", "thanhTien: " + thanhTien);
         }
 
-        double totalAmount = totalPrice + totalTax - totalDiscount;
+        double totalAmount = totalPrice + totalTax;
         String invoiceId = db.collection("invoices").document().getId();
 
         Map<String, Object> invoiceMap = new HashMap<>();
         invoiceMap.put("id", invoiceId);
         invoiceMap.put("dateTime", FieldValue.serverTimestamp());
-        invoiceMap.put("totalAmount", totalAmount);
         invoiceMap.put("totalPrice", totalPrice);
         invoiceMap.put("tax", totalTax);
-        invoiceMap.put("totalDiscount", totalDiscount);
+        invoiceMap.put("totalAmount", totalAmount);
         invoiceMap.put("totalQuantity", totalQuantity);
         invoiceMap.put("createdBy", userId);
         invoiceMap.put("status", "Đã thanh toán");
 
-        int finalTotalQuantity = totalQuantity;
+        String orderId = db.collection("Orders").document().getId();
+        String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        db.collection("invoices")
-                .document(invoiceId)
-                .set(invoiceMap)
+        db.collection("invoices").document(invoiceId).set(invoiceMap)
                 .addOnSuccessListener(aVoid -> {
-                    String orderId = db.collection("Orders").document().getId();
-
-                    // Format ngày theo chuỗi "yyyy-MM-dd HH:mm:ss"
-                    String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                            .format(new Date());
-
                     Map<String, Object> orderMap = new HashMap<>();
                     orderMap.put("id", orderId);
                     orderMap.put("idKhach", userId);
                     orderMap.put("ngayDat", currentDateTime);
                     orderMap.put("tongTien", totalAmount);
-                    orderMap.put("tongSoLuong", finalTotalQuantity);
+                    orderMap.put("tongSoLuong", totalQuantity);
                     orderMap.put("statusXuLy", "Chờ xử lý");
                     orderMap.put("statusThanhToan", "Đã thanh toán");
                     orderMap.put("note", "");
                     orderMap.put("invoiceId", invoiceId);
                     orderMap.put("packages", orderPackageList);
 
-                    db.collection("Orders")
-                            .document(orderId)
-                            .set(orderMap)
+                    db.collection("Orders").document(orderId).set(orderMap)
                             .addOnSuccessListener(orderVoid -> {
-                                // ✅ Sau khi tạo đơn hàng, giảm số lượng gói trong collection Packages
                                 for (CartItem item : cartItems) {
-                                    String packageId = item.getPackageId();
-                                    int quantityToSubtract = item.getSoLuong();
-
-                                    db.collection("Package").document(packageId)
-                                            .update("soLuong", FieldValue.increment(-quantityToSubtract))
-                                            .addOnSuccessListener(a -> {
-                                                // Thành công
-                                            })
+                                    db.collection("Package").document(item.getPackageId())
+                                            .update("soLuong", FieldValue.increment(-item.getSoLuong()))
                                             .addOnFailureListener(e -> {
-                                                Toast.makeText(this, "Không thể cập nhật số lượng gói: " + packageId, Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(this, "Lỗi cập nhật số lượng: " + item.getPackageId(), Toast.LENGTH_SHORT).show();
                                             });
                                 }
 
@@ -187,11 +157,12 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                                 finish();
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Lỗi khi lưu đơn hàng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Lỗi lưu đơn hàng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi khi lưu hóa đơn: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Lỗi lưu hóa đơn: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 }

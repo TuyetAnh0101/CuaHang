@@ -51,6 +51,12 @@
                 android:textStyle="bold"
                 android:textColor="#E53935"
                 android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/tvPackageQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Số lượng"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!-- Nút trừ -->

@@ -38,27 +38,23 @@ public class CartActivity extends AppCompatActivity {
         cartItemList = CartManager.getInstance().getCartItems();
 
         recyclerCart.setLayoutManager(new LinearLayoutManager(this));
-        cartAdapter = new CartAdapter(this, cartItemList, null);
+        cartAdapter = new CartAdapter(this, cartItemList, () -> updateTotalPrice());
         recyclerCart.setAdapter(cartAdapter);
 
         updateTotalPrice();
 
-        btnCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!cartItemList.isEmpty()) {
-                    Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
-                    startActivity(intent);
-                }
+        btnCheckout.setOnClickListener(v -> {
+            if (!cartItemList.isEmpty()) {
+                Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
+                startActivity(intent);
             }
         });
     }
+
     private void updateTotalPrice() {
         double total = 0;
         for (CartItem item : cartItemList) {
-            // Tính lại thanh tiền nếu chưa tính sẵn
-            double itemTotal = item.getPackagePrice() * item.getSoLuong();
-            total += itemTotal;
+            total += item.getThanhTien(); // Giá bán * số lượng
         }
         String formattedTotal = String.format("%,.0f", total);
         tvTotalPrice.setText("Tổng tiền: " + formattedTotal + "đ");

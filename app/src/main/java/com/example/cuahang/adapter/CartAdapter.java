@@ -18,15 +18,15 @@ import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
-    private Context context;
-    private List<CartItem> cartItems;
-    private OnCartItemListener listener;
+    private final Context context;
+    private final List<CartItem> cartItems;
+    private final OnCartItemActionListener listener;
 
-    public interface OnCartItemListener {
-        void onDeleteClick(int position);
+    public interface OnCartItemActionListener {
+        void onCartUpdated(); // Gọi khi xóa để cập nhật lại tổng tiền bên ngoài
     }
 
-    public CartAdapter(Context context, List<CartItem> cartItems, OnCartItemListener listener) {
+    public CartAdapter(Context context, List<CartItem> cartItems, OnCartItemActionListener listener) {
         this.context = context;
         this.cartItems = cartItems;
         this.listener = listener;
@@ -43,14 +43,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         CartItem item = cartItems.get(position);
         holder.tvName.setText(item.getPackageName());
-        holder.tvPrice.setText("Giá: " + formatMoney(item.getPackagePrice()));
+        holder.tvPrice.setText("Giá bán: " + formatMoney(item.getPackagePrice()));
+        holder.tvQuantity.setText("Số lượng: " + item.getSoLuong());
 
         holder.btnDelete.setOnClickListener(v -> {
+            cartItems.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, cartItems.size());
+
             if (listener != null) {
-                listener.onDeleteClick(position);
+                listener.onCartUpdated(); // Cập nhật lại tổng tiền
             }
         });
     }
+
     private String formatMoney(double amount) {
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(amount) + "đ";
@@ -62,13 +68,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvPrice;
+        TextView tvName, tvPrice, tvQuantity;
         ImageButton btnDelete;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvPackageName);
             tvPrice = itemView.findViewById(R.id.tvPackagePrice);
+            tvQuantity = itemView.findViewById(R.id.tvPackageQuantity);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }

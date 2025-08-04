@@ -73,6 +73,7 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         }
         tvTotal.setText("Tổng tiền: " + String.format("%,.0f", total) + "đ");
     }
+
     private void saveInvoiceAndOrder() {
         if (auth.getCurrentUser() == null) {
             Toast.makeText(this, "Người dùng chưa đăng nhập!", Toast.LENGTH_SHORT).show();
@@ -80,9 +81,10 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         }
 
         String userId = auth.getCurrentUser().getUid();
+
         double totalPrice = 0;
         double totalTax = 0;
-        final int[] totalQuantity = {0};
+        int totalQuantity = 0;
 
         List<Map<String, Object>> orderPackageList = new ArrayList<>();
 
@@ -95,7 +97,7 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
 
             totalPrice += totalBeforeTax;
             totalTax += thanhTien - totalBeforeTax;
-            totalQuantity[0] += item.getSoLuong();
+            totalQuantity += quantity;
 
             Map<String, Object> packageMap = new HashMap<>();
             packageMap.put("packageId", item.getPackageId());
@@ -112,7 +114,10 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
 
         double totalAmount = totalPrice + totalTax;
         String invoiceId = db.collection("invoices").document().getId();
+        String orderId = db.collection("Orders").document().getId();
+        String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
+        // ✅ Hóa đơn
         Map<String, Object> invoiceMap = new HashMap<>();
         invoiceMap.put("id", invoiceId);
         invoiceMap.put("dateTime", FieldValue.serverTimestamp());
@@ -121,21 +126,19 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         invoiceMap.put("totalAmount", totalAmount);
         invoiceMap.put("totalQuantity", totalQuantity);
         invoiceMap.put("userId", userId);
-        invoiceMap.put("createdBy", "App");            
+        invoiceMap.put("createdBy", "App");
         invoiceMap.put("status", "Đã thanh toán");
 
-
-        String orderId = db.collection("Orders").document().getId();
-        String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-
+        int finalTotalQuantity = totalQuantity;
         db.collection("invoices").document(invoiceId).set(invoiceMap)
                 .addOnSuccessListener(aVoid -> {
+                    // ✅ Đơn hàng
                     Map<String, Object> orderMap = new HashMap<>();
                     orderMap.put("id", orderId);
                     orderMap.put("idKhach", userId);
                     orderMap.put("ngayDat", currentDateTime);
                     orderMap.put("tongTien", totalAmount);
-                    orderMap.put("tongSoLuong", totalQuantity);
+                    orderMap.put("tongSoLuong", finalTotalQuantity);
                     orderMap.put("statusXuLy", "Chờ xử lý");
                     orderMap.put("statusThanhToan", "Đã thanh toán");
                     orderMap.put("note", "");
@@ -144,6 +147,7 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
 
                     db.collection("Orders").document(orderId).set(orderMap)
                             .addOnSuccessListener(orderVoid -> {
+                                // ✅ Cập nhật lại số lượng hàng tồn
                                 for (CartItem item : cartItems) {
                                     db.collection("Package").document(item.getPackageId())
                                             .update("soLuong", FieldValue.increment(-item.getSoLuong()))
@@ -166,5 +170,4 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                     Toast.makeText(this, "Lỗi lưu hóa đơn: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
-
 }

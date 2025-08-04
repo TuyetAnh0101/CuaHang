@@ -126,6 +126,7 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         invoiceMap.put("userId", userId);
         invoiceMap.put("createdBy", "App");
         invoiceMap.put("status", "Đã thanh toán");
+        invoiceMap.put("orderId", orderId);
 
         int finalTotalQuantity = totalQuantity;
         db.collection("invoices").document(invoiceId).set(invoiceMap)

@@ -20,16 +20,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     private final Context context;
     private final List<Order> orderList;
     private final OnOrderActionListener listener;
+    private final OnOrderClickListener clickListener;
 
     public interface OnOrderActionListener {
         void onEdit(Order order);
         void onDelete(Order order);
     }
 
-    public OrderAdapter(Context context, List<Order> orderList, OnOrderActionListener listener) {
+    public interface OnOrderClickListener {
+        void onClick(Order order);
+    }
+
+    public OrderAdapter(Context context, List<Order> orderList, OnOrderActionListener listener, OnOrderClickListener clickListener) {
         this.context = context;
         this.orderList = orderList;
         this.listener = listener;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -49,18 +55,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvTrangThaiThanhToan.setText("Thanh toán: " + order.getStatusThanhToan());
         holder.tvSoLuong.setText("Tổng SL: " + order.getTongSoLuong());
 
-        holder.btnEdit.setOnClickListener(v -> {
-            if (listener != null) listener.onEdit(order);
-        });
-
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDelete(order);
-        });
+        holder.bind(order, listener, clickListener);
     }
+
     private String formatMoney(double amount) {
-        return String.format("%,.0fđ", amount); // hoặc dùng NumberFormat
+        return String.format("%,.0fđ", amount);
     }
-
 
     @Override
     public int getItemCount() {
@@ -80,6 +80,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             tvSoLuong = itemView.findViewById(R.id.tvSoLuong);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+        }
+
+        public void bind(Order order, OnOrderActionListener listener, OnOrderClickListener clickListener) {
+            btnEdit.setOnClickListener(v -> {
+                if (listener != null) listener.onEdit(order);
+            });
+
+            btnDelete.setOnClickListener(v -> {
+                if (listener != null) listener.onDelete(order);
+            });
+
+            itemView.setOnClickListener(v -> {
+                if (clickListener != null) clickListener.onClick(order);
+            });
         }
     }
 }

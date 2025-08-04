@@ -18,6 +18,7 @@ public class Invoices {
     private double totalDiscount;   // Tổng giảm giá
     private String status;          // Trạng thái hóa đơn (Đã thanh toán/Chưa thanh toán)
     private String userId;
+    private String orderId;
 
     public Invoices() {
         // Firestore yêu cầu constructor rỗng
@@ -116,5 +117,12 @@ public class Invoices {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

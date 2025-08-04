@@ -9,7 +9,22 @@
     android:padding="16dp"
     tools:context=".manager.InvoiceDetailActivity">
 
-    <!-- CardView chứa thông tin hóa đơn -->
+    <!-- 🟦 Tiêu đề Chi tiết hóa đơn -->
+    <TextView
+        android:id="@+id/tv_invoice_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Chi tiết hóa đơn"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#3F51B5"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 🧾 Thông tin hóa đơn -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardInvoiceInfo"
         android:layout_width="0dp"
@@ -17,7 +32,7 @@
         android:layout_marginBottom="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_invoice_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -28,13 +43,22 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tvOrderId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🧾 Mã đơn hàng: "
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/tvUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="👤 Mã người dùng:"
                 android:textColor="#212121"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:id="@+id/tvCreatedBy"
@@ -48,7 +72,7 @@
                 android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📅 Ngày đặt:"
+                android:text="📅 Ngày tạo:"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
@@ -60,39 +84,21 @@
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#BDBDBD"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp" />
+
             <TextView
                 android:id="@+id/tvTotal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="💵 Tổng tiền thanh toán:"
                 android:textSize="16sp"
-                android:layout_marginTop="8dp"
                 android:textStyle="bold"
                 android:textColor="#D32F2F" />
-
-            <TextView
-                android:id="@+id/tvTotalPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="💰 Tổng giá trước thuế/giảm:"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/tvQuantity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🔢 Số lượng:"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/tvTax"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🧾 Thuế:"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp" />
 
             <TextView
                 android:id="@+id/tvDiscount"
@@ -102,29 +108,14 @@
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
+            <TextView
+                android:id="@+id/tvQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔢 Tổng số lượng:"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- RecyclerView hiển thị các package -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardPackages"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        app:layout_constraintTop_toBottomOf="@id/cardInvoiceInfo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPackages"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:scrollbars="vertical" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

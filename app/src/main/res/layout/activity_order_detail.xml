@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_order"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA"
+    android:padding="16dp"
+    tools:context=".manager.OrderDetailActivity">
+
+    <!-- 🟦 Tiêu đề Chi tiết đơn hàng -->
+    <TextView
+        android:id="@+id/tv_order_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Chi tiết đơn hàng"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#3F51B5"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- CardView chứa thông tin đơn hàng -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_order_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_order_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_order_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mã đơn: #"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/tv_customer_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Khách hàng: "
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_order_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ngày đặt: "
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_total_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tổng tiền: "
+                android:textStyle="bold"
+                android:textColor="#388E3C"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_total_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tổng SL: "
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_status_xuly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trạng thái xử lý: "
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_status_thanhtoan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thanh toán: "
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ghi chú: "
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Label danh sách gói hàng -->
+    <TextView
+        android:id="@+id/tv_packages_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Danh sách gói hàng"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@+id/card_order_info"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"/>
+
+    <!-- Danh sách gói hàng -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_order_packages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/white"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/tv_packages_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -74,7 +74,7 @@ public class Invoicesctivity extends AppCompatActivity {
             @Override
             public void onClick(Invoices invoice) {
                 Intent intent = new Intent(Invoicesctivity.this, InvoiceDetailActivity.class);
-                intent.putExtra("invoiceId", invoice.getId());
+                intent.putExtra("id", invoice.getId());
                 startActivity(intent);
             }
         });
@@ -99,6 +99,13 @@ public class Invoicesctivity extends AppCompatActivity {
                         invoice.setId(doc.getId());
                         invoiceList.add(invoice);
                     }
+
+                    invoiceList.sort((a, b) -> {
+                        Date dateA = a.getCreatedAt();
+                        Date dateB = b.getCreatedAt();
+                        return dateB.compareTo(dateA);
+                    });
+
                     adapter.setInvoiceList(invoiceList);
                 });
     }

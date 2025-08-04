@@ -1,6 +1,7 @@
 package com.example.cuahang.manager;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +36,6 @@ public class OrderActivity extends AppCompatActivity {
     private OrderAdapter orderAdapter;
 
     private static final String TAG = "OrderActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,7 @@ public class OrderActivity extends AppCompatActivity {
         fabAddOrder = findViewById(R.id.fabAddOrder);
 
         recyclerOrders.setLayoutManager(new LinearLayoutManager(this));
+
         orderAdapter = new OrderAdapter(this, orderList, new OrderAdapter.OnOrderActionListener() {
             @Override
             public void onEdit(Order order) {
@@ -79,13 +80,23 @@ public class OrderActivity extends AppCompatActivity {
                         .setNegativeButton("Huỷ", null)
                         .show();
             }
+        }, new OrderAdapter.OnOrderClickListener() {
+            @Override
+            public void onClick(Order order) {
+                Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
+                intent.putExtra("id", order.getId()); // đảm bảo order.getId() KHÔNG null
+                startActivity(intent);
+                Log.d("OrderActivity", "Gửi ID: " + order.getId());
+            }
         });
+
         recyclerOrders.setAdapter(orderAdapter);
 
         fabAddOrder.setOnClickListener(v -> openAddOrderDialog());
 
         loadOrders();
     }
+
     private void loadOrders() {
         FirebaseFirestore.getInstance().collection("Orders")
                 .get()
@@ -97,6 +108,15 @@ public class OrderActivity extends AppCompatActivity {
                             orderList.add(order);
                         }
                     }
+
+                    // Sắp xếp từ mới nhất đến cũ nhất theo ngày đặt (ngayDat)
+                    orderList.sort((o1, o2) -> {
+                        String date1 = o1.getNgayDat();
+                        String date2 = o2.getNgayDat();
+                        if (date1 == null || date2 == null) return 0;
+                        return date2.compareTo(date1); // Mới nhất lên trước
+                    });
+
                     orderAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
@@ -104,6 +124,8 @@ public class OrderActivity extends AppCompatActivity {
                     Log.e(TAG, "Lỗi tải đơn hàng từ Firestore", e);
                 });
     }
+
+
 
     private void openAddOrderDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.add_order_layout, null);

@@ -2,6 +2,7 @@ package com.example.cuahang.manager;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,30 +95,32 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
         int totalQuantity = 0;
 
         List<Map<String, Object>> orderPackageList = new ArrayList<>();
-
         for (CartItem item : cartItems) {
             int quantity = item.getSoLuong();
-            double price = item.getPackagePrice();
-            double tax = item.getTax();
-            double discount = item.getDiscount();
+            double price = item.getDiscount(); // Giá đã giảm = giá bán cuối
+            double thanhTien = price * quantity;
 
-            double thanhTien = (price + tax - discount) * quantity;
+            // Nếu CartItem chưa có thanhTien, thì tính lại ở đây
+            item.setThanhTien(thanhTien);
 
             Map<String, Object> packageMap = new HashMap<>();
             packageMap.put("packageId", item.getPackageId());
-            packageMap.put("packageName", item.getPackageName());
-            packageMap.put("price", price);
-            packageMap.put("quantity", quantity);
-            packageMap.put("tax", tax);
-            packageMap.put("discount", discount);
+            packageMap.put("packageType", item.getPackageType() != null ? item.getPackageType() : ""); // tránh null
+            packageMap.put("tenGoi", item.getPackageName() != null ? item.getPackageName() : "");       // tránh null
+            packageMap.put("soLuong", quantity);
+            packageMap.put("giaGiam", price);
             packageMap.put("thanhTien", thanhTien);
 
-            totalPrice += price * quantity;
-            totalTax += tax * quantity;
-            totalDiscount += discount * quantity;
             totalQuantity += quantity;
-
             orderPackageList.add(packageMap);
+
+            // Ghi log kiểm tra đầy đủ
+            Log.d("CartItemCheck", "packageId: " + item.getPackageId());
+            Log.d("CartItemCheck", "packageType: " + item.getPackageType());
+            Log.d("CartItemCheck", "tenGoi: " + item.getPackageName());
+            Log.d("CartItemCheck", "soLuong: " + quantity);
+            Log.d("CartItemCheck", "giaGiam: " + price);
+            Log.d("CartItemCheck", "thanhTien: " + thanhTien);
         }
 
         double totalAmount = totalPrice + totalTax - totalDiscount;
@@ -142,13 +145,14 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                 .addOnSuccessListener(aVoid -> {
                     String orderId = db.collection("Orders").document().getId();
 
+                    // Format ngày theo chuỗi "yyyy-MM-dd HH:mm:ss"
                     String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                             .format(new Date());
 
                     Map<String, Object> orderMap = new HashMap<>();
                     orderMap.put("id", orderId);
                     orderMap.put("idKhach", userId);
-                    orderMap.put("ngayDat", currentDateTime); // 🔁 thay đổi tại đây
+                    orderMap.put("ngayDat", currentDateTime);
                     orderMap.put("tongTien", totalAmount);
                     orderMap.put("tongSoLuong", finalTotalQuantity);
                     orderMap.put("statusXuLy", "Chờ xử lý");
@@ -157,7 +161,6 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                     orderMap.put("invoiceId", invoiceId);
                     orderMap.put("packages", orderPackageList);
 
-
                     db.collection("Orders")
                             .document(orderId)
                             .set(orderMap)
@@ -165,17 +168,18 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                                 // ✅ Sau khi tạo đơn hàng, giảm số lượng gói trong collection Packages
                                 for (CartItem item : cartItems) {
                                     String packageId = item.getPackageId();
-                                    int quantityToSubtract = item.getSoLuong();  // số lượng đã mua
+                                    int quantityToSubtract = item.getSoLuong();
 
                                     db.collection("Package").document(packageId)
                                             .update("soLuong", FieldValue.increment(-quantityToSubtract))
                                             .addOnSuccessListener(a -> {
-                                                // Thành công - có thể ghi log hoặc không cần gì thêm
+                                                // Thành công
                                             })
                                             .addOnFailureListener(e -> {
                                                 Toast.makeText(this, "Không thể cập nhật số lượng gói: " + packageId, Toast.LENGTH_SHORT).show();
                                             });
                                 }
+
                                 Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                                 CartManager.getInstance().clearCart();
                                 adapter.notifyDataSetChanged();
@@ -185,7 +189,6 @@ public class PaymentActivity extends AppCompatActivity implements CartAdapter.On
                             .addOnFailureListener(e -> {
                                 Toast.makeText(this, "Lỗi khi lưu đơn hàng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
-
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lỗi khi lưu hóa đơn: " + e.getMessage(), Toast.LENGTH_SHORT).show();

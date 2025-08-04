@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class PostFragment extends Fragment {
         if (currentUser == null) return;
 
         String uid = currentUser.getUid();
+
         db.collection("Orders")
                 .whereEqualTo("idKhach", uid)
                 .whereEqualTo("statusThanhToan", "Đã thanh toán")
@@ -112,7 +114,9 @@ public class PostFragment extends Fragment {
 
                     for (QueryDocumentSnapshot doc : querySnapshot) {
                         List<Map<String, Object>> packages = (List<Map<String, Object>>) doc.get("packages");
-                        if (packages != null) allPackages.addAll(packages);
+                        if (packages != null) {
+                            allPackages.addAll(packages);
+                        }
                     }
 
                     if (allPackages.isEmpty()) {
@@ -120,23 +124,67 @@ public class PostFragment extends Fragment {
                         return;
                     }
 
+                    // Đếm số lượng gói hợp lệ cần fetch để show dialog sau cùng
+                    List<String> validPackageIds = new ArrayList<>();
+
                     for (Map<String, Object> pkg : allPackages) {
-                        int quantity = ((Long) pkg.get("quantity")).intValue();
+                        Object quantityObj = pkg.get("soLuong");  // đảm bảo dùng đúng key
+                        int quantity = 0;
+
+                        if (quantityObj instanceof Long) {
+                            quantity = ((Long) quantityObj).intValue();
+                        } else if (quantityObj instanceof Integer) {
+                            quantity = (Integer) quantityObj;
+                        } else {
+                            Log.e("PostFragment", "❌ Giá trị soLuong không hợp lệ: " + quantityObj);
+                            continue;
+                        }
+
                         if (quantity > 0) {
                             String packageId = (String) pkg.get("packageId");
-                            db.collection("Package").document(packageId).get().addOnSuccessListener(doc -> {
-                                Package p = doc.toObject(Package.class);
-                                if (p != null) {
-                                    userPackages.add(p);
-                                    categoryNames.add(p.getTenGoi());
-                                    categoryToPackage.put(p.getCategoryId(), p);
-                                }
-                                if (!userPackages.isEmpty()) showAddPostDialog();
-                            });
+                            if (packageId != null && !packageId.isEmpty()) {
+                                validPackageIds.add(packageId);
+                            } else {
+                                Log.e("PostFragment", "❌ packageId null hoặc rỗng: " + pkg);
+                            }
                         }
                     }
+
+                    if (validPackageIds.isEmpty()) {
+                        Toast.makeText(getContext(), "Tất cả các gói đã hết lượt đăng", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Đếm số gói đã tải về thành công để chỉ show dialog sau cùng
+                    final int[] loadedCount = {0};
+                    for (String packageId : validPackageIds) {
+                        db.collection("Package").document(packageId).get().addOnSuccessListener(doc -> {
+                            Package p = doc.toObject(Package.class);
+                            if (p != null) {
+                                userPackages.add(p);
+                                categoryNames.add(p.getTenGoi());
+                                categoryToPackage.put(p.getCategoryId(), p);
+                            }
+
+                            loadedCount[0]++;
+                            if (loadedCount[0] == validPackageIds.size() && !userPackages.isEmpty()) {
+                                showAddPostDialog();
+                            }
+                        }).addOnFailureListener(e -> {
+                            Log.e("PostFragment", "❌ Lỗi khi tải gói tin: " + packageId, e);
+                            loadedCount[0]++;
+                            if (loadedCount[0] == validPackageIds.size() && !userPackages.isEmpty()) {
+                                showAddPostDialog();
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("PostFragment", "❌ Lỗi khi truy vấn đơn hàng: ", e);
+                    Toast.makeText(getContext(), "Lỗi khi kiểm tra đơn hàng", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void checkUserOrderAndSetupUI() {
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -150,20 +198,42 @@ public class PostFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     boolean canPost = false;
+
                     for (QueryDocumentSnapshot doc : querySnapshot) {
                         List<Map<String, Object>> packages = (List<Map<String, Object>>) doc.get("packages");
+
                         if (packages != null) {
                             for (Map<String, Object> pkg : packages) {
-                                int quantity = ((Long) pkg.get("quantity")).intValue();
+                                Object quantityObj = pkg.get("soLuong");
+                                int quantity = 0;
+
+                                if (quantityObj instanceof Long) {
+                                    quantity = ((Long) quantityObj).intValue();
+                                } else if (quantityObj instanceof Integer) {
+                                    quantity = (Integer) quantityObj;
+                                } else {
+                                    Log.e("PostFragment", "❌ Không thể đọc 'soLuong' từ package: " + pkg);
+                                }
+
+                                Log.d("PostFragment", "✅ Package: " + pkg + " | soLuong: " + quantity);
+
                                 if (quantity > 0) {
                                     canPost = true;
                                     break;
                                 }
                             }
+                        } else {
+                            Log.w("PostFragment", "⚠️ Gói tin rỗng hoặc null trong đơn hàng: " + doc.getId());
                         }
+
                         if (canPost) break;
                     }
+
                     fabPost.setVisibility(canPost ? View.VISIBLE : View.GONE);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("PostFragment", "❌ Lỗi khi kiểm tra đơn hàng: ", e);
+                    fabPost.setVisibility(View.GONE);
                 });
     }
 
@@ -216,11 +286,15 @@ public class PostFragment extends Fragment {
                 }
 
                 int pos = spinnerDanhMuc.getSelectedItemPosition();
-                if (pos < 0 || pos >= userPackages.size()) {
-                    Toast.makeText(getContext(), "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show();
+                if (userPackages == null || userPackages.isEmpty()) {
+                    Toast.makeText(getContext(), "Không có gói tin nào khả dụng", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                if (pos < 0 || pos >= userPackages.size()) {
+                    Toast.makeText(getContext(), "Vui lòng chọn gói tin hợp lệ", Toast.LENGTH_SHORT).show();
+                    Log.e("PostFragment", "❌ Index spinner không hợp lệ: " + pos + " / size: " + userPackages.size());
+                    return;
+                }
                 Package selectedPkg = userPackages.get(pos);
 
                 // ✅ RÀNG BUỘC 1: maxPosts

@@ -5,10 +5,11 @@ public class CartItem {
     private String packageName;
     private double packagePrice;
     private int soLuong;
-    private String firestoreId; // Dùng để lưu ID tài liệu trong Firestore nếu cần
+    private String firestoreId;
     private double tax;
     private double discount;
-    private Package aPackage;
+    private double thanhTien;
+    private String packageType;
 
     public CartItem() {
         // Constructor mặc định bắt buộc khi dùng Firebase Firestore
@@ -69,13 +70,39 @@ public class CartItem {
         this.firestoreId = firestoreId;
     }
 
-    // Tính tổng tiền cho mục này
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public void setTax(double tax) {
+        this.tax = tax;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getThanhTien() {
+        return thanhTien;
+    }
+
+    public void setThanhTien(double thanhTien) {
+        this.thanhTien = thanhTien;
+    }
+
     public double getTotalPrice() {
         return packagePrice * soLuong;
-    }
-    public double getTax() { return tax; }
-    public double getDiscount() { return discount; }
-    public double getThanhTien() {
-        return aPackage != null ? aPackage.getThanhTien() : 0.0;
     }
 }

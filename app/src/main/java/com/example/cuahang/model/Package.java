@@ -132,7 +132,6 @@ public class Package {
     public double getThanhTien() { return thanhTien; }
     public void setThanhTien(double thanhTien) { this.thanhTien = thanhTien; }
 
-    // Hàm tính lại thanhTien theo giá giảm * số lượng, nếu muốn dùng riêng nội bộ:
     public double tinhThanhTien() {
         return giaGiam * soLuong;
     }

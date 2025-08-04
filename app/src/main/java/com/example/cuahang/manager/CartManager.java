@@ -47,9 +47,18 @@ public class CartManager {
                         String name = doc.getString("tenGoi");
                         double price = doc.getDouble("giaGiam");
                         double tax = doc.getDouble("vat");
+                        String packageType = doc.getString("loaiGoi"); // thêm dòng này
                         int quantity = 1;
 
-                        CartItem item = new CartItem(packageId, name, price, 1);
+                        CartItem item = new CartItem();
+                        item.setPackageId(packageId);
+                        item.setPackageName(name);
+                        item.setDiscount(price);     // giá bán
+                        item.setTax(tax);            // VAT
+                        item.setPackageType(packageType);  // Loại gói
+                        item.setSoLuong(quantity);
+                        item.setThanhTien(price * quantity);  // Không cần cộng tax nếu đã là giá cuối
+
                         cartItems.add(item);
                         if (onSuccess != null) onSuccess.run();
                     }

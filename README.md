@@ -34,7 +34,7 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <td align="center" width="25%">
 
-<img src="./docs/screenshots/home.jpg" width="180px">
+<img src="./docs/screenshorts/home.jpg" width="180px">
 
 <br><br>
 
@@ -44,7 +44,7 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <td align="center" width="25%">
 
-<img src="./docs/screenshots/tk.jpg" width="180px">
+<img src="./docs/screenshorts/tk.jpg" width="180px">
 
 <br><br>
 
@@ -54,7 +54,7 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <td align="center" width="25%">
 
-<img src="./docs/screenshots/if.jpg" width="180px">
+<img src="./docs/screenshorts/if.jpg" width="180px">
 
 <br><br>
 
@@ -64,7 +64,7 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <td align="center" width="25%">
 
-<img src="./docs/screenshots/add.jpg" width="180px">
+<img src="./docs/screenshorts/add.jpg" width="180px">
 
 <br><br>
 

@@ -26,10 +26,7 @@ CuaHang is an Android application developed as a practical project for exploring
 ---
 
 ## Application Preview
-
-| Home | Account | Information | Add Item |
-| :---: | :---: | :---: | :---: |
-| <img src="docs/screenshots/home.jpg" width="220" alt="Home Screen"/> | <img src="docs/screenshots/tk.jpg" width="220" alt="Account Screen"/> | <img src="docs/screenshots/if.jpg" width="220" alt="Information Screen"/> | <img src="docs/screenshots/add.jpg" width="220" alt="Add Item Screen"/> |
+| <img src="docs/screenshots/home.jpg" width="220" alt="Home Screen"/> | <img src="docs/screenshots/tk.JPG" width="220" alt="Account Screen"/> | <img src="docs/screenshots/if.jpg" width="220" alt="Information Screen"/> | <img src="docs/screenshots/add.jpg" width="220" alt="Add Item Screen"/> |
 
 *(Note: If images are not loading, ensure the `docs/screenshots/` directory is successfully pushed to the repository and the file extensions match exactly).*
 

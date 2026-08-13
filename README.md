@@ -21,91 +21,219 @@ A mobile application developed with Kotlin and Android to explore store manageme
 
 CuaHang is an Android application developed as a practical project for exploring mobile application development and store management workflows.
 
-The project combines Android development with cloud-based Firebase services for application data, authentication, and database operations.
+The project combines Kotlin and Android development with Firebase services for authentication, cloud data management, and realtime database operations.
 
 The application also integrates supporting libraries for data visualization, image loading, and JSON processing.
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="./docs/screenshots/home.png" width="30%" />
+  <img src="./docs/screenshots/products.png" width="30%" />
+  <img src="./docs/screenshots/detail.png" width="30%" />
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/login.png" width="30%" />
+  <img src="./docs/screenshots/statistics.png" width="30%" />
+</p>
+
+---
+
 ## Tech Stack
 
-| Category             | Technologies                                    |
-| -------------------- | ----------------------------------------------- |
-| Platform             | Android                                         |
-| Programming Language | Kotlin                                          |
-| Build System         | Gradle Kotlin DSL                               |
-| Authentication       | Firebase Authentication                         |
-| Cloud Database       | Firebase Firestore                              |
-| Realtime Data        | Firebase Realtime Database                      |
-| Data Visualization   | MPAndroidChart                                  |
-| Image Loading        | Glide                                           |
-| JSON Processing      | Gson                                            |
-| UI                   | AndroidX, Material Components, ConstraintLayout |
+<table>
+<tr>
+<td align="center" width="25%">
+
+### Platform
+
+Android
+
+</td>
+<td align="center" width="25%">
+
+### Language
+
+Kotlin
+
+</td>
+<td align="center" width="25%">
+
+### Backend Services
+
+Firebase
+
+</td>
+<td align="center" width="25%">
+
+### Database
+
+Firestore
+
+</td>
+</tr>
+</table>
+
+| Category | Technologies |
+|---|---|
+| Platform | Android |
+| Programming Language | Kotlin |
+| Build System | Gradle Kotlin DSL |
+| Authentication | Firebase Authentication |
+| Cloud Database | Firebase Firestore |
+| Realtime Data | Firebase Realtime Database |
+| Data Visualization | MPAndroidChart |
+| Image Loading | Glide |
+| JSON Processing | Gson |
+| UI | AndroidX, Material Components, ConstraintLayout |
 
 ---
 
-## Project Structure
+## Core Technologies
 
-The project follows a standard Android application structure.
+<table>
+<tr>
 
-```text
-CuaHang
-|
-+-- app
-|   +-- src
-|   +-- build.gradle.kts
-|   +-- proguard-rules.pro
-|   +-- google-services.json
-|
-+-- gradle
-|
-+-- build.gradle.kts
-+-- settings.gradle.kts
-+-- gradle.properties
-+-- gradlew
-+-- gradlew.bat
-```
+<td width="33%" valign="top">
 
----
+### Android Development
 
-## Main Components
+The application is built with Kotlin and the Android SDK.
 
-### Android Application
+AndroidX and Material Components are used to develop and organize the application interface.
 
-The application is built with Kotlin and Android SDK, using AndroidX and Material Components for the application interface.
+</td>
+
+<td width="33%" valign="top">
 
 ### Firebase Services
 
-Firebase services are integrated for authentication and cloud-based data management.
+Firebase provides the cloud services used by the application.
 
-The project includes:
+- Authentication
+- Firestore
+- Realtime Database
+- Analytics
 
-* Firebase Authentication
-* Firebase Firestore
-* Firebase Realtime Database
-* Firebase Analytics
+</td>
+
+<td width="33%" valign="top">
 
 ### Supporting Libraries
 
-Additional libraries are used to support common application requirements:
+Additional libraries are integrated for specific application requirements.
 
-* MPAndroidChart for data visualization
-* Glide for image loading
-* Gson for JSON processing
-* AndroidX CardView for UI components
+- MPAndroidChart
+- Glide
+- Gson
+- AndroidX CardView
+
+</td>
+
+</tr>
+</table>
+
+---
+
+## Application Overview
+
+<table>
+<tr>
+
+<td width="50%" align="center">
+
+### Mobile Application
+
+Kotlin and Android SDK
+
+<br>
+
+AndroidX  
+Material Components  
+ConstraintLayout
+
+</td>
+
+<td width="50%" align="center">
+
+### Cloud Services
+
+Firebase Authentication
+
+<br>
+
+Cloud Firestore  
+Realtime Database  
+Firebase Analytics
+
+</td>
+
+</tr>
+
+<tr>
+
+<td width="50%" align="center">
+
+### Data Visualization
+
+MPAndroidChart
+
+<br>
+
+Charts and statistical data visualization
+
+</td>
+
+<td width="50%" align="center">
+
+### Data and Media
+
+Glide
+
+<br>
+
+Image loading and display
+
+<br>
+
+Gson
+
+<br>
+
+JSON data processing
+
+</td>
+
+</tr>
+</table>
 
 ---
 
 ## Development Configuration
 
-| Configuration        | Version |
-| -------------------- | ------- |
-| Compile SDK          | 35      |
-| Minimum SDK          | 30      |
-| Target SDK           | 35      |
-| Java                 | 11      |
-| Kotlin JVM Toolchain | 11      |
-| Application Version  | 1.0     |
+| Configuration | Version |
+|---|---|
+| Compile SDK | 35 |
+| Minimum SDK | 30 |
+| Target SDK | 35 |
+| Java | 11 |
+| Kotlin JVM Toolchain | 11 |
+| Application Version | 1.0 |
+
+---
+
+## Project Highlights
+
+- Developed an Android application using Kotlin and Android SDK.
+- Integrated Firebase services for authentication and cloud-based data management.
+- Worked with Firestore and Realtime Database.
+- Integrated MPAndroidChart for data visualization.
+- Implemented image loading and display with Glide.
+- Used Gson for JSON data processing.
+- Applied AndroidX and Material Components for the application interface.
 
 ---
 
@@ -113,11 +241,11 @@ Additional libraries are used to support common application requirements:
 
 ### Requirements
 
-* Android Studio
-* Android SDK
-* JDK 11
-* Android device or emulator
-* Firebase project configuration
+- Android Studio
+- Android SDK
+- JDK 11
+- Android device or emulator
+- Firebase project configuration
 
 ### Installation
 
@@ -126,54 +254,3 @@ Clone the repository:
 ```bash
 git clone https://github.com/TuyetAnh0101/CuaHang.git
 cd CuaHang
-```
-
-Open the project with Android Studio and allow Gradle to synchronize the project dependencies.
-
-Before running the application, make sure the required Firebase configuration is available for the project.
-
-### Build
-
-```bash
-./gradlew build
-```
-
-For Windows:
-
-```bash
-gradlew.bat build
-```
-
----
-
-## Project Highlights
-
-* Developed an Android application using Kotlin.
-* Integrated Firebase services for authentication and cloud data management.
-* Worked with Firestore and Realtime Database.
-* Integrated data visualization with MPAndroidChart.
-* Implemented image handling with Glide.
-* Used Gson for JSON processing.
-* Applied AndroidX and Material Components for the application interface.
-
----
-
-## Repository
-
-<p align="center">
-  <a href="https://github.com/TuyetAnh0101/CuaHang">
-    <img src="https://img.shields.io/badge/View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" />
-  </a>
-</p>
-
----
-
-## Author
-
-<div align="center">
-
-**Tuyết Anh**
-
-Information Technology Student
-
-</div>

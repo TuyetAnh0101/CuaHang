@@ -30,17 +30,11 @@ The application also integrates supporting libraries for data visualization, ima
 ## Screenshots
 
 <p align="center">
-  <img src="./docs/screenshots/home.png" width="30%" />
-  <img src="./docs/screenshots/products.png" width="30%" />
-  <img src="./docs/screenshots/detail.png" width="30%" />
+  <img src=".home.jpg" width="30%" />
+  <img src=".tk.jpg" width="30%" />
+  <img src=".if.jpg" width="30%" />
 </p>
 
-<p align="center">
-  <img src="./docs/screenshots/login.png" width="30%" />
-  <img src="./docs/screenshots/statistics.png" width="30%" />
-</p>
-
----
 
 ## Tech Stack
 

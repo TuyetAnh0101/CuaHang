@@ -19,111 +19,93 @@ A mobile application developed with Kotlin and Android to explore store manageme
 
 ## Overview
 
-CuaHang is an Android application developed as a practical project for exploring mobile application development, store management workflows, data handling, and cloud-based services.
+CuaHang is an Android application developed as a practical project for exploring mobile application development and store management workflows.
 
-The project combines Kotlin and Android development with Firebase services for authentication and data management.
+The project combines Android development with cloud-based Firebase services for application data, authentication, and database operations.
 
-Several supporting libraries are also integrated for data visualization, image loading, and JSON processing.
-
----
-
-## Screenshots
-
-<p align="center">
-  <img src="./docs/screenshots/home.png" width="30%" />
-  <img src="./docs/screenshots/products.png" width="30%" />
-  <img src="./docs/screenshots/statistics.png" width="30%" />
-</p>
-
-<p align="center">
-  <img src="./docs/screenshots/login.png" width="30%" />
-  <img src="./docs/screenshots/detail.png" width="30%" />
-  <img src="./docs/screenshots/profile.png" width="30%" />
-</p>
+The application also integrates supporting libraries for data visualization, image loading, and JSON processing.
 
 ---
 
 ## Tech Stack
 
-| Category | Technologies |
-|---|---|
-| Platform | Android |
-| Programming Language | Kotlin |
-| Build System | Gradle Kotlin DSL |
-| Authentication | Firebase Authentication |
-| Cloud Database | Firebase Firestore |
-| Realtime Data | Firebase Realtime Database |
-| Data Visualization | MPAndroidChart |
-| Image Loading | Glide |
-| JSON Processing | Gson |
-| UI | AndroidX, Material Components, ConstraintLayout |
+| Category             | Technologies                                    |
+| -------------------- | ----------------------------------------------- |
+| Platform             | Android                                         |
+| Programming Language | Kotlin                                          |
+| Build System         | Gradle Kotlin DSL                               |
+| Authentication       | Firebase Authentication                         |
+| Cloud Database       | Firebase Firestore                              |
+| Realtime Data        | Firebase Realtime Database                      |
+| Data Visualization   | MPAndroidChart                                  |
+| Image Loading        | Glide                                           |
+| JSON Processing      | Gson                                            |
+| UI                   | AndroidX, Material Components, ConstraintLayout |
 
 ---
 
-## Core Technologies
+## Project Structure
 
-<table>
-<tr>
-<td width="33%" align="center">
+The project follows a standard Android application structure.
 
-### Android Development
+```text
+CuaHang
+|
++-- app
+|   +-- src
+|   +-- build.gradle.kts
+|   +-- proguard-rules.pro
+|   +-- google-services.json
+|
++-- gradle
+|
++-- build.gradle.kts
++-- settings.gradle.kts
++-- gradle.properties
++-- gradlew
++-- gradlew.bat
+```
 
-Kotlin  
-Android SDK  
-AndroidX  
-Material Components  
-ConstraintLayout
+---
 
-</td>
+## Main Components
 
-<td width="33%" align="center">
+### Android Application
+
+The application is built with Kotlin and Android SDK, using AndroidX and Material Components for the application interface.
 
 ### Firebase Services
 
-Firebase Authentication  
-Cloud Firestore  
-Realtime Database  
-Firebase Analytics
+Firebase services are integrated for authentication and cloud-based data management.
 
-</td>
+The project includes:
 
-<td width="33%" align="center">
+* Firebase Authentication
+* Firebase Firestore
+* Firebase Realtime Database
+* Firebase Analytics
 
 ### Supporting Libraries
 
-MPAndroidChart  
-Glide  
-Gson  
-AndroidX CardView
+Additional libraries are used to support common application requirements:
 
-</td>
-</tr>
-</table>
+* MPAndroidChart for data visualization
+* Glide for image loading
+* Gson for JSON processing
+* AndroidX CardView for UI components
 
 ---
 
 ## Development Configuration
 
-| Configuration | Version |
-|---|---|
-| Compile SDK | 35 |
-| Minimum SDK | 30 |
-| Target SDK | 35 |
-| Java | 11 |
-| Kotlin JVM Toolchain | 11 |
-| Application Version | 1.0 |
-
----
-
-## Project Highlights
-
-- Developed an Android application using Kotlin and Android SDK.
-- Integrated Firebase services for authentication and cloud-based data management.
-- Worked with Firestore and Realtime Database.
-- Integrated MPAndroidChart for data visualization.
-- Implemented image loading and display with Glide.
-- Used Gson for JSON data processing.
-- Applied AndroidX and Material Components for the application interface.
+| Configuration        | Version |
+| -------------------- | ------- |
+| Compile SDK          | 35      |
+| Minimum SDK          | 30      |
+| Target SDK           | 35      |
+| Java                 | 11      |
+| Kotlin JVM Toolchain | 11      |
+| Application Version  | 1.0     |
 
 ---
 
@@ -131,11 +113,11 @@ AndroidX CardView
 
 ### Requirements
 
-- Android Studio
-- Android SDK
-- JDK 11
-- Android device or emulator
-- Firebase project configuration
+* Android Studio
+* Android SDK
+* JDK 11
+* Android device or emulator
+* Firebase project configuration
 
 ### Installation
 
@@ -144,3 +126,54 @@ Clone the repository:
 ```bash
 git clone https://github.com/TuyetAnh0101/CuaHang.git
 cd CuaHang
+```
+
+Open the project with Android Studio and allow Gradle to synchronize the project dependencies.
+
+Before running the application, make sure the required Firebase configuration is available for the project.
+
+### Build
+
+```bash
+./gradlew build
+```
+
+For Windows:
+
+```bash
+gradlew.bat build
+```
+
+---
+
+## Project Highlights
+
+* Developed an Android application using Kotlin.
+* Integrated Firebase services for authentication and cloud data management.
+* Worked with Firestore and Realtime Database.
+* Integrated data visualization with MPAndroidChart.
+* Implemented image handling with Glide.
+* Used Gson for JSON processing.
+* Applied AndroidX and Material Components for the application interface.
+
+---
+
+## Repository
+
+<p align="center">
+  <a href="https://github.com/TuyetAnh0101/CuaHang">
+    <img src="https://img.shields.io/badge/View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+</p>
+
+---
+
+## Author
+
+<div align="center">
+
+**Tuyết Anh**
+
+Information Technology Student
+
+</div>

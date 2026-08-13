@@ -44,29 +44,21 @@ The application also integrates supporting libraries for data visualization, ima
 
 ---
 
-## Project Structure
+## Key Components
 
-The project follows a standard Android application structure.
+The application is organized around several main components:
 
-```text
-CuaHang
-|
-+-- app
-|   +-- src
-|   +-- build.gradle.kts
-|   +-- proguard-rules.pro
-|   +-- google-services.json
-|
-+-- gradle
-|
-+-- build.gradle.kts
-+-- settings.gradle.kts
-+-- gradle.properties
-+-- gradlew
-+-- gradlew.bat
-```
+| Component               | Purpose                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| Android Application     | Provides the main mobile application and user interface |
+| Firebase Authentication | Handles user registration and authentication            |
+| Cloud Firestore         | Stores and manages application data                     |
+| Realtime Database       | Supports real-time data operations                      |
+| MPAndroidChart          | Provides data visualization and charts                  |
+| Glide                   | Handles image loading and display                       |
+| Gson                    | Supports JSON data processing                           |
 
----
+These components work together to provide the application's core functionality while keeping data management and application services separated.
 
 ## Main Components
 

@@ -38,7 +38,6 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <br><br>
 
-<b>Home</b>
 
 </td>
 
@@ -48,8 +47,6 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <br><br>
 
-<b>Account</b>
-
 </td>
 
 <td align="center" width="25%">
@@ -58,7 +55,6 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <br><br>
 
-<b>Information</b>
 
 </td>
 
@@ -68,7 +64,6 @@ CuaHang is an Android application developed as a practical project for exploring
 
 <br><br>
 
-<b>Add Item</b>
 
 </td>
 

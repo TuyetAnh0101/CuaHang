@@ -30,9 +30,9 @@ The application also integrates supporting libraries for data visualization, ima
 ## Screenshots
 
 <p align="center">
-  <img src=".home.jpg" width="30%" />
-  <img src=".tk.jpg" width="30%" />
-  <img src=".if.jpg" width="30%" />
+  <img src="home.jpg" width="30%" />
+  <img src="tk.jpg" width="30%" />
+  <img src="if.jpg" width="30%" />
 </p>
 
 
